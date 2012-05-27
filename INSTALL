@@ -14,11 +14,11 @@ Since GPG-Gui depends on Gtk3 you also need that.
 For the actual encryption GPG-Gui currently uses xterm and
 the command-line gpg utility. (You will need those two packages!)
 
-############################################
-# It's planned to use libgpgme for encryption in the future		#
+#####################################################################
+# It's planned to use libgpgme for encryption in the future			#
 # but it need to figure out how to port it to vala or someone else	#
-# has to.																#
-############################################
+# has to.															#
+#####################################################################
 
 If you have all dependencies installed, install with:
 	$make

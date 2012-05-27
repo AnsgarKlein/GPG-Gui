@@ -46,9 +46,31 @@ public class MainFrame : Gtk.Window {
 		this.border_width = 10;											//Used for cleaner look
 		this.destroy.connect(Gtk.main_quit);
 		
+		//Set Application Icon & update Application Icon if theme changes
+		setApplicationIcon();
+		this.style_set.connect(setApplicationIcon);
+		this.style_set.connect(setApplicationIcon);
+		
 		buildgui();
 		
 		this.show_all();
+	}
+	
+	private void setApplicationIcon() {
+		string icon1 = "gdu-encrypted-lock";
+		string icon2 = "application-x-executable";
+		
+		try {
+			this.icon = IconTheme.get_default().load_icon(icon1, 48, 0);
+		} catch (Error e){
+			stderr.printf("Could not load Icon: " +icon1 +" setting fallback icon");
+			try {
+				this.icon = IconTheme.get_default().load_icon(icon2, 48, 0);
+			}
+			catch (Error e) {
+				stderr.printf("Could not load Icon: " +icon2);
+			}
+		}
 	}
 	
 	private void buildgui() {
