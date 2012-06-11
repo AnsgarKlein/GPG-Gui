@@ -1,10 +1,10 @@
 You should compile GPG-Gui with a decently up-to-date Vala Compiler (valac),
 which is available at git://git.gnome.org/vala
 
-Many Distribution already offer a version of the Vala Compiler, while this
-version probably is super out of date it should be sufficient.
+Many Distribution already offer a version of the Vala Compiler, but this
+version probably is super outdated.
 
-If you use Ubuntu you can also add a Vala ppa:
+If you use Ubuntu you can add a Vala ppa:
 ppa:vala-team/ppa
 (The package you need is called valac)
 
