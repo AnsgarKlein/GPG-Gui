@@ -1,8 +1,8 @@
 
-PACKAGES	=	--pkg gtk+-3.0
+PACKAGES	=	--pkg gtk+-3.0 --pkg vte-2.90
 
 CC			=	valac
-CFLAGS		=	$(PACKAGES) --thread
+CFLAGS		=	$(PACKAGES)
 SOURCES		=	src/*.vala
 
 #############################################################################

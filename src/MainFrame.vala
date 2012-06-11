@@ -31,10 +31,10 @@ public class MainFrame : Gtk.Window {
 	private Gtk.Label hashLabel;
 	private Gtk.ComboBoxText hashBox;
 	
-	private Gtk.Label pwlabel1;
-	private Gtk.Entry pwfield1;
-	private Gtk.Label pwlabel2;
-	private Gtk.Entry pwfield2;
+	///private Gtk.Label pwlabel1;	TODO
+	///private Gtk.Entry pwfield1;	TODO
+	///private Gtk.Label pwlabel2;	TODO
+	///private Gtk.Entry pwfield2;	TODO
 	
 	private Gtk.Button runButton;
 	
@@ -116,25 +116,19 @@ public class MainFrame : Gtk.Window {
 		
 		
 		// #!!!!#### Password Fields ####!!!!#
-		pwlabel1 = new Gtk.Label("Password:");
-		pwfield1 = new Gtk.Entry();
-		pwfield1.set_visibility(false);
-		pwfield1.changed.connect( check_runable );
-		middleTable.attach_defaults(pwlabel1, 0,1,2,3);
-		middleTable.attach_defaults(pwfield1, 1,2,2,3);
+		///pwlabel1 = new Gtk.Label("Password:");
+		///pwfield1 = new Gtk.Entry();
+		///pwfield1.set_visibility(false);
+		///pwfield1.changed.connect( check_runable );
+		///middleTable.attach_defaults(pwlabel1, 0,1,2,3);
+		///middleTable.attach_defaults(pwfield1, 1,2,2,3);
 		
-		pwlabel2 = new Gtk.Label("Confirm:");
-		pwfield2 = new Gtk.Entry();
-		pwfield2.set_visibility(false);
-		pwfield2.changed.connect( check_runable );
-		middleTable.attach_defaults(pwlabel2, 0,1,3,4);
-		middleTable.attach_defaults(pwfield2, 1,2,3,4);
-		
-		// This will cause a Gtk-CRITICAL, but is only debug
-		//////////////////////////////////////////////////////////////
-				pwfield1.set_text("a");								//
-				pwfield2.set_text("a");								//
-		//////////////////////////////////////////////////////////////
+		///pwlabel2 = new Gtk.Label("Confirm:");
+		///pwfield2 = new Gtk.Entry();
+		///pwfield2.set_visibility(false);
+		///pwfield2.changed.connect( check_runable );
+		///middleTable.attach_defaults(pwlabel2, 0,1,3,4);
+		///middleTable.attach_defaults(pwfield2, 1,2,3,4);
 		
 		
 		// #!!!!#### Crypto ComboBox ####!!!!#
@@ -215,8 +209,8 @@ public class MainFrame : Gtk.Window {
 		command_operation = "encrypt";
 		
 		//Change sensitivity of some widgets
-		pwlabel2.set_sensitive(true);
-		pwfield2.set_sensitive(true);
+		///pwlabel2.set_sensitive(true);
+		///pwfield2.set_sensitive(true);
 		cryptoLabel.set_sensitive(true);
 		cryptoBox.set_sensitive(true);
 		hashLabel.set_sensitive(true);
@@ -229,8 +223,8 @@ public class MainFrame : Gtk.Window {
 		command_operation = "decrypt";
 		
 		//Change sensitivity of some widgets
-		pwlabel2.set_sensitive(false);
-		pwfield2.set_sensitive(false);
+		///pwlabel2.set_sensitive(false);
+		///pwfield2.set_sensitive(false);
 		cryptoLabel.set_sensitive(false);
 		cryptoBox.set_sensitive(false);
 		hashLabel.set_sensitive(false);
@@ -288,16 +282,16 @@ public class MainFrame : Gtk.Window {
 				
 		else if (command_operation == "encrypt") {
 			if ( command_filePath == null	|| command_filePath == ""	)	{	runable = false;	}
-			if ( pwfield1.get_text() == ""								)	{	runable = false;	}
-			if ( pwfield2.get_text() == ""								)	{	runable = false;	}
-			if ( pwfield1.get_text() != pwfield2.get_text()				)	{	runable = false;	}
+			///if ( pwfield1.get_text() == ""								)	{	runable = false;	}
+			///if ( pwfield2.get_text() == ""								)	{	runable = false;	}
+			///if ( pwfield1.get_text() != pwfield2.get_text()				)	{	runable = false;	}
 			if ( command_cipherAlgo == null	|| command_cipherAlgo == ""	)	{	runable = false;	}
 			if ( command_hashAlgo == null	|| command_hashAlgo == ""	)	{	runable = false;	}
 		}
 		
 		else if (command_operation == "decrypt") {
 			if ( command_filePath == null	|| command_filePath == ""	)	{	runable = false;	}
-			if ( pwfield1.get_text() == ""								)	{	runable = false;	}
+			///if ( pwfield1.get_text() == ""								)	{	runable = false;	}
 		}
 		
 		
@@ -345,28 +339,40 @@ public class MainFrame : Gtk.Window {
 		}
 		
 		
-		//Build processString ( the uxterm command calling the gpg command )
-		string processString = "";
-		processString += "uxterm -e \"";
-		processString += executeString;
-		processString += "\"";
-		
-		stdout.printf( processString +"\n");
+
+		//string consoletype = "xterm"
+		string consoletype = "vte";
 		
 		
-		try {
-			GLib.Process.spawn_command_line_async( processString );
+		
+		if (consoletype == "xterm") {
+			
+			//Build processString ( the uxterm command calling the gpg command )
+			string processString = "";
+			processString += "uxterm -e \"";
+			processString += executeString;
+			processString += "\"";
+			
+			stdout.printf( processString +"\n");
+			
+			try {
+				GLib.Process.spawn_command_line_async(processString);
+			}
+			catch (SpawnError e) {
+				stdout.printf("Error, spawning process, SpawnError-Message:\n");
+				stdout.printf(e.message +"\n");
+				stderr.printf("Error, spawning process, SpawnError-Message:\n");
+				stderr.printf(e.message +"\n");
+			}
+			
+			//close_pid possibly necessary
 		}
-		catch (SpawnError e) {
-			stdout.printf("Error, spawning process, SpawnError-Message:\n");
-			stdout.printf( e.message +"\n");
-			stderr.printf("Error, spawning process, SpawnError-Message:\n");
-			stderr.printf( e.message +"\n");
+		else if (consoletype =="vte") {
+			new TerminalWindow(this, executeString);
 		}
-		
-		//while 
-		
-		//close_pid possibly necessary
+		else {
+			stderr.printf("fail\n");
+		}
 	}
 	
 }
