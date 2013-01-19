@@ -86,8 +86,8 @@ public class MainFrame : Gtk.Window {
 		// #!!!!#### Operation Buttons ####!!!!#
 		Gtk.RadioButton operationButton1 = new Gtk.RadioButton.with_label(null, "Encrypt");
 		Gtk.RadioButton operationButton2 = new Gtk.RadioButton.with_label_from_widget(operationButton1, "Decrypt");
-		operationButton1.pressed.connect( set_encrypt );
-		operationButton2.pressed.connect( set_decrypt );
+		operationButton1.button_press_event.connect( () => { set_encrypt(); return true; } );
+		operationButton2.button_press_event.connect( () => { set_decrypt(); return true; } );
 		middleTable.attach_defaults(operationButton1, 0,1,0,1);
 		middleTable.attach_defaults(operationButton2, 1,2,0,1);
 		
@@ -106,7 +106,7 @@ public class MainFrame : Gtk.Window {
 		Gtk.Button openButton = new Gtk.Button.with_label("Open");
 		openButton.set_image( new Gtk.Image.from_stock(Gtk.Stock.OPEN, Gtk.IconSize.BUTTON) );
 		openButton.set_image_position( Gtk.PositionType.LEFT );
-		openButton.pressed.connect( open_fileChooser );
+		openButton.button_press_event.connect( () => { open_fileChooser(); return true; } );
 		
 		Gtk.Box fileBox = new Gtk.Box(Gtk.Orientation.HORIZONTAL,0);
 		fileBox.set_homogeneous(false);
@@ -157,7 +157,7 @@ public class MainFrame : Gtk.Window {
 		
 		// #!!!!#### Run Button ####!!!!#
 		runButton = new Gtk.Button.with_label("Run");
-		runButton.pressed.connect( run );
+		runButton.button_press_event.connect( () => { run(); return true; } );
 		middleTable.attach_defaults(runButton, 1,2,6,7);
 		
 		// #!!!!#### Setup ####!!!!#
@@ -270,7 +270,7 @@ public class MainFrame : Gtk.Window {
 		stdout.printf("\n");
 	}**/
 	
-	private async void check_runable() {
+	private void check_runable() {
 		//print_values();	//debug
 		
 		

@@ -34,7 +34,8 @@ public class TerminalWindow : Gtk.Window {
 		this.set_keep_above(true);
 		this.set_modal(true);				//prevent interaction with other windows
 		
-		Gtk.VBox mainbox = new Gtk.VBox(false,0);
+		Gtk.Box mainbox = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+		mainbox.set_homogeneous(false);
 		this.add(mainbox);
 		
 		TermWidget termw = new TermWidget(command);
@@ -42,7 +43,7 @@ public class TerminalWindow : Gtk.Window {
 		
 		Gtk.Button closeButton = new Gtk.Button.with_label("Close");
 		closeButton.set_sensitive(false);
-		closeButton.pressed.connect( () => { this.destroy(); } );
+		closeButton.button_press_event.connect( () => { this.destroy(); return true; } );
 		termw.child_exited.connect( () => { closeButton.set_sensitive(true); } );
 		mainbox.pack_start(closeButton);
 		
