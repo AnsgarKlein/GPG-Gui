@@ -8,17 +8,18 @@ If you use Ubuntu you can add a Vala ppa:
 ppa:vala-team/ppa
 (The package you need is called valac)
 
+
 Since GPG-Gui depends on Gtk3 you also need that.
 (On Ubuntu that package is called libgtk-3-dev)
 
-For the actual encryption GPG-Gui currently uses xterm and
-the command-line gpg utility. (You will need those two packages!)
 
-#####################################################################
-# It's planned to use libgpgme for encryption in the future			#
-# but it need to figure out how to port it to vala or someone else	#
-# has to.															#
-#####################################################################
+For the actual encryption GPG-Gui currently uses the command-line gpg
+utility. (You will need this package too) (gnupg)
+
+
+For displaying xterm or vte is used so you will need those two packages
+too. (libvte-2.90-dev, xterm)
+
 
 If you have all dependencies installed, install with:
 	$make
