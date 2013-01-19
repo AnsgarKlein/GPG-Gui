@@ -1,31 +1,33 @@
 
 PACKAGES	=	--pkg gtk+-3.0 --pkg vte-2.90
 
-CC			=	valac
-CFLAGS		=	$(PACKAGES)
+CC		=	valac
+CFLAGS		=	$(PACKAGES) -X -O3
 SOURCES		=	src/*.vala
 
-#############################################################################
-#																			#
-#																			#
-#																			#
-#																			#
-#																			#
-#																			#
-#############################################################################
+BINARYDIR	=	build/
+BINARY		=	gpggui
 
 
-all: GPG-Gui
-	#sucessfully compiled everything
 
-install:
-	
-	#not yet implemented
+
+all: $(BINARYDIR)$(BINARY)
+	@echo "Compiling complete"
 
 clean:
-	rm GPG-Gui
-	#sucessfully cleaned everything
+	rm $(BINARYDIR)$(BINARY)
+	@echo "Cleaned everything successfully"
+
+install:
+	cp $(BINARYDIR)$(BINARY) /usr/bin/$(BINARY)
+	@echo "Installed everything successfully"
+
+uninstall:
+	rm /usr/bin/$(BINARY)
+	@echo "Uninstalled everything successfully"
 
 
-GPG-Gui: $(SOURCES)
-	$(CC) $(CFLAGS) $(SOURCES) -o GPG-Gui
+
+
+$(BINARYDIR)$(BINARY): $(SOURCES)
+	$(CC) $(CFLAGS) $(SOURCES) -o $(BINARYDIR)$(BINARY) 
