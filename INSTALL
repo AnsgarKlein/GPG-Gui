@@ -13,12 +13,9 @@ Since GPG-Gui depends on Gtk3 you also need that.
 (On Ubuntu that package is called libgtk-3-dev)
 
 
-For the actual encryption GPG-Gui currently uses the command-line gpg
+For the actual encryption GPG-Gui uses the command-line gpg
 utility. (You will need this package too) (gnupg)
 
-
-For displaying xterm or vte is used so you will need those two packages
-too. (libvte-2.90-dev, xterm)
 
 
 If you have all dependencies installed, install with:

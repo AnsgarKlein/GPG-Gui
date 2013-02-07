@@ -1,5 +1,5 @@
 
-PACKAGES	=	--pkg gtk+-3.0 --pkg vte-2.90
+PACKAGES	=	--pkg gtk+-3.0
 
 CC		=	valac
 CFLAGS		=	$(PACKAGES) -X -O3
