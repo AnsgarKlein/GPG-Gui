@@ -43,7 +43,7 @@ public class MainFrame : Gtk.Window {
 		Object (type: Gtk.WindowType.TOPLEVEL);
 		
 		this.title = "GPG Gui";
-		this.border_width = 10;											//For cleaner look
+		this.border_width = 10;
 		this.destroy.connect(Gtk.main_quit);
 		
 		//Set Application Icon & update Application Icon if theme changes
@@ -51,8 +51,6 @@ public class MainFrame : Gtk.Window {
 		this.style_set.connect(setApplicationIcon);
 		
 		buildgui();
-		
-		this.show_all();
 	}
 	
 	private void setApplicationIcon() {
@@ -175,6 +173,8 @@ public class MainFrame : Gtk.Window {
 		hashBox.set_active(0);		//Set MD5 hash as default
 		
 		check_runable();
+		
+		this.show_all();
 	}
 	
 	private void open_fileChooser() {
@@ -187,10 +187,8 @@ public class MainFrame : Gtk.Window {
         if (file_chooser.run() == ResponseType.ACCEPT) {
 			string filepath = file_chooser.get_filename();
 			
-			//Set filepath to console friendly version
-			if (GLib.FileUtils.test(filepath, GLib.FileTest.EXISTS)) {
-				filepath = "\""+filepath+"\"";
-			} else {
+			//Abort if file doesn't exists
+			if (!GLib.FileUtils.test(filepath, GLib.FileTest.EXISTS)) {
 				return;
 			}
 			
@@ -328,16 +326,14 @@ public class MainFrame : Gtk.Window {
 		/// call this function is only clickable if everything is ok
 		/// see check_runable()
 		
-		//Build executeString ( the gpg command )
-		string executeString = "gpg --no-use-agent --batch --no-tty";
 		if (command_operation == "encrypt") {
-			
+			string executeString = "gpg --no-use-agent --batch --no-tty";
 			executeString += " --symmetric";
 			executeString += " --cipher-algo "+command_cipherAlgo;
 			executeString += " --digest-algo "+command_hashAlgo;
 			executeString += " --passphrase ";
 			executeString += pwfield1.get_text();
-			executeString += " "+command_filePath;
+			executeString += " \""+command_filePath+"\"";
 			
 			//start encryption
 			stdout.printf(executeString+"\n");
@@ -346,31 +342,70 @@ public class MainFrame : Gtk.Window {
 			} catch (SpawnError e) {
 				stderr.printf("spawn error!");
 			}
-			stdout.printf("done\n");
 		} else {
 			//New file will be named like the original file but
 			//with _DECRYPTED as suffix
 			// encryptedfile => encryptedfile_DECRYPTED
 			// secretphoto.jpg.gpg => secretphoto.jpg.gpg_ENCRYPTED
 			
-			string outputFileString = command_filePath.slice(0, -1)+"_DECRYPTED"+"\"";
+			string outputFile;
+			if (command_filePath.length > 4 &&
+			command_filePath.slice(-4, command_filePath.length) == ".gpg") {
+				outputFile = command_filePath.slice(0, -4);
+			}
+			else {
+				outputFile = command_filePath+"_DECRYPTED";
+			}
 			
-			executeString += " --passphrase ";
-			executeString += pwfield1.get_text();
-			executeString += " --decrypt ";
-			executeString += command_filePath;
-			//executeString += " > "+outputFile;
+			string argv[8];
+			argv[0] = "gpg";
+			argv[1] = "--no-use-agent";
+			argv[2] = "--batch";
+			argv[3] = "--no-tty";
+			argv[4] = "--passphrase";
+			argv[5] = pwfield1.get_text();
+			argv[6] = "--decrypt";
+			argv[7] = command_filePath;
+			
+			stdout.printf("path: %s\n", command_filePath);
+			
+			string[] envv = Environ.get();
+			int child_stdin_fd;
+			int child_stdout_fd;
+			int child_stderr_fd;
 			
 			//start decryption
-			stdout.printf(executeString+"\n");
 			try {
-				GLib.Process.spawn_command_line_sync(executeString, out outputFileString);
+				GLib.Process.spawn_async_with_pipes(
+					".",
+					argv,
+					envv,
+					SpawnFlags.SEARCH_PATH,
+					null,
+					null,
+					out child_stdin_fd,
+					out child_stdout_fd,
+					out child_stderr_fd
+				);
 			} catch (SpawnError e) {
 				stderr.printf("spawn error!");
 				stderr.printf(e.message);
 			}
-			stdout.printf("done\n");
-			stdout.flush();
+			
+			GLib.FileStream child_stdout_stream = GLib.FileStream.fdopen(child_stdout_fd, "r");
+			GLib.FileStream child_stderr_stream = GLib.FileStream.fdopen(child_stderr_fd, "r");
+			GLib.FileStream output_stream = GLib.FileStream.open(outputFile, "w");
+			///GLib.FileStream filestreamOUTERR = GLib.FileStream.open("./err", "w");
+			
+			uint8 buf[1];
+			size_t t;
+			while ((t = child_stdout_stream.read(buf, 1)) != 0) {
+				output_stream.write(buf, 1);
+			}
+			
+			/**while ((t = filestreamSTDERR.read(buf, 1)) != 0) {
+				filestreamOUTERR.write(buf, 1);
+			}**/
 		}
 		
 		
