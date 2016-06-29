@@ -21,15 +21,19 @@ public class MainFrame : Gtk.Window {
 	private string command_operation;
 	private string command_cipherAlgo;
 	private string command_hashAlgo;
+	private string command_hashStrengthen;
 	private string command_filePath;
 	private string[] cryptoValues = {"3DES", "CAST5", "BLOWFISH", "AES", "AES192", "AES256", "TWOFISH", "CAMELLIA128", "CAMELLIA192", "CAMELLIA256"};
-	private string[] hashValues = {"MD5", "SHA1", "RIPEMD160", "SHA256", "SHA384", "SHA512", "SHA224"};
+	private string[] hashValues = {"MD5", "SHA1", "RIPEMD160", "SHA224", "SHA256", "SHA384", "SHA512"};
+	private string[] hashStrengthenValues = {"normal", "maximum"};
 	
 	private Gtk.Entry openTextField;
 	private Gtk.Label cryptoLabel;
 	private Gtk.ComboBoxText cryptoBox;
 	private Gtk.Label hashLabel;
 	private Gtk.ComboBoxText hashBox;
+	private Gtk.Label hashStrengthenLabel;
+	private Gtk.ComboBoxText hashStrengthenBox;
 	
 	private Gtk.Label pwlabel1;
 	private Gtk.Entry pwfield1;
@@ -84,9 +88,13 @@ public class MainFrame : Gtk.Window {
 		Gtk.RadioButton operationButton1 = new Gtk.RadioButton.with_label(null, "Encrypt");
 		Gtk.RadioButton operationButton2 = new Gtk.RadioButton.with_label_from_widget(operationButton1, "Decrypt");
 		operationButton1.button_press_event.connect( () => {
+			operationButton1.set_active(true);
+			operationButton2.set_active(false);
 			set_encrypt();
 			return true; } );
 		operationButton2.button_press_event.connect( () => {
+			operationButton1.set_active(false);
+			operationButton2.set_active(true);
 			set_decrypt();
 			return true; } );
 		middleTable.attach_defaults(operationButton1, 0, 1, 0, 1);
@@ -96,8 +104,8 @@ public class MainFrame : Gtk.Window {
 		
 			// #---!--- Label ---!---#
 		Gtk.Label fileLabel = new Gtk.Label("File:");
+		fileLabel.set_alignment(1, 0);
 		middleTable.attach_defaults(fileLabel, 0, 1, 1, 2);
-		
 		
 			// #---!--- Chooser ---!---#
 		openTextField = new Gtk.Entry();
@@ -120,13 +128,15 @@ public class MainFrame : Gtk.Window {
 		
 		// #!!!!#### Password Fields ####!!!!#
 		pwlabel1 = new Gtk.Label("Password:");
+		pwlabel1.set_alignment(1, 0);
 		pwfield1 = new Gtk.Entry();
 		pwfield1.set_visibility(false);
 		pwfield1.changed.connect(check_runable);
 		middleTable.attach_defaults(pwlabel1, 0, 1, 2, 3);
 		middleTable.attach_defaults(pwfield1, 1, 2, 2, 3);
 		
-		pwlabel2 = new Gtk.Label("Confirm:");
+		pwlabel2 = new Gtk.Label("Confirm Password:");
+		pwlabel2.set_alignment(1, 0);
 		pwfield2 = new Gtk.Entry();
 		pwfield2.set_visibility(false);
 		pwfield2.changed.connect(check_runable);
@@ -135,12 +145,13 @@ public class MainFrame : Gtk.Window {
 		
 		
 		// #!!!!#### Crypto ComboBox ####!!!!#
-		cryptoLabel = new Gtk.Label("Cryptographic Algorithm:");
-		cryptoLabel.set_tooltip_text("If you don't know what\nthis is, just ignore it.");
+		cryptoLabel = new Gtk.Label("Encryption Cipher:");
+		cryptoLabel.set_alignment(1, 0);
+		cryptoLabel.set_tooltip_text("TWOFISH, AES256, and CAMELLIA256 are the strongest ciphers.");
 		middleTable.attach_defaults(cryptoLabel, 0, 1, 4, 5);
 		
 		cryptoBox = new Gtk.ComboBoxText();
-		cryptoBox.set_tooltip_text("If you don't know what\nthis is, just ignore it.");
+		cryptoBox.set_tooltip_text("TWOFISH, AES256, and CAMELLIA256 are the strongest ciphers.");
 		cryptoBox.changed.connect(set_crypto);
 		foreach(string str in cryptoValues) { cryptoBox.append_text(str); }
 		
@@ -148,29 +159,44 @@ public class MainFrame : Gtk.Window {
 		
 		// #!!!!#### Hash ComboBox ####!!!!#
 		hashLabel = new Gtk.Label("Hash Algorithm:");
-		hashLabel.set_tooltip_text("If you don't know what\nthis is, just ignore it.");
+		hashLabel.set_alignment(1, 0);
+		hashLabel.set_tooltip_text("SHA512 is the strongest hash.");
 		middleTable.attach_defaults(hashLabel, 0, 1, 5, 6);
 		
 		hashBox = new Gtk.ComboBoxText();
-		hashBox.set_tooltip_text("If you don't know what\nthis is, just ignore it.");
+		hashBox.set_tooltip_text("SHA512 is the strongest hash.");
 		hashBox.changed.connect(set_hash);
 		foreach(string str in hashValues) { hashBox.append_text(str); }
 		
 		middleTable.attach_defaults(hashBox, 1, 2, 5, 6);
 		
+		// #!!!!#### Hash StrengthenBox ####!!!!#
+		hashStrengthenLabel = new Gtk.Label("Hash Strengthen:");
+		hashStrengthenLabel.set_alignment(1, 0);
+		hashStrengthenLabel.set_tooltip_text("'normal' is faster, 'maximum' is stronger.");
+		middleTable.attach_defaults(hashStrengthenLabel, 0, 1, 6, 7);
+
+		hashStrengthenBox = new Gtk.ComboBoxText();
+		hashStrengthenBox.set_tooltip_text("'normal' is faster, 'maximum' is stronger.");
+		hashStrengthenBox.changed.connect(set_hash_strengthen);
+		foreach(string str in hashStrengthenValues) { hashStrengthenBox.append_text(str); }
+
+		middleTable.attach_defaults(hashStrengthenBox, 1, 2, 6, 7);
+
 		// #!!!!#### Run Button ####!!!!#
 		runButton = new Gtk.Button.with_label("Run");
 		runButton.button_press_event.connect( () => {
 			run();
 			return true; } );
-		middleTable.attach_defaults(runButton, 1, 2, 6, 7);
+		middleTable.attach_defaults(runButton, 1, 2, 8, 9);
 		
 		// #!!!!#### Setup ####!!!!#
 		operationButton1.set_active(true);
 		set_encrypt();				//Activate "Encrypt" Tab
 		
-		cryptoBox.set_active(6);	//Set TWOFISH cipher as default
-		hashBox.set_active(0);		//Set MD5 hash as default
+		cryptoBox.set_active(6);			//Set TWOFISH cipher as default
+		hashBox.set_active(4);				//Set SHA256 hash as default
+		hashStrengthenBox.set_active(0);	//Set 'normal' as default
 		
 		check_runable();
 		
@@ -178,11 +204,13 @@ public class MainFrame : Gtk.Window {
 	}
 	
 	private void open_fileChooser() {
-        Gtk.FileChooserDialog file_chooser = new Gtk.FileChooserDialog(
-				"Open File", this,
-				FileChooserAction.OPEN,
-				Stock.CANCEL, ResponseType.CANCEL,
-				Stock.OPEN, ResponseType.ACCEPT);
+
+		Gtk.FileChooserDialog file_chooser = new Gtk.FileChooserDialog(
+			"Open File", this,
+			FileChooserAction.OPEN,
+			Stock.CANCEL, ResponseType.CANCEL,
+			Stock.OPEN, ResponseType.ACCEPT
+		);
 		
         if (file_chooser.run() == ResponseType.ACCEPT) {
 			string filepath = file_chooser.get_filename();
@@ -198,11 +226,10 @@ public class MainFrame : Gtk.Window {
 			//set textFieldText to selected file
 			string filename = GLib.Filename.display_basename(filepath);
 			openTextField.set_text(filename);
-			
-        }
-        file_chooser.destroy();
-    }
-	
+		}
+
+		file_chooser.destroy();
+	}
 	
 	
 	private void set_file(string str) {
@@ -221,6 +248,8 @@ public class MainFrame : Gtk.Window {
 		cryptoBox.set_sensitive(true);
 		hashLabel.set_sensitive(true);
 		hashBox.set_sensitive(true);
+		hashStrengthenLabel.set_sensitive(true);
+		hashStrengthenBox.set_sensitive(true);
 		
 		check_runable();
 	}
@@ -235,22 +264,28 @@ public class MainFrame : Gtk.Window {
 		cryptoBox.set_sensitive(false);
 		hashLabel.set_sensitive(false);
 		hashBox.set_sensitive(false);
+		hashStrengthenLabel.set_sensitive(false);
+		hashStrengthenBox.set_sensitive(false);
 		
 		check_runable();
 	}
-    
-    
+
+
 	private void set_crypto() {
 		//stdout.printf(		cryptoValues[	cryptoBox.get_active()	]		);
-		command_cipherAlgo = cryptoValues[	cryptoBox.get_active()	];
-		
+		command_cipherAlgo = cryptoValues[ cryptoBox.get_active() ];
 		check_runable();
 	}
 	
 	private void set_hash() {
 		//stdout.printf(		hashValues[		hashBox.get_active()	]		);
-		command_hashAlgo = 	hashValues[		hashBox.get_active()	];
-		
+		command_hashAlgo = hashValues[ hashBox.get_active() ];
+		check_runable();
+	}
+
+	private void set_hash_strengthen() {
+		//stdout.printf(		hashValues[		hashBox.get_active()	]		);
+		command_hashStrengthen = hashStrengthenValues[ hashStrengthenBox.get_active() ];
 		check_runable();
 	}
 	
@@ -285,7 +320,7 @@ public class MainFrame : Gtk.Window {
 		//Check if everything is ok, otherwise set runable to false
 		if (command_operation == null || command_operation == "") {
 			runable = false;
-		}	
+		}
 		else if (command_operation == "encrypt") {
 			if (command_filePath == null || command_filePath == "") {
 				runable = false; }
@@ -299,15 +334,15 @@ public class MainFrame : Gtk.Window {
 				runable = false; }
 			else if (command_hashAlgo == null || command_hashAlgo == "") {
 				runable = false; }
+			else if (command_hashStrengthen == null || command_hashStrengthen == "") {
+				runable = false; }
 		}
-		
 		else if (command_operation == "decrypt") {
 			if ( command_filePath == null || command_filePath == "") {
 				runable = false; }
 			else if (pwfield1.get_text() == "") {
 				runable = false; }
 		}
-		
 		
 		//Enable or disable the run button
 		if (runable == false) {
@@ -316,8 +351,6 @@ public class MainFrame : Gtk.Window {
 		else {
 			runButton.set_sensitive(true);
 		}
-		
-
 	}
 	
 	
@@ -327,19 +360,29 @@ public class MainFrame : Gtk.Window {
 		/// see check_runable()
 		
 		if (command_operation == "encrypt") {
+
 			string executeString = "gpg --no-use-agent --batch --no-tty";
 			executeString += " --symmetric";
-			executeString += " --cipher-algo "+command_cipherAlgo;
-			executeString += " --digest-algo "+command_hashAlgo;
+
+			if (command_hashStrengthen == "normal") {
+				executeString += " --digest-algo " + command_hashAlgo;
+			}
+			else {
+				executeString += " --s2k-mode 3 --s2k-count 65011712";
+				executeString += " --s2k-digest-algo " + command_hashAlgo;
+			}
+
+			executeString += " --cipher-algo " + command_cipherAlgo;
 			executeString += " --passphrase ";
 			executeString += pwfield1.get_text();
-			executeString += " \""+command_filePath+"\"";
+			executeString += " \"" + command_filePath + "\"";
 			
 			//start encryption
 			stdout.printf(executeString+"\n");
 			try {
 				GLib.Process.spawn_command_line_sync(executeString);
-			} catch (SpawnError e) {
+			}
+			catch (SpawnError e) {
 				stderr.printf("spawn error!");
 			}
 		} else {
@@ -407,9 +450,5 @@ public class MainFrame : Gtk.Window {
 				filestreamOUTERR.write(buf, 1);
 			}**/
 		}
-		
-		
-
 	}
-	
 }
