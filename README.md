@@ -1,7 +1,7 @@
 
 # GPG-Gui
 
-### GUI interface to GnuPG (GPG)
+### GUI interface for GnuPG (GPG) file encryption.
 
 [1]: https://tinram.github.io/images/gpg-gui.png
 ![gpg-gui][1]
@@ -9,11 +9,11 @@
 
 ## Purpose
 
-A simple GUI executable that interacts with the GPG application to encrypt and decrypt files.
+A simple GUI frontend that interacts with the GPG application to encrypt and decrypt files.
 
-The GUI provides a convenient way to use GPG, rather than through the command line, and a complicated range of switches.
+The GUI provides a convenient way to use GPG, rather than through the terminal, along with encryption-strengthening switches.
 
-Symmetric encryption is used: a password is used, not a private key file.
+Symmetric encryption is used: a password, not a private key file.
 
 The GPG cipher, hash algorithm, and hash strengthening can be changed in the GUI.
 
@@ -38,9 +38,12 @@ Windows - untried, but should be possible with effort. A Vala installer is avail
 
 ## Build
 
-### Linux
-
         make
+
+
+## Credits
+
+Ansgar Klein, original developer.
 
 
 ## License
