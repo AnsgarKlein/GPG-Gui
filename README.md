@@ -3,6 +3,7 @@
 
 ### GUI interface for GnuPG (GPG) file encryption.
 
+
 [1]: https://tinram.github.io/images/gpg-gui.png
 ![gpg-gui][1]
 
@@ -22,7 +23,7 @@ The GPG cipher, hash algorithm, and hash strengthening can be changed in the GUI
 
 + Linux
 
-Windows - untried, but should be possible with effort. A Vala installer is available.
+Windows - A Vala installer is available.  Depending on version, the Vala code requires updating.
 
 
 ## Requirements
@@ -38,7 +39,9 @@ Windows - untried, but should be possible with effort. A Vala installer is avail
 
 ## Build
 
-        make
+```bash
+    make
+```
 
 
 ## Credits
