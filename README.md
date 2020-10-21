@@ -8,9 +8,11 @@
 
 ## Purpose
 
-A simple GUI frontend that interacts with the GPG application to encrypt and decrypt files.
+A simple GUI frontend that interacts with the GPG application to encrypt and
+decrypt files.
 
-The GUI provides a convenient way to use GPG, rather than through the terminal, along with encryption-strengthening switches.
+The GUI provides a convenient way to use GPG, rather than through the terminal,
+along with encryption-strengthening switches.
 
 Symmetric encryption is used: a password, not a private key file.
 
@@ -21,7 +23,8 @@ The GPG cipher, hash algorithm, and hash strengthening can be changed in the GUI
 
 + Linux
 
-Windows - A Vala installer is available.  Depending on version, the Vala code requires updating.
+Windows - A Vala installer is available.  Depending on version, the Vala code
+requires updating.
 
 
 ## Requirements
