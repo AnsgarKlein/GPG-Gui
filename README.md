@@ -52,9 +52,10 @@ The GPG cipher, hash algorithm, and hash strengthening can be changed in the GUI
 ```
 
 
-## Credits
+## Contributors
 
-Ansgar Klein, original developer.
++ [Ansgar Klein](https://github.com/AnsgarKlein)
++ [Tinram](https://github.com/Tinram)
 
 
 ## License
