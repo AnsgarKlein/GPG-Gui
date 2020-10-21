@@ -3,9 +3,7 @@
 
 ### GUI interface for GnuPG (GPG) file encryption.
 
-
-[1]: https://tinram.github.io/images/gpg-gui.png
-![gpg-gui][1]
+![example image](misc/gpg-gui.png)
 
 
 ## Purpose
