@@ -23,8 +23,9 @@ The GPG cipher, hash algorithm, and hash strengthening can be changed in the GUI
 
 + Linux
 
-Windows - A Vala installer is available.  Depending on version, the Vala code
-requires updating.
++ Windows  
+  Not tested. If you can get all requirements to work (vala, gtk, ...)
+  it should work too.
 
 
 ## Requirements
