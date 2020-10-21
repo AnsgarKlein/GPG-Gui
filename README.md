@@ -30,13 +30,19 @@ The GPG cipher, hash algorithm, and hash strengthening can be changed in the GUI
 
 ## Requirements
 
-+ GPG (gnupg)
++ GPG  
+  (just the gpg binary)
+  
++ GTK+ 3  
+  (Probably already installed on your linux machine)
 
 
 ## Build Requirements
 
-+ Vala (valac)
-+ GTK3 (libgtk-3-dev)
++ Vala Compiler (valac)
+
++ GTK+ 3  
+  (including its development files)
 
 
 ## Build
