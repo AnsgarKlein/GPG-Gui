@@ -1,6 +1,24 @@
-
-#ignore temp files (like created by gedit)
+# Generic editor
 *~
+*.bak
 
-#ignore compiled file (see makefile)
-GPG-Gui
+# vim
+*.swp
+Session.vim
+Sessionx.vim
+.netrwhist
+
+# ctags
+tags
+.tags
+
+# Visual studio code
+.vscode
+
+# Windows
+Thumbs.db
+$RECYCLE.BIN/
+
+# Linux
+.directory
+.Trash-*
