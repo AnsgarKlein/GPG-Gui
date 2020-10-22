@@ -76,11 +76,10 @@ public class MainFrame : Gtk.Window {
 	
 	private void buildgui() {
 		//Setting up main grid
-		//Note: Using Gtk.Table! Gtk.Table has been deprecated. Use Grid instead!
-		
-		Gtk.Table middleTable = new Gtk.Table(0,0,false);		//Set to 0,0 but seems to expand dynamically (also no compiler/runtime warnings)
-		middleTable.set_row_spacings(10);
-		middleTable.set_col_spacings(50);
+		Gtk.Grid middleTable = new Gtk.Grid();
+		middleTable.set_orientation(Gtk.Orientation.VERTICAL);
+		middleTable.set_row_spacing(10);
+		middleTable.set_column_spacing(50);
 		this.add(middleTable);
 		
 		
@@ -97,15 +96,15 @@ public class MainFrame : Gtk.Window {
 			operationButton2.set_active(true);
 			set_decrypt();
 			return true; } );
-		middleTable.attach_defaults(operationButton1, 0, 1, 0, 1);
-		middleTable.attach_defaults(operationButton2, 1, 2, 0, 1);
+		middleTable.add(operationButton1);
+		middleTable.attach_next_to(operationButton2, operationButton1, Gtk.PositionType.RIGHT);
 		
 		// #!!!!#### File Chooser ####!!!!#
 		
 			// #---!--- Label ---!---#
 		Gtk.Label fileLabel = new Gtk.Label("File:");
 		fileLabel.set_alignment(1, 0);
-		middleTable.attach_defaults(fileLabel, 0, 1, 1, 2);
+		middleTable.add(fileLabel);
 		
 			// #---!--- Chooser ---!---#
 		openTextField = new Gtk.Entry();
@@ -123,7 +122,7 @@ public class MainFrame : Gtk.Window {
 		fileBox.set_homogeneous(false);
 		fileBox.pack_start(openTextField);
 		fileBox.pack_start(openButton);
-		middleTable.attach_defaults(fileBox, 1, 2, 1, 2);
+		middleTable.attach_next_to(fileBox, fileLabel, Gtk.PositionType.RIGHT);
 		
 		
 		// #!!!!#### Password Fields ####!!!!#
@@ -132,63 +131,72 @@ public class MainFrame : Gtk.Window {
 		pwfield1 = new Gtk.Entry();
 		pwfield1.set_visibility(false);
 		pwfield1.changed.connect(check_runable);
-		middleTable.attach_defaults(pwlabel1, 0, 1, 2, 3);
-		middleTable.attach_defaults(pwfield1, 1, 2, 2, 3);
+		middleTable.add(pwlabel1);
+		middleTable.attach_next_to(pwfield1, pwlabel1, Gtk.PositionType.RIGHT);
 		
 		pwlabel2 = new Gtk.Label("Confirm Password:");
 		pwlabel2.set_alignment(1, 0);
 		pwfield2 = new Gtk.Entry();
 		pwfield2.set_visibility(false);
 		pwfield2.changed.connect(check_runable);
-		middleTable.attach_defaults(pwlabel2, 0, 1, 3, 4);
-		middleTable.attach_defaults(pwfield2, 1, 2, 3, 4);
+		middleTable.add(pwlabel2);
+		middleTable.attach_next_to(pwfield2, pwlabel2, Gtk.PositionType.RIGHT);
 		
 		
 		// #!!!!#### Crypto ComboBox ####!!!!#
 		cryptoLabel = new Gtk.Label("Encryption Cipher:");
 		cryptoLabel.set_alignment(1, 0);
 		cryptoLabel.set_tooltip_text("TWOFISH, AES256, and CAMELLIA256 are the strongest ciphers.");
-		middleTable.attach_defaults(cryptoLabel, 0, 1, 4, 5);
+		middleTable.add(cryptoLabel);
 		
 		cryptoBox = new Gtk.ComboBoxText();
 		cryptoBox.set_tooltip_text("TWOFISH, AES256, and CAMELLIA256 are the strongest ciphers.");
 		cryptoBox.changed.connect(set_crypto);
-		foreach(string str in cryptoValues) { cryptoBox.append_text(str); }
-		
-		middleTable.attach_defaults(cryptoBox, 1, 2, 4, 5);
+		foreach (string str in cryptoValues) {
+			cryptoBox.append_text(str);
+		}
+		middleTable.attach_next_to(cryptoBox, cryptoLabel, Gtk.PositionType.RIGHT);
 		
 		// #!!!!#### Hash ComboBox ####!!!!#
 		hashLabel = new Gtk.Label("Hash Algorithm:");
 		hashLabel.set_alignment(1, 0);
 		hashLabel.set_tooltip_text("SHA512 is the strongest hash.");
-		middleTable.attach_defaults(hashLabel, 0, 1, 5, 6);
+		middleTable.add(hashLabel);
 		
 		hashBox = new Gtk.ComboBoxText();
 		hashBox.set_tooltip_text("SHA512 is the strongest hash.");
 		hashBox.changed.connect(set_hash);
-		foreach(string str in hashValues) { hashBox.append_text(str); }
-		
-		middleTable.attach_defaults(hashBox, 1, 2, 5, 6);
+		foreach (string str in hashValues) {
+			hashBox.append_text(str);
+		}
+		middleTable.attach_next_to(hashBox, hashLabel, Gtk.PositionType.RIGHT);
 		
 		// #!!!!#### Hash StrengthenBox ####!!!!#
 		hashStrengthenLabel = new Gtk.Label("Hash Strengthen:");
 		hashStrengthenLabel.set_alignment(1, 0);
 		hashStrengthenLabel.set_tooltip_text("'normal' is faster, 'maximum' is stronger.");
-		middleTable.attach_defaults(hashStrengthenLabel, 0, 1, 6, 7);
+		middleTable.add(hashStrengthenLabel);
 
 		hashStrengthenBox = new Gtk.ComboBoxText();
 		hashStrengthenBox.set_tooltip_text("'normal' is faster, 'maximum' is stronger.");
 		hashStrengthenBox.changed.connect(set_hash_strengthen);
-		foreach(string str in hashStrengthenValues) { hashStrengthenBox.append_text(str); }
-
-		middleTable.attach_defaults(hashStrengthenBox, 1, 2, 6, 7);
+		foreach (string str in hashStrengthenValues) {
+			hashStrengthenBox.append_text(str);
+		}
+		middleTable.attach_next_to(hashStrengthenBox, hashStrengthenLabel, Gtk.PositionType.RIGHT);
 
 		// #!!!!#### Run Button ####!!!!#
 		runButton = new Gtk.Button.with_label("Run");
 		runButton.button_press_event.connect( () => {
 			run();
 			return true; } );
-		middleTable.attach_defaults(runButton, 1, 2, 8, 9);
+		middleTable.attach_next_to(runButton, hashStrengthenBox, Gtk.PositionType.BOTTOM);
+		
+		// Expand all widgets inside table
+		middleTable.foreach( (child) => {
+			child.set_hexpand(true);
+			child.set_vexpand(true);
+		});
 		
 		// #!!!!#### Setup ####!!!!#
 		operationButton1.set_active(true);
