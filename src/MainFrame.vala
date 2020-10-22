@@ -103,7 +103,8 @@ public class MainFrame : Gtk.Window {
 		
 			// #---!--- Label ---!---#
 		Gtk.Label fileLabel = new Gtk.Label("File:");
-		fileLabel.set_alignment(1, 0);
+		fileLabel.set_xalign(1);
+		fileLabel.set_yalign((float)0.5);
 		middleTable.add(fileLabel);
 		
 			// #---!--- Chooser ---!---#
@@ -127,7 +128,8 @@ public class MainFrame : Gtk.Window {
 		
 		// #!!!!#### Password Fields ####!!!!#
 		pwlabel1 = new Gtk.Label("Password:");
-		pwlabel1.set_alignment(1, 0);
+		pwlabel1.set_xalign(1);
+		pwlabel1.set_yalign((float)0.5);
 		pwfield1 = new Gtk.Entry();
 		pwfield1.set_visibility(false);
 		pwfield1.changed.connect(check_runable);
@@ -135,7 +137,8 @@ public class MainFrame : Gtk.Window {
 		middleTable.attach_next_to(pwfield1, pwlabel1, Gtk.PositionType.RIGHT);
 		
 		pwlabel2 = new Gtk.Label("Confirm Password:");
-		pwlabel2.set_alignment(1, 0);
+		pwlabel2.set_xalign(1);
+		pwlabel2.set_yalign((float)0.5);
 		pwfield2 = new Gtk.Entry();
 		pwfield2.set_visibility(false);
 		pwfield2.changed.connect(check_runable);
@@ -145,7 +148,8 @@ public class MainFrame : Gtk.Window {
 		
 		// #!!!!#### Crypto ComboBox ####!!!!#
 		cryptoLabel = new Gtk.Label("Encryption Cipher:");
-		cryptoLabel.set_alignment(1, 0);
+		cryptoLabel.set_xalign(1);
+		cryptoLabel.set_yalign((float)0.5);
 		cryptoLabel.set_tooltip_text("TWOFISH, AES256, and CAMELLIA256 are the strongest ciphers.");
 		middleTable.add(cryptoLabel);
 		
@@ -159,7 +163,8 @@ public class MainFrame : Gtk.Window {
 		
 		// #!!!!#### Hash ComboBox ####!!!!#
 		hashLabel = new Gtk.Label("Hash Algorithm:");
-		hashLabel.set_alignment(1, 0);
+		hashLabel.set_xalign(1);
+		hashLabel.set_yalign((float)0.5);
 		hashLabel.set_tooltip_text("SHA512 is the strongest hash.");
 		middleTable.add(hashLabel);
 		
@@ -173,7 +178,8 @@ public class MainFrame : Gtk.Window {
 		
 		// #!!!!#### Hash StrengthenBox ####!!!!#
 		hashStrengthenLabel = new Gtk.Label("Hash Strengthen:");
-		hashStrengthenLabel.set_alignment(1, 0);
+		hashStrengthenLabel.set_xalign(1);
+		hashStrengthenLabel.set_yalign((float)0.5);
 		hashStrengthenLabel.set_tooltip_text("'normal' is faster, 'maximum' is stronger.");
 		middleTable.add(hashStrengthenLabel);
 
