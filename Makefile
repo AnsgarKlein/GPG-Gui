@@ -1,33 +1,29 @@
 
-PACKAGES	=	--pkg gtk+-3.0
+PACKAGES    = gtk+-3.0
 
-CC		=	valac
-CFLAGS		=	$(PACKAGES) -X -O3
-SOURCES		=	src/*.vala
+VALAC       = valac
+CFLAGS      = -O3
+VFLAGS      = $(addprefix --pkg , $(PACKAGES))
+VFLAGS     += $(addprefix -X , $(CFLAGS))
+SOURCES     = $(wildcard src/*.vala)
 
-BINARYDIR	=	build/
-BINARY		=	gpggui
+BINARYDIR   = build
+BINARY      = gpggui
 
+.PHONY: all clean install uninstall
 
-
-
-all: $(BINARYDIR)$(BINARY)
-	@echo "Compiling complete"
+all: $(BINARYDIR)/$(BINARY)
+	@#
 
 clean:
-	rm $(BINARYDIR)$(BINARY)
-	@echo "Cleaned everything successfully"
+	@rm -f $(BINARYDIR)/$(BINARY)
 
 install:
-	cp $(BINARYDIR)$(BINARY) /usr/bin/$(BINARY)
-	@echo "Installed everything successfully"
+	cp $(BINARYDIR)/$(BINARY) /usr/bin/$(BINARY)
 
 uninstall:
-	rm /usr/bin/$(BINARY)
-	@echo "Uninstalled everything successfully"
+	rm -f /usr/bin/$(BINARY)
 
 
-
-
-$(BINARYDIR)$(BINARY): $(SOURCES)
-	$(CC) $(CFLAGS) $(SOURCES) -o $(BINARYDIR)$(BINARY) 
+$(BINARYDIR)/$(BINARY): $(SOURCES)
+	$(VALAC) $(VFLAGS) $(SOURCES) -o $@
