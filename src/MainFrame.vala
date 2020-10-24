@@ -113,7 +113,7 @@ public class MainFrame : Gtk.Window {
 		openTextField.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "drive-harddisk");
 		
 		Gtk.Image openButtonImage = new Gtk.Image.from_icon_name("document-open", Gtk.IconSize.BUTTON);
-		Gtk.Button openButton = new Gtk.Button.with_label("Open");
+		Gtk.Button openButton = new Gtk.Button.with_mnemonic(dgettext("gtk30", "_Open"));
 		openButton.set_image(openButtonImage);
 		openButton.set_image_position(Gtk.PositionType.LEFT);
 		openButton.button_press_event.connect( () => {
@@ -224,10 +224,13 @@ public class MainFrame : Gtk.Window {
 	private void open_fileChooser() {
 
 		Gtk.FileChooserDialog file_chooser = new Gtk.FileChooserDialog(
-			"Open File", this,
+			"Open File",
+			this,
 			FileChooserAction.OPEN,
-			Stock.CANCEL, ResponseType.CANCEL,
-			Stock.OPEN, ResponseType.ACCEPT
+			dgettext("gtk30", "_Cancel"),
+			ResponseType.CANCEL,
+			dgettext("gtk30", "_Open"),
+			ResponseType.ACCEPT
 		);
 		
         if (file_chooser.run() == ResponseType.ACCEPT) {

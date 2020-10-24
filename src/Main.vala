@@ -15,9 +15,13 @@
 
 
 using Gtk;
+using GLib;
 
 static void main(string[] args) {
 	stdout.printf("\n");
+	
+	// Set default locale
+	GLib.Intl.setlocale();
 	
 	Gtk.init(ref args);
 	new MainFrame();

@@ -1,8 +1,10 @@
 
 PACKAGES    = gtk+-3.0
+PACKAGES   += glib-2.0
 
 VALAC       = valac
 CFLAGS      = -O3
+CFLAGS     += -DGETTEXT_PACKAGE
 VFLAGS      = $(addprefix --pkg , $(PACKAGES))
 VFLAGS     += $(addprefix -X , $(CFLAGS))
 SOURCES     = $(wildcard src/*.vala)
