@@ -193,7 +193,10 @@ public class MainFrame : Gtk.Window {
 		middleTable.attach_next_to(hashStrengthenBox, hashStrengthenLabel, Gtk.PositionType.RIGHT);
 
 		// #!!!!#### Run Button ####!!!!#
+		Gtk.Image runButtonImage = new Gtk.Image.from_icon_name("system-run", Gtk.IconSize.BUTTON);
 		runButton = new Gtk.Button.with_label("Run");
+		runButton.set_image(runButtonImage);
+		runButton.set_image_position(Gtk.PositionType.LEFT);
 		runButton.button_press_event.connect( () => {
 			run();
 			return true; } );
