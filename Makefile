@@ -10,7 +10,7 @@ VFLAGS     += $(addprefix -X , $(CFLAGS))
 SOURCES     = $(wildcard src/*.vala)
 
 BINARYDIR   = build
-BINARY      = gpggui
+BINARY      = gpg-gui
 
 .PHONY: all clean install uninstall
 
