@@ -47,8 +47,12 @@ The GPG cipher, hash algorithm, and hash strengthening can be changed in the GUI
 
 ## Build
 
+gpg-gui builds out-of-tree with [Meson](https://mesonbuild.com)
+and [Ninja](https://ninja-build.org):
+
 ```bash
-    make
+    meson setup build
+    ninja -C build
 ```
 
 

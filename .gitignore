@@ -22,3 +22,12 @@ $RECYCLE.BIN/
 # Linux
 .directory
 .Trash-*
+
+# virtualenv (if using meson from pip)
+env/
+venv/
+.env/
+.venv/
+
+# Ignore all build directories
+/build*/
