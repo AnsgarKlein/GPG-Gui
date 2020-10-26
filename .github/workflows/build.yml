@@ -1,0 +1,43 @@
+name: Build
+
+on: [ push, pull_request ]
+
+jobs:
+  build-clang-gcc:
+    name: Build with clang and gcc
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Install meson and ninja
+        run: sudo apt-get install meson ninja-build
+
+      - name: Install vala
+        run: sudo apt-get install valac
+
+      - name: Install gcc
+        run: sudo apt-get install gcc
+
+      - name: Install clang
+        run: sudo apt-get install clang
+
+      - name: Install dependencies
+        run: sudo apt-get install gtk+3.0 libgtk-3-dev
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Prepare compilation with Meson (gcc)
+        run: meson setup build-$CC
+        env:
+          CC: gcc
+
+      - name: Prepare compilation with Meson (clang)
+        run: meson setup build-$CC
+        env:
+          CC: clang
+
+      - name: Compile with Ninja (gcc)
+        run: ninja -C build-gcc
+
+      - name: Compile with Ninja (clang)
+        run: ninja -C build-clang
