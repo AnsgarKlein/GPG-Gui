@@ -75,18 +75,21 @@ public class MainFrame : Gtk.Window {
     }
 
     private void set_application_icon() {
-        string icon1 = "gdu-encrypted-lock";
-        string icon2 = "application-x-executable";
+        string[] icons = {
+            "gdu-encrypted-lock",
+            "application-x-executable"
+        };
 
-        try {
-            this.icon = IconTheme.get_default().load_icon(icon1, 48, 0);
-        } catch (Error e) {
-            stderr.printf("Could not load icon: "+icon1+" setting fallback icon");
+        foreach (string icon in icons) {
             try {
-                this.icon = IconTheme.get_default().load_icon(icon2, 48, 0);
+                this.icon = IconTheme.get_default().load_icon(icon, 48, 0);
             } catch (Error e) {
-                stderr.printf("Could not load icon: "+icon2);
+                stderr.printf("Could not load icon: " +icon +". Using fallback icon...\n");
+                continue;
             }
+
+            // Found working icon
+            break;
         }
     }
 
