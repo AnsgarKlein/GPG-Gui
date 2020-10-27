@@ -310,47 +310,21 @@ public class MainFrame : Gtk.Window {
     }
 
     private void set_crypto() {
-        //stdout.printf(cryptoValues[cryptoBox.get_active()]);
         command_cipherAlgo = cryptoValues[ cryptoBox.get_active() ];
         check_runable();
     }
 
     private void set_hash() {
-        //stdout.printf(hashValues[hashBox.get_active()]);
         command_hashAlgo = hashValues[ hashBox.get_active() ];
         check_runable();
     }
 
     private void set_hash_strengthen() {
-        //stdout.printf(hashValues[hashBox.get_active()]);
         command_hashStrengthen = hashStrengthenValues[ hashStrengthenBox.get_active() ];
         check_runable();
     }
 
-    //debug function, see check_runable()
-    /**private void print_values() {
-        stdout.printf("\nCommand Operation:\t");
-        if (command_operation != null) { stdout.printf(command_operation); }
-        else { stdout.printf("null"); }
-
-        stdout.printf("\nCommand Cipher:\t\t");
-        if (command_cipherAlgo != null) { stdout.printf(command_cipherAlgo); }
-        else { stdout.printf("null"); }
-
-        stdout.printf("\nCommand Hash:\t\t");
-        if (command_hashAlgo != null)   { stdout.printf(command_hashAlgo); }
-        else { stdout.printf("null"); }
-
-        stdout.printf("\nCommand FilePath:\t");
-        if (command_filePath != null)   { stdout.printf(command_filePath); }
-        else { stdout.printf("null"); }
-
-        stdout.printf("\n");
-    }**/
-
     private void check_runable() {
-        //print_values();   //debug
-
         bool runable = true;
 
         //Check if everything is ok, otherwise set runable to false
@@ -410,7 +384,6 @@ public class MainFrame : Gtk.Window {
             executeString += " \"" + command_filePath + "\"";
 
             // start encryption
-            stdout.printf(executeString+"\n");
             try {
                 GLib.Process.spawn_command_line_sync(executeString);
             } catch (SpawnError e) {
@@ -442,8 +415,6 @@ public class MainFrame : Gtk.Window {
             argv[6] = "--decrypt";
             argv[7] = command_filePath;
 
-            stdout.printf("path: %s\n", command_filePath);
-
             string[] envv = Environ.get();
             int child_stdin_fd;
             int child_stdout_fd;
@@ -468,19 +439,13 @@ public class MainFrame : Gtk.Window {
             }
 
             GLib.FileStream child_stdout_stream = GLib.FileStream.fdopen(child_stdout_fd, "r");
-            GLib.FileStream child_stderr_stream = GLib.FileStream.fdopen(child_stderr_fd, "r");
             GLib.FileStream output_stream = GLib.FileStream.open(outputFile, "w");
-            ///GLib.FileStream filestreamOUTERR = GLib.FileStream.open("./err", "w");
 
             uint8 buf[1];
             size_t t;
             while ((t = child_stdout_stream.read(buf, 1)) != 0) {
                 output_stream.write(buf, 1);
             }
-
-            /**while ((t = filestreamSTDERR.read(buf, 1)) != 0) {
-                filestreamOUTERR.write(buf, 1);
-            }**/
         }
     }
 }
