@@ -13,7 +13,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 **/
 
-
 using Gtk;
 
 public class MainFrame : Gtk.Window {
@@ -23,8 +22,27 @@ public class MainFrame : Gtk.Window {
     private string command_hashAlgo;
     private string command_hashStrengthen;
     private string command_filePath;
-    private string[] cryptoValues = {"3DES", "CAST5", "BLOWFISH", "AES", "AES192", "AES256", "TWOFISH", "CAMELLIA128", "CAMELLIA192", "CAMELLIA256"};
-    private string[] hashValues = {"MD5", "SHA1", "RIPEMD160", "SHA224", "SHA256", "SHA384", "SHA512"};
+    private string[] cryptoValues = {
+        "3DES",
+        "CAST5",
+        "BLOWFISH",
+        "AES",
+        "AES192",
+        "AES256",
+        "TWOFISH",
+        "CAMELLIA128",
+        "CAMELLIA192",
+        "CAMELLIA256"
+    };
+    private string[] hashValues = {
+        "MD5",
+        "SHA1",
+        "RIPEMD160",
+        "SHA224",
+        "SHA256",
+        "SHA384",
+        "SHA512"
+    };
     private string[] hashStrengthenValues = {"normal", "maximum"};
 
     private Gtk.Entry openTextField;
@@ -42,39 +60,37 @@ public class MainFrame : Gtk.Window {
 
     private Gtk.Button runButton;
 
-
     public MainFrame() {
-        Object (type: Gtk.WindowType.TOPLEVEL);
+        Object(type: Gtk.WindowType.TOPLEVEL);
 
         this.title = "GPG Gui";
         this.border_width = 10;
         this.destroy.connect(Gtk.main_quit);
 
-        //Set Application Icon & update Application Icon if theme changes
-        setApplicationIcon();
-        this.style_set.connect(setApplicationIcon);
+        //Set application icon & update application icon if theme changes
+        set_application_icon();
+        this.style_set.connect(set_application_icon);
 
-        buildgui();
+        build_gui();
     }
 
-    private void setApplicationIcon() {
+    private void set_application_icon() {
         string icon1 = "gdu-encrypted-lock";
         string icon2 = "application-x-executable";
 
         try {
             this.icon = IconTheme.get_default().load_icon(icon1, 48, 0);
-        } catch (Error e){
+        } catch (Error e) {
             stderr.printf("Could not load icon: "+icon1+" setting fallback icon");
             try {
                 this.icon = IconTheme.get_default().load_icon(icon2, 48, 0);
-            }
-            catch (Error e) {
+            } catch (Error e) {
                 stderr.printf("Could not load icon: "+icon2);
             }
         }
     }
 
-    private void buildgui() {
+    private void build_gui() {
         // Set up main grid
         Gtk.Grid middleTable = new Gtk.Grid();
         middleTable.set_orientation(Gtk.Orientation.VERTICAL);
@@ -98,6 +114,7 @@ public class MainFrame : Gtk.Window {
             return true; } );
         middleTable.add(operationButton1);
         middleTable.attach_next_to(operationButton2, operationButton1, Gtk.PositionType.RIGHT);
+
 
         // File chooser
         Gtk.Label fileLabel = new Gtk.Label("File:");
@@ -159,6 +176,7 @@ public class MainFrame : Gtk.Window {
         }
         middleTable.attach_next_to(cryptoBox, cryptoLabel, Gtk.PositionType.RIGHT);
 
+
         // Hash selection
         hashLabel = new Gtk.Label("Hash Algorithm:");
         hashLabel.set_xalign(1);
@@ -173,6 +191,7 @@ public class MainFrame : Gtk.Window {
             hashBox.append_text(str);
         }
         middleTable.attach_next_to(hashBox, hashLabel, Gtk.PositionType.RIGHT);
+
 
         // Hash strengthen selection
         hashStrengthenLabel = new Gtk.Label("Hash Strengthen:");
@@ -189,6 +208,7 @@ public class MainFrame : Gtk.Window {
         }
         middleTable.attach_next_to(hashStrengthenBox, hashStrengthenLabel, Gtk.PositionType.RIGHT);
 
+
         // Run button
         Gtk.Image runButtonImage = new Gtk.Image.from_icon_name("system-run", Gtk.IconSize.BUTTON);
         runButton = new Gtk.Button.with_label("Run");
@@ -196,14 +216,17 @@ public class MainFrame : Gtk.Window {
         runButton.set_image_position(Gtk.PositionType.LEFT);
         runButton.button_press_event.connect( () => {
             run();
-            return true; } );
+            return true;
+        });
         middleTable.attach_next_to(runButton, hashStrengthenBox, Gtk.PositionType.BOTTOM);
+
 
         // Expand all widgets inside table
         middleTable.foreach( (child) => {
             child.set_hexpand(true);
             child.set_vexpand(true);
         });
+
 
         // Select default options
         operationButton1.set_active(true);
@@ -249,12 +272,10 @@ public class MainFrame : Gtk.Window {
         file_chooser.destroy();
     }
 
-
     private void set_file(string str) {
         command_filePath = str;
         check_runable();
     }
-
 
     private void set_encrypt() {
         command_operation = "encrypt";
@@ -288,7 +309,6 @@ public class MainFrame : Gtk.Window {
         check_runable();
     }
 
-
     private void set_crypto() {
         //stdout.printf(cryptoValues[cryptoBox.get_active()]);
         command_cipherAlgo = cryptoValues[ cryptoBox.get_active() ];
@@ -306,7 +326,6 @@ public class MainFrame : Gtk.Window {
         command_hashStrengthen = hashStrengthenValues[ hashStrengthenBox.get_active() ];
         check_runable();
     }
-
 
     //debug function, see check_runable()
     /**private void print_values() {
@@ -332,60 +351,55 @@ public class MainFrame : Gtk.Window {
     private void check_runable() {
         //print_values();   //debug
 
-
         bool runable = true;
 
         //Check if everything is ok, otherwise set runable to false
         if (command_operation == null || command_operation == "") {
             runable = false;
-        }
-        else if (command_operation == "encrypt") {
+        } else if (command_operation == "encrypt") {
             if (command_filePath == null || command_filePath == "") {
-                runable = false; }
-            else if (pwfield1.get_text() == "") {
-                runable = false; }
-            else if (pwfield2.get_text() == "") {
-                runable = false; }
-            else if (pwfield1.get_text() != pwfield2.get_text()) {
-                runable = false; }
-            else if (command_cipherAlgo == null || command_cipherAlgo == "") {
-                runable = false; }
-            else if (command_hashAlgo == null || command_hashAlgo == "") {
-                runable = false; }
-            else if (command_hashStrengthen == null || command_hashStrengthen == "") {
-                runable = false; }
-        }
-        else if (command_operation == "decrypt") {
-            if ( command_filePath == null || command_filePath == "") {
-                runable = false; }
-            else if (pwfield1.get_text() == "") {
-                runable = false; }
+                runable = false;
+            } else if (pwfield1.get_text() == "") {
+                runable = false;
+            } else if (pwfield2.get_text() == "") {
+                runable = false;
+            } else if (pwfield1.get_text() != pwfield2.get_text()) {
+                runable = false;
+            } else if (command_cipherAlgo == null || command_cipherAlgo == "") {
+                runable = false;
+            } else if (command_hashAlgo == null || command_hashAlgo == "") {
+                runable = false;
+            } else if (command_hashStrengthen == null || command_hashStrengthen == "") {
+                runable = false;
+            }
+        } else if (command_operation == "decrypt") {
+            if (command_filePath == null || command_filePath == "") {
+                runable = false;
+            } else if (pwfield1.get_text() == "") {
+                runable = false;
+            }
         }
 
         // Enable or disable the run button
         if (runable == false) {
             runButton.set_sensitive(false);
-        }
-        else {
+        } else {
             runButton.set_sensitive(true);
         }
     }
 
-
     private void run() {
-        /// No need to check if everything is !null, because button to
-        /// call this function is only clickable if everything is ok
-        /// see check_runable()
+        // No need to check if everything is !null, because button to
+        // call this function is only clickable if everything is ok
+        // see check_runable()
 
         if (command_operation == "encrypt") {
-
             string executeString = "gpg --no-use-agent --batch --no-tty";
             executeString += " --symmetric";
 
             if (command_hashStrengthen == "normal") {
                 executeString += " --digest-algo " + command_hashAlgo;
-            }
-            else {
+            } else {
                 executeString += " --s2k-mode 3 --s2k-count 65011712";
                 executeString += " --s2k-digest-algo " + command_hashAlgo;
             }
@@ -399,22 +413,22 @@ public class MainFrame : Gtk.Window {
             stdout.printf(executeString+"\n");
             try {
                 GLib.Process.spawn_command_line_sync(executeString);
-            }
-            catch (SpawnError e) {
-                stderr.printf("spawn error!");
+            } catch (SpawnError e) {
+                stderr.printf("Error starting gpg encryption!");
+                stderr.printf(e.message);
             }
         } else {
-            //New file will be named like the original file but
-            //with _DECRYPTED as suffix
-            // encryptedfile => encryptedfile_DECRYPTED
-            // secretphoto.jpg.gpg => secretphoto.jpg.gpg_ENCRYPTED
+            // New file will be named like the original file but
+            // with .gpg removed if it ends with .gpg otherwise
+            // _DECRYPTED will be added as suffix:
+            //  - encryptedfile       => encryptedfile_DECRYPTED
+            //  - secretphoto.jpg.gpg => secretphoto.jpg
 
             string outputFile;
             if (command_filePath.length > 4 &&
             command_filePath.slice(-4, command_filePath.length) == ".gpg") {
                 outputFile = command_filePath.slice(0, -4);
-            }
-            else {
+            } else {
                 outputFile = command_filePath+"_DECRYPTED";
             }
 
@@ -449,7 +463,7 @@ public class MainFrame : Gtk.Window {
                     out child_stderr_fd
                 );
             } catch (SpawnError e) {
-                stderr.printf("spawn error!");
+                stderr.printf("Error starting gpg encryption!");
                 stderr.printf(e.message);
             }
 
