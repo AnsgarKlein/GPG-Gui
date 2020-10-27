@@ -75,7 +75,7 @@ public class MainFrame : Gtk.Window {
     }
 
     private void buildgui() {
-        //Setting up main grid
+        // Set up main grid
         Gtk.Grid middleTable = new Gtk.Grid();
         middleTable.set_orientation(Gtk.Orientation.VERTICAL);
         middleTable.set_row_spacing(10);
@@ -83,7 +83,7 @@ public class MainFrame : Gtk.Window {
         this.add(middleTable);
 
 
-        // #!!!!#### Operation Buttons ####!!!!#
+        // Encrypt / Decrypt operation buttons
         Gtk.RadioButton operationButton1 = new Gtk.RadioButton.with_label(null, "Encrypt");
         Gtk.RadioButton operationButton2 = new Gtk.RadioButton.with_label_from_widget(operationButton1, "Decrypt");
         operationButton1.button_press_event.connect( () => {
@@ -99,15 +99,12 @@ public class MainFrame : Gtk.Window {
         middleTable.add(operationButton1);
         middleTable.attach_next_to(operationButton2, operationButton1, Gtk.PositionType.RIGHT);
 
-        // #!!!!#### File Chooser ####!!!!#
-
-            // #---!--- Label ---!---#
+        // File chooser
         Gtk.Label fileLabel = new Gtk.Label("File:");
         fileLabel.set_xalign(1);
         fileLabel.set_yalign((float)0.5);
         middleTable.add(fileLabel);
 
-            // #---!--- Chooser ---!---#
         openTextField = new Gtk.Entry();
         openTextField.set_text("...");
         openTextField.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "drive-harddisk");
@@ -127,7 +124,7 @@ public class MainFrame : Gtk.Window {
         middleTable.attach_next_to(fileBox, fileLabel, Gtk.PositionType.RIGHT);
 
 
-        // #!!!!#### Password Fields ####!!!!#
+        // Password fields
         pwlabel1 = new Gtk.Label("Password:");
         pwlabel1.set_xalign(1);
         pwlabel1.set_yalign((float)0.5);
@@ -147,7 +144,7 @@ public class MainFrame : Gtk.Window {
         middleTable.attach_next_to(pwfield2, pwlabel2, Gtk.PositionType.RIGHT);
 
 
-        // #!!!!#### Crypto ComboBox ####!!!!#
+        // Crypto selection
         cryptoLabel = new Gtk.Label("Encryption Cipher:");
         cryptoLabel.set_xalign(1);
         cryptoLabel.set_yalign((float)0.5);
@@ -162,7 +159,7 @@ public class MainFrame : Gtk.Window {
         }
         middleTable.attach_next_to(cryptoBox, cryptoLabel, Gtk.PositionType.RIGHT);
 
-        // #!!!!#### Hash ComboBox ####!!!!#
+        // Hash selection
         hashLabel = new Gtk.Label("Hash Algorithm:");
         hashLabel.set_xalign(1);
         hashLabel.set_yalign((float)0.5);
@@ -177,7 +174,7 @@ public class MainFrame : Gtk.Window {
         }
         middleTable.attach_next_to(hashBox, hashLabel, Gtk.PositionType.RIGHT);
 
-        // #!!!!#### Hash StrengthenBox ####!!!!#
+        // Hash strengthen selection
         hashStrengthenLabel = new Gtk.Label("Hash Strengthen:");
         hashStrengthenLabel.set_xalign(1);
         hashStrengthenLabel.set_yalign((float)0.5);
@@ -192,7 +189,7 @@ public class MainFrame : Gtk.Window {
         }
         middleTable.attach_next_to(hashStrengthenBox, hashStrengthenLabel, Gtk.PositionType.RIGHT);
 
-        // #!!!!#### Run Button ####!!!!#
+        // Run button
         Gtk.Image runButtonImage = new Gtk.Image.from_icon_name("system-run", Gtk.IconSize.BUTTON);
         runButton = new Gtk.Button.with_label("Run");
         runButton.set_image(runButtonImage);
@@ -208,7 +205,7 @@ public class MainFrame : Gtk.Window {
             child.set_vexpand(true);
         });
 
-        // #!!!!#### Setup ####!!!!#
+        // Select default options
         operationButton1.set_active(true);
         set_encrypt();                      //Activate "Encrypt" Tab
 
@@ -278,7 +275,7 @@ public class MainFrame : Gtk.Window {
     private void set_decrypt() {
         command_operation = "decrypt";
 
-        //Change sensitivity of some widgets
+        // Change sensitivity of some widgets
         pwlabel2.set_sensitive(false);
         pwfield2.set_sensitive(false);
         cryptoLabel.set_sensitive(false);
@@ -365,7 +362,7 @@ public class MainFrame : Gtk.Window {
                 runable = false; }
         }
 
-        //Enable or disable the run button
+        // Enable or disable the run button
         if (runable == false) {
             runButton.set_sensitive(false);
         }
@@ -398,7 +395,7 @@ public class MainFrame : Gtk.Window {
             executeString += pwfield1.get_text();
             executeString += " \"" + command_filePath + "\"";
 
-            //start encryption
+            // start encryption
             stdout.printf(executeString+"\n");
             try {
                 GLib.Process.spawn_command_line_sync(executeString);
@@ -438,7 +435,7 @@ public class MainFrame : Gtk.Window {
             int child_stdout_fd;
             int child_stderr_fd;
 
-            //start decryption
+            // start decryption
             try {
                 GLib.Process.spawn_async_with_pipes(
                     ".",
