@@ -77,6 +77,8 @@ public class MainFrame : Gtk.Window {
     private void set_application_icon() {
         string[] icons = {
             "gdu-encrypted-lock",
+            "stock_keyring",
+            "keyring-manager",
             "application-x-executable"
         };
 
