@@ -13,4 +13,4 @@ dependencies = [
 
 add_project_arguments('-DGETTEXT_PACKAGE', language: 'c')
 
-executable('gpg-gui', sources, dependencies: dependencies)
+executable('gpg-gui', sources, dependencies: dependencies, install: true)
