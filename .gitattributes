@@ -1,0 +1,4 @@
+# Dont put git specific files in archive
+.gitattributes export-ignore
+.gitignore     export-ignore
+.github        export-ignore
