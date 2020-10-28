@@ -63,7 +63,7 @@ public class MainFrame : Gtk.Window {
     public MainFrame() {
         Object(type: Gtk.WindowType.TOPLEVEL);
 
-        this.title = "GPG Gui";
+        this.title = "GPG-Gui";
         this.border_width = 10;
         this.destroy.connect(Gtk.main_quit);
 
