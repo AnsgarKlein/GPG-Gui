@@ -373,7 +373,7 @@ public class MainFrame : Gtk.Window {
         // see check_runable()
 
         if (command_operation == "encrypt") {
-            string executeString = "gpg --no-use-agent --batch --no-tty";
+            string executeString = "gpg --batch --no-tty";
             executeString += " --symmetric";
 
             if (command_hashStrengthen == "normal") {
@@ -412,13 +412,12 @@ public class MainFrame : Gtk.Window {
 
             string argv[8];
             argv[0] = "gpg";
-            argv[1] = "--no-use-agent";
-            argv[2] = "--batch";
-            argv[3] = "--no-tty";
-            argv[4] = "--passphrase";
-            argv[5] = pwfield1.get_text();
-            argv[6] = "--decrypt";
-            argv[7] = command_filePath;
+            argv[1] = "--batch";
+            argv[2] = "--no-tty";
+            argv[3] = "--passphrase";
+            argv[4] = pwfield1.get_text();
+            argv[5] = "--decrypt";
+            argv[6] = command_filePath;
 
             string[] envv = Environ.get();
             int child_stdin_fd;
