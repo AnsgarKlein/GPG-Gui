@@ -69,7 +69,7 @@ public class MainFrame : Gtk.Window {
 
         //Set application icon & update application icon if theme changes
         set_application_icon();
-        this.style_set.connect(set_application_icon);
+        this.style_updated.connect(set_application_icon);
 
         build_gui();
     }
