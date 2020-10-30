@@ -410,19 +410,20 @@ public class MainFrame : Gtk.Window {
                 outputFile = command_filePath+"_DECRYPTED";
             }
 
-            string argv[8];
-            argv[0] = "gpg";
-            argv[1] = "--batch";
-            argv[2] = "--no-tty";
-            argv[3] = "--passphrase";
-            argv[4] = pwfield1.get_text();
-            argv[5] = "--decrypt";
-            argv[6] = command_filePath;
+            string[] argv = {
+                "gpg",
+                "--batch",
+                "--no-tty",
+                "--passphrase-fd",
+                "0",
+                "--decrypt",
+                command_filePath
+            };
 
             string[] envv = Environ.get();
-            int child_stdin_fd;
-            int child_stdout_fd;
-            int child_stderr_fd;
+            int stdin_fd;
+            int stdout_fd;
+            int stderr_fd;
 
             // start decryption
             try {
@@ -433,21 +434,27 @@ public class MainFrame : Gtk.Window {
                     SpawnFlags.SEARCH_PATH,
                     null,
                     null,
-                    out child_stdin_fd,
-                    out child_stdout_fd,
-                    out child_stderr_fd
+                    out stdin_fd,
+                    out stdout_fd,
+                    out stderr_fd
                 );
             } catch (SpawnError e) {
                 stderr.printf("Error starting gpg encryption!");
                 stderr.printf(e.message);
             }
 
-            GLib.FileStream child_stdout_stream = GLib.FileStream.fdopen(child_stdout_fd, "r");
+            // Send passphrase to gpg stdin
+            GLib.FileStream stdin_stream = GLib.FileStream.fdopen(stdin_fd, "w");
+            stdin_stream.printf("%s\n", pwfield1.get_text());
+            stdin_stream.flush();
+
+            // Write gpg stdout to target file
+            GLib.FileStream stdout_stream = GLib.FileStream.fdopen(stdout_fd, "r");
             GLib.FileStream output_stream = GLib.FileStream.open(outputFile, "w");
 
             uint8 buf[1];
             size_t t;
-            while ((t = child_stdout_stream.read(buf, 1)) != 0) {
+            while ((t = stdout_stream.read(buf, 1)) != 0) {
                 output_stream.write(buf, 1);
             }
         }
