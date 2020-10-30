@@ -452,10 +452,11 @@ public class MainFrame : Gtk.Window {
             GLib.FileStream stdout_stream = GLib.FileStream.fdopen(stdout_fd, "r");
             GLib.FileStream output_stream = GLib.FileStream.open(outputFile, "w");
 
-            uint8 buf[1];
+            const int buf_len = 4096;
+            uint8 buf[buf_len];
             size_t t;
             while ((t = stdout_stream.read(buf, 1)) != 0) {
-                output_stream.write(buf, 1);
+                output_stream.write(buf[0:t], 1);
             }
         }
     }
