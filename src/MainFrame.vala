@@ -13,8 +13,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 **/
 
-using Gtk;
-
 public class MainFrame : Gtk.Window {
 
     private string cmd_operation;
@@ -84,7 +82,7 @@ public class MainFrame : Gtk.Window {
 
         foreach (string icon in icons) {
             try {
-                this.icon = IconTheme.get_default().load_icon(icon, 48, 0);
+                this.icon = Gtk.IconTheme.get_default().load_icon(icon, 48, 0);
             } catch (Error e) {
                 stderr.printf(
                     "Could not load icon: " + icon + ". Using fallback icon...\n");
@@ -276,14 +274,14 @@ public class MainFrame : Gtk.Window {
         Gtk.FileChooserDialog file_chooser = new Gtk.FileChooserDialog(
             "Open File",
             this,
-            FileChooserAction.OPEN,
+            Gtk.FileChooserAction.OPEN,
             dgettext("gtk30", "_Cancel"),
-            ResponseType.CANCEL,
+            Gtk.ResponseType.CANCEL,
             dgettext("gtk30", "_Open"),
-            ResponseType.ACCEPT
+            Gtk.ResponseType.ACCEPT
         );
 
-        if (file_chooser.run() == ResponseType.ACCEPT) {
+        if (file_chooser.run() == Gtk.ResponseType.ACCEPT) {
             string filepath = file_chooser.get_filename();
 
             //Abort if file doesn't exists
