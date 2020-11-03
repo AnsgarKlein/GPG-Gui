@@ -13,19 +13,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 **/
 
-
-using Gtk;
-using GLib;
-
 static void main(string[] args) {
-    stdout.printf("\n");
-
     // Set default locale
     GLib.Intl.setlocale();
 
+    // Start Gtk main loop
     Gtk.init(ref args);
     new MainFrame();
     Gtk.main();
-
-    stdout.printf("\n");
 }
