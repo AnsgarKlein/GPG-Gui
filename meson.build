@@ -1,6 +1,7 @@
 project('GPG-Gui', 'vala', 'c')
 
 sources = files([
+    'src/GPGHandler.vala',
     'src/Main.vala',
     'src/MainFrame.vala',
 ])

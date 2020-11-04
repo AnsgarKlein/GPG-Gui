@@ -20,27 +20,19 @@ public class MainFrame : Gtk.Window {
     private string cmd_hash_algo;
     private string cmd_hash_strengthen;
     private string cmd_file_path;
-    private string[] crypto_values = {
-        "3DES",
-        "CAST5",
-        "BLOWFISH",
-        "AES",
-        "AES192",
-        "AES256",
-        "TWOFISH",
-        "CAMELLIA128",
-        "CAMELLIA192",
-        "CAMELLIA256"
-    };
-    private string[] hash_values = {
-        "MD5",
-        "SHA1",
-        "RIPEMD160",
-        "SHA224",
-        "SHA256",
-        "SHA384",
-        "SHA512"
-    };
+
+    private string[] crypto_values {
+        get {
+            return gpg_handler.get_cipher_algos();
+        }
+    }
+
+    private string[] hash_values {
+        get {
+            return gpg_handler.get_digest_algos();
+        }
+    }
+
     private string[] hash_strengthen_values = {"normal", "maximum"};
 
     private Gtk.Entry open_text_field;
@@ -58,12 +50,16 @@ public class MainFrame : Gtk.Window {
 
     private Gtk.Button run_button;
 
+    private GPGHandler gpg_handler;
+
     public MainFrame() {
         Object(type: Gtk.WindowType.TOPLEVEL);
 
         this.title = "GPG-Gui";
         this.border_width = 10;
         this.destroy.connect(Gtk.main_quit);
+
+        this.gpg_handler = new GPGHandler();
 
         //Set application icon & update application icon if theme changes
         set_application_icon();
@@ -73,7 +69,7 @@ public class MainFrame : Gtk.Window {
     }
 
     private void set_application_icon() {
-        string[] icons = {
+        const string[] icons = {
             "gdu-encrypted-lock",
             "stock_keyring",
             "keyring-manager",
@@ -395,92 +391,35 @@ public class MainFrame : Gtk.Window {
         // call this function is only clickable if everything is ok
         // see check_runable()
 
+        string input_file = cmd_file_path;
+
         if (cmd_operation == "encrypt") {
-            string cmd_str = "gpg --batch --no-tty";
-            cmd_str += " --symmetric";
+            this.gpg_handler.encrypt(
+                pwfield1.get_text(),
+                input_file,
+                cmd_cipher_algo,
+                cmd_hash_algo,
+                cmd_hash_strengthen == "maximum");
 
-            if (cmd_hash_strengthen == "normal") {
-                cmd_str += " --digest-algo " + cmd_hash_algo;
-            } else {
-                cmd_str += " --s2k-mode 3 --s2k-count 65011712";
-                cmd_str += " --s2k-digest-algo " + cmd_hash_algo;
-            }
-
-            cmd_str += " --cipher-algo " + cmd_cipher_algo;
-            cmd_str += " --passphrase ";
-            cmd_str += pwfield1.get_text();
-            cmd_str += " \"" + cmd_file_path + "\"";
-
-            // start encryption
-            try {
-                GLib.Process.spawn_command_line_sync(cmd_str);
-            } catch (SpawnError e) {
-                stderr.printf("Error starting gpg encryption!");
-                stderr.printf(e.message);
-            }
         } else {
-            // New file will be named like the original file but
-            // with .gpg removed if it ends with .gpg otherwise
+            // Output file will be named like the input file but
+            // with .gpg removed if it ends with .gpg input
             // _DECRYPTED will be added as suffix:
             //  - encryptedfile       => encryptedfile_DECRYPTED
             //  - secretphoto.jpg.gpg => secretphoto.jpg
 
             string output_file;
-            if (cmd_file_path.length > 4 &&
-            cmd_file_path.slice(-4, cmd_file_path.length) == ".gpg") {
-                output_file = cmd_file_path.slice(0, -4);
+            if (input_file.length > 4 &&
+            input_file.slice(-4, input_file.length) == ".gpg") {
+                output_file = input_file.slice(0, -4);
             } else {
-                output_file = cmd_file_path + "_DECRYPTED";
+                output_file = input_file + "_DECRYPTED";
             }
 
-            string[] argv = {
-                "gpg",
-                "--batch",
-                "--no-tty",
-                "--passphrase-fd",
-                "0",
-                "--decrypt",
-                cmd_file_path
-            };
-
-            string[] envv = Environ.get();
-            int stdin_fd;
-            int stdout_fd;
-            int stderr_fd;
-
-            // start decryption
-            try {
-                GLib.Process.spawn_async_with_pipes(
-                    ".",
-                    argv,
-                    envv,
-                    SpawnFlags.SEARCH_PATH,
-                    null,
-                    null,
-                    out stdin_fd,
-                    out stdout_fd,
-                    out stderr_fd
-                );
-            } catch (SpawnError e) {
-                stderr.printf("Error starting gpg encryption!");
-                stderr.printf(e.message);
-            }
-
-            // Send passphrase to gpg stdin
-            GLib.FileStream stdin_stream = GLib.FileStream.fdopen(stdin_fd, "w");
-            stdin_stream.printf("%s\n", pwfield1.get_text());
-            stdin_stream.flush();
-
-            // Write gpg stdout to target file
-            GLib.FileStream stdout_stream = GLib.FileStream.fdopen(stdout_fd, "r");
-            GLib.FileStream output_stream = GLib.FileStream.open(output_file, "w");
-
-            const int BUF_LEN = 4096;
-            uint8 buf[BUF_LEN];
-            size_t t;
-            while ((t = stdout_stream.read(buf, 1)) != 0) {
-                output_stream.write(buf[0:t], 1);
-            }
+            this.gpg_handler.decrypt(
+                pwfield1.get_text(),
+                input_file,
+                output_file);
         }
     }
 }
