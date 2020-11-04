@@ -281,7 +281,7 @@ public class MainFrame : Gtk.Window {
             string filepath = file_chooser.get_filename();
 
             //Abort if file doesn't exists
-            if (!GLib.FileUtils.test(filepath, GLib.FileTest.EXISTS)) {
+            if (!FileUtils.test(filepath, FileTest.EXISTS)) {
                 return;
             }
 
@@ -289,7 +289,7 @@ public class MainFrame : Gtk.Window {
             set_file(filepath);
 
             //set textFieldText to selected file
-            string filename = GLib.Filename.display_basename(filepath);
+            string filename = Filename.display_basename(filepath);
             open_text_field.set_text(filename);
         }
 

@@ -75,15 +75,15 @@ private string[] get_paths_from_env() {
     return paths.data;
 }
 
-public class GPGHandler : GLib.Object {
+public class GPGHandler : Object {
 
     private string? path = null;
 
     public GPGHandler() {
         // Try to let GLib find gpg
-        path = GLib.Environment.find_program_in_path("gpg2");
+        path = Environment.find_program_in_path("gpg2");
         if (path == null) {
-            path = GLib.Environment.find_program_in_path("gpg");
+            path = Environment.find_program_in_path("gpg");
         }
 
         // Try ourself to find gpg
@@ -189,7 +189,7 @@ public class GPGHandler : GLib.Object {
         int stderr_fd;
 
         try {
-            GLib.Process.spawn_async_with_pipes(
+            Process.spawn_async_with_pipes(
                 ".",
                 argv.data,
                 Environ.get(),
@@ -206,12 +206,12 @@ public class GPGHandler : GLib.Object {
         }
 
         // Send passphrase to gpg stdin
-        GLib.FileStream stdin_stream = GLib.FileStream.fdopen(stdin_fd, "w");
+        FileStream stdin_stream = FileStream.fdopen(stdin_fd, "w");
         stdin_stream.printf("%s\n", passphrase);
         stdin_stream.flush();
 
         // Forward child stderr to application stderr
-        GLib.FileStream stderr_stream = GLib.FileStream.fdopen(stderr_fd, "r");
+        FileStream stderr_stream = FileStream.fdopen(stderr_fd, "r");
 
         const int BUF_LEN = 4096;
         uint8 buf[BUF_LEN];
@@ -241,7 +241,7 @@ public class GPGHandler : GLib.Object {
         int stderr_fd;
 
         try {
-            GLib.Process.spawn_async_with_pipes(
+            Process.spawn_async_with_pipes(
                 ".",
                 argv.data,
                 Environ.get(),
@@ -258,14 +258,14 @@ public class GPGHandler : GLib.Object {
         }
 
         // Send passphrase to gpg stdin
-        GLib.FileStream stdin_stream = GLib.FileStream.fdopen(stdin_fd, "w");
+        FileStream stdin_stream = FileStream.fdopen(stdin_fd, "w");
         stdin_stream.printf("%s\n", passphrase);
         stdin_stream.flush();
 
         // TODO: replace this with --output option
         // Write gpg stdout to target file
-        GLib.FileStream stdout_stream = GLib.FileStream.fdopen(stdout_fd, "r");
-        GLib.FileStream output_stream = GLib.FileStream.open(output_file, "w");
+        FileStream stdout_stream = FileStream.fdopen(stdout_fd, "r");
+        FileStream output_stream = FileStream.open(output_file, "w");
 
         const int BUF_STDOUT_LEN = 4096;
         uint8 buf_stdout[BUF_STDOUT_LEN];
@@ -275,7 +275,7 @@ public class GPGHandler : GLib.Object {
         }
 
         // Forward child stderr to application stderr
-        GLib.FileStream stderr_stream = GLib.FileStream.fdopen(stderr_fd, "r");
+        FileStream stderr_stream = FileStream.fdopen(stderr_fd, "r");
 
         const int BUF_STDERR_LEN = 4096;
         uint8 buf_stderr[BUF_STDERR_LEN];

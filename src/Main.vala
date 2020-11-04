@@ -15,7 +15,7 @@
 
 static void main(string[] args) {
     // Set default locale
-    GLib.Intl.setlocale();
+    Intl.setlocale();
 
     // Start Gtk main loop
     Gtk.init(ref args);
