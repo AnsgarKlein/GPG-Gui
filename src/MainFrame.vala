@@ -149,6 +149,9 @@ public class MainFrame : Gtk.Window {
         pwlabel1.set_yalign((float)0.5);
         pwfield1 = new Gtk.Entry();
         pwfield1.set_visibility(false);
+        pwfield1.set_input_hints(Gtk.InputHints.NO_SPELLCHECK);
+        pwfield1.set_input_purpose(Gtk.InputPurpose.PASSWORD);
+        pwfield1.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "dialog-password");
         pwfield1.changed.connect(check_runable);
         main_grid.add(pwlabel1);
         main_grid.attach_next_to(pwfield1, pwlabel1, Gtk.PositionType.RIGHT);
@@ -158,6 +161,9 @@ public class MainFrame : Gtk.Window {
         pwlabel2.set_yalign((float)0.5);
         pwfield2 = new Gtk.Entry();
         pwfield2.set_visibility(false);
+        pwfield2.set_input_hints(Gtk.InputHints.NO_SPELLCHECK);
+        pwfield2.set_input_purpose(Gtk.InputPurpose.PASSWORD);
+        pwfield2.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "dialog-password");
         pwfield2.changed.connect(check_runable);
         main_grid.add(pwlabel2);
         main_grid.attach_next_to(pwfield2, pwlabel2, Gtk.PositionType.RIGHT);
