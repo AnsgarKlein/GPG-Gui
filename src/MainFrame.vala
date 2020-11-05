@@ -134,9 +134,7 @@ public class MainFrame : Gtk.Window {
             dgettext("gtk30", "_Open"));
         open_button.set_image(open_button_image);
         open_button.set_image_position(Gtk.PositionType.LEFT);
-        open_button.button_press_event.connect( () => {
-            open_file_chooser();
-            return true;} );
+        open_button.clicked.connect(open_file_chooser);
 
         Gtk.Box file_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL,0);
         file_box.set_homogeneous(false);
@@ -227,10 +225,7 @@ public class MainFrame : Gtk.Window {
         run_button = new Gtk.Button.with_label("Run");
         run_button.set_image(run_button_image);
         run_button.set_image_position(Gtk.PositionType.LEFT);
-        run_button.button_press_event.connect( () => {
-            run();
-            return true;
-        });
+        run_button.clicked.connect(run);
         main_grid.attach_next_to(
             run_button,
             hash_strengthen_box,
@@ -273,7 +268,6 @@ public class MainFrame : Gtk.Window {
     }
 
     private void open_file_chooser() {
-
         Gtk.FileChooserDialog file_chooser = new Gtk.FileChooserDialog(
             "Open File",
             this,
