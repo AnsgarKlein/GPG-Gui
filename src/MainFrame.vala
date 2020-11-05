@@ -253,6 +253,7 @@ public class MainFrame : Gtk.Window {
         }
 
         // Set SHA256 hash as default
+        hash_box.set_active(0);
         for (int i = 0; i < hash_values.length; i++) {
             if (hash_values[i] == "SHA256") {
                 hash_box.set_active(i);
