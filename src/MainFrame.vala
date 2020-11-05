@@ -254,11 +254,26 @@ public class MainFrame : Gtk.Window {
 
         // Select default options
         mode_selector1.set_active(true);
-        set_encrypt();                      //Activate "Encrypt" Tab
+        set_encrypt();
 
-        crypto_box.set_active(6);           //Set TWOFISH cipher as default
-        hash_box.set_active(4);             //Set SHA256 hash as default
-        hash_strengthen_box.set_active(0);  //Set 'normal' as default
+        // Set TWOFISH cipher as default
+        crypto_box.set_active(0);
+        for (int i = 0; i < crypto_values.length; i++) {
+            if (crypto_values[i] == "TWOFISH") {
+                crypto_box.set_active(i);
+                break;
+            }
+        }
+
+        // Set SHA256 hash as default
+        for (int i = 0; i < hash_values.length; i++) {
+            if (hash_values[i] == "SHA256") {
+                hash_box.set_active(i);
+            }
+        }
+
+        // Set 'normal' as default
+        hash_strengthen_box.set_active(0);
 
         check_runable();
 
