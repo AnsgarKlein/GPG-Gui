@@ -191,7 +191,7 @@ public class MainFrame : Gtk.Window {
         pwfield1.set_input_hints(Gtk.InputHints.NO_SPELLCHECK);
         pwfield1.set_input_purpose(Gtk.InputPurpose.PASSWORD);
         pwfield1.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "dialog-password");
-        pwfield1.changed.connect(set_pw_entry);
+        pwfield1.changed.connect(on_pw_change);
         main_grid.add(pwlabel1);
         main_grid.attach_next_to(pwfield1, pwlabel1, Gtk.PositionType.RIGHT);
 
@@ -203,7 +203,7 @@ public class MainFrame : Gtk.Window {
         pwfield2.set_input_hints(Gtk.InputHints.NO_SPELLCHECK);
         pwfield2.set_input_purpose(Gtk.InputPurpose.PASSWORD);
         pwfield2.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "dialog-password");
-        pwfield2.changed.connect(set_pw_entry);
+        pwfield2.changed.connect(on_pw_change);
         main_grid.add(pwlabel2);
         main_grid.attach_next_to(pwfield2, pwlabel2, Gtk.PositionType.RIGHT);
 
@@ -385,7 +385,7 @@ public class MainFrame : Gtk.Window {
         check_runable();
     }
 
-    private void set_pw_entry() {
+    private void on_pw_change() {
         const string pw_warning = "Passwords do not match";
 
         // If both password entries don't have same content
