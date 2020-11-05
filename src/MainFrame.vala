@@ -16,8 +16,47 @@
 public class MainFrame : Gtk.Window {
 
     private string cmd_operation;
-    private string cmd_cipher_algo;
-    private string cmd_hash_algo;
+
+    /**
+     * Currently selected cipher algorithm or null if no cipher algorithm
+     * has been selected.
+     */
+    private string? selected_cipher_algo {
+        get {
+            if (crypto_box == null || crypto_values == null) {
+                return null;
+            }
+
+            int selection = crypto_box.get_active();
+            if (selection < 0 || selection > crypto_values.length - 1) {
+                // Selection out of scope
+                return null;
+            }
+
+            return crypto_values[selection];
+        }
+    }
+
+    /**
+     * Currently selected digest algorithm or null if no digest algorithm
+     * has been selected.
+     */
+    private string? selected_digest_algo {
+        get {
+            if (hash_box == null || hash_values == null) {
+                return null;
+            }
+
+            int selection = hash_box.get_active();
+            if (selection < 0 || selection > hash_values.length - 1) {
+                // Selection out of scope
+                return null;
+            }
+
+            return hash_values[selection];
+        }
+    }
+
     private string cmd_hash_strengthen;
     private string cmd_file_path;
 
@@ -180,7 +219,7 @@ public class MainFrame : Gtk.Window {
         crypto_box = new Gtk.ComboBoxText();
         crypto_box.set_tooltip_text(
             "TWOFISH, AES256, and CAMELLIA256 are the strongest ciphers.");
-        crypto_box.changed.connect(set_crypto);
+        crypto_box.changed.connect(check_runable);
         foreach (string str in crypto_values) {
             crypto_box.append_text(str);
         }
@@ -196,7 +235,7 @@ public class MainFrame : Gtk.Window {
 
         hash_box = new Gtk.ComboBoxText();
         hash_box.set_tooltip_text("SHA512 is the strongest hash.");
-        hash_box.changed.connect(set_hash);
+        hash_box.changed.connect(check_runable);
         foreach (string str in hash_values) {
             hash_box.append_text(str);
         }
@@ -341,16 +380,6 @@ public class MainFrame : Gtk.Window {
         check_runable();
     }
 
-    private void set_crypto() {
-        cmd_cipher_algo = crypto_values[crypto_box.get_active()];
-        check_runable();
-    }
-
-    private void set_hash() {
-        cmd_hash_algo = hash_values[hash_box.get_active()];
-        check_runable();
-    }
-
     private void set_hash_strengthen() {
         cmd_hash_strengthen = hash_strengthen_values[hash_strengthen_box.get_active()];
         check_runable();
@@ -392,9 +421,9 @@ public class MainFrame : Gtk.Window {
                 runable = false;
             } else if (pwfield1.get_text() != pwfield2.get_text()) {
                 runable = false;
-            } else if (cmd_cipher_algo == null || cmd_cipher_algo == "") {
+            } else if (selected_cipher_algo == null) {
                 runable = false;
-            } else if (cmd_hash_algo == null || cmd_hash_algo == "") {
+            } else if (selected_digest_algo == null) {
                 runable = false;
             } else if (cmd_hash_strengthen == null || cmd_hash_strengthen == "") {
                 runable = false;
@@ -426,8 +455,8 @@ public class MainFrame : Gtk.Window {
             this.gpg_handler.encrypt(
                 pwfield1.get_text(),
                 input_file,
-                cmd_cipher_algo,
-                cmd_hash_algo,
+                selected_cipher_algo,
+                selected_digest_algo,
                 cmd_hash_strengthen == "maximum");
 
         } else {
