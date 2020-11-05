@@ -106,16 +106,8 @@ public class MainFrame : Gtk.Window {
         Gtk.RadioButton mode_selector2 = new Gtk.RadioButton.with_label_from_widget(
             mode_selector1,
             "Decrypt");
-        mode_selector1.button_press_event.connect( () => {
-            mode_selector1.set_active(true);
-            mode_selector2.set_active(false);
-            set_encrypt();
-            return true; } );
-        mode_selector2.button_press_event.connect( () => {
-            mode_selector1.set_active(false);
-            mode_selector2.set_active(true);
-            set_decrypt();
-            return true; } );
+        mode_selector1.toggled.connect(set_encrypt);
+        mode_selector2.toggled.connect(set_decrypt);
         main_grid.add(mode_selector1);
         main_grid.attach_next_to(
             mode_selector2,
