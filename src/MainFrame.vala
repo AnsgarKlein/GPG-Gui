@@ -15,7 +15,10 @@
 
 public class MainFrame : Gtk.Window {
 
-    private string cmd_operation;
+    /**
+     * Currently selected type operation: decrypt / encrypt
+     */
+    private GPGOperationType selected_operation;
 
     /**
      * Currently selected cipher algorithm or null if no cipher algorithm
@@ -349,7 +352,7 @@ public class MainFrame : Gtk.Window {
     }
 
     private void set_encrypt() {
-        cmd_operation = "encrypt";
+        selected_operation = GPGOperationType.ENCRYPT;
 
         //Change sensitivity of some widgets
         pwlabel2.set_sensitive(true);
@@ -365,7 +368,7 @@ public class MainFrame : Gtk.Window {
     }
 
     private void set_decrypt() {
-        cmd_operation = "decrypt";
+        selected_operation = GPGOperationType.DECRYPT;
 
         // Change sensitivity of some widgets
         pwlabel2.set_sensitive(false);
@@ -410,9 +413,7 @@ public class MainFrame : Gtk.Window {
         bool runable = true;
 
         //Check if everything is ok, otherwise set runable to false
-        if (cmd_operation == null || cmd_operation == "") {
-            runable = false;
-        } else if (cmd_operation == "encrypt") {
+        if (selected_operation == GPGOperationType.ENCRYPT) {
             if (cmd_file_path == null || cmd_file_path == "") {
                 runable = false;
             } else if (pwfield1.get_text() == "") {
@@ -428,7 +429,7 @@ public class MainFrame : Gtk.Window {
             } else if (cmd_hash_strengthen == null || cmd_hash_strengthen == "") {
                 runable = false;
             }
-        } else if (cmd_operation == "decrypt") {
+        } else if (selected_operation == GPGOperationType.DECRYPT) {
             if (cmd_file_path == null || cmd_file_path == "") {
                 runable = false;
             } else if (pwfield1.get_text() == "") {
@@ -451,7 +452,7 @@ public class MainFrame : Gtk.Window {
 
         string input_file = cmd_file_path;
 
-        if (cmd_operation == "encrypt") {
+        if (selected_operation == GPGOperationType.ENCRYPT) {
             this.gpg_handler.encrypt(
                 pwfield1.get_text(),
                 input_file,
