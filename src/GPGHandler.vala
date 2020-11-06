@@ -227,138 +227,116 @@ public class GPGHandler : Object {
         return this.digest_algos;
     }
 
-    public void encrypt(
+    public GPGProcess encrypt(
             string passphrase,
             string input_file,
             string? cipher_algo,
             string? digest_algo,
             bool digest_strengthen) {
 
-        Array<string> argv = new Array<string>();
-        argv.append_val(this.path);
-        argv.append_val("--batch");
-        argv.append_val("--no-tty");
-        argv.append_val("--symmetric");
-        argv.append_val("--passphrase-fd");
-        argv.append_val("0");
+        Array<string> args = new Array<string>();
+        args.append_val(this.path);
+        args.append_val("--batch");
+        args.append_val("--no-tty");
+        args.append_val("--symmetric");
+        args.append_val("--passphrase-fd");
+        args.append_val("0");
 
         // Specify digest algorithm
         if (digest_algo != null) {
             if (digest_strengthen) {
-                argv.append_val("--s2k-digest-algo");
-                argv.append_val(digest_algo);
+                args.append_val("--s2k-digest-algo");
+                args.append_val(digest_algo);
             } else {
-                argv.append_val("--digest-algo");
-                argv.append_val(digest_algo);
+                args.append_val("--digest-algo");
+                args.append_val(digest_algo);
             }
         }
         if (digest_strengthen) {
-            argv.append_val("--s2k-mode");
-            argv.append_val("3");
-            argv.append_val("--s2k-count");
-            argv.append_val("65011712");
+            args.append_val("--s2k-mode");
+            args.append_val("3");
+            args.append_val("--s2k-count");
+            args.append_val("65011712");
         }
 
         // Specify cipher algorithm
         if (cipher_algo != null) {
-            argv.append_val("--cipher-algo");
-            argv.append_val(cipher_algo);
+            args.append_val("--cipher-algo");
+            args.append_val(cipher_algo);
         }
 
         // Specify input file
-        argv.append_val(input_file);
+        args.append_val(input_file);
 
         // Start encryption
-        int stdin_fd;
-        int stdout_fd;
-        int stderr_fd;
+        GPGProcess process = new GPGProcess(args.data, passphrase);
 
-        try {
-            Process.spawn_async_with_pipes(
-                ".",
-                argv.data,
-                Environ.get(),
-                0,
-                null,
-                null,
-                out stdin_fd,
-                out stdout_fd,
-                out stderr_fd
-            );
-        } catch (SpawnError e) {
-            stderr.printf("Error starting gpg encryption!");
-            stderr.printf(e.message);
-        }
+        process.state_changed.connect(() => {
+            if (process.get_state() != GPGProcess.State.FINISHED) {
+                return;
+            }
 
-        // Send passphrase to gpg stdin
-        FileStream stdin_stream = FileStream.fdopen(stdin_fd, "w");
-        stdin_stream.printf("%s\n", passphrase);
-        stdin_stream.flush();
+            // Print stdout
+            foreach (string line in process.get_stdout().split("\n")) {
+                stdout.printf("stdout: %s\n", line);
+            }
 
-        // Forward child stderr to application stderr
-        // TODO: only forward stderr on non-0 exit code
-        FileStream stderr_stream = FileStream.fdopen(stderr_fd, "r");
+            // Print stderr
+            foreach (string line in process.get_stderr().split("\n")) {
+                stdout.printf("stderr: %s\n", line);
+            }
 
-        const int BUF_LEN = 4096;
-        uint8 buf[BUF_LEN];
-        size_t t;
-        while ((t = stderr_stream.read(buf, 1)) != 0) {
-            stderr.write(buf[0:t], 1);
-        }
+            if (process.get_success()) {
+                stdout.printf("GPG: Success\n");
+            } else {
+                stdout.printf("GPG: Failure\n");
+            }
+        });
+
+        return process;
     }
 
-    public void decrypt(
+    public GPGProcess decrypt(
             string passphrase,
             string input_file,
             string output_file) {
 
-        Array<string> argv = new Array<string>();
-        argv.append_val(this.path);
-        argv.append_val("--batch");
-        argv.append_val("--no-tty");
-        argv.append_val("--passphrase-fd");
-        argv.append_val("0");
-        argv.append_val("--decrypt");
-        argv.append_val("--output");
-        argv.append_val(output_file);
-        argv.append_val(input_file);
+        Array<string> args = new Array<string>();
+        args.append_val(this.path);
+        args.append_val("--batch");
+        args.append_val("--no-tty");
+        args.append_val("--passphrase-fd");
+        args.append_val("0");
+        args.append_val("--decrypt");
+        args.append_val("--output");
+        args.append_val(output_file);
+        args.append_val(input_file);
 
         // Start decryption
-        int stdin_fd;
-        int stdout_fd;
-        int stderr_fd;
+        GPGProcess process = new GPGProcess(args.data, passphrase);
 
-        try {
-            Process.spawn_async_with_pipes(
-                ".",
-                argv.data,
-                Environ.get(),
-                0,
-                null,
-                null,
-                out stdin_fd,
-                out stdout_fd,
-                out stderr_fd
-            );
-        } catch (SpawnError e) {
-            stderr.printf("Error starting gpg decryption!");
-            stderr.printf(e.message);
-        }
+        process.state_changed.connect(() => {
+            if (process.get_state() != GPGProcess.State.FINISHED) {
+                return;
+            }
 
-        // Send passphrase to gpg stdin
-        FileStream stdin_stream = FileStream.fdopen(stdin_fd, "w");
-        stdin_stream.printf("%s\n", passphrase);
-        stdin_stream.flush();
+            // Print stdout
+            foreach (string line in process.get_stdout().split("\n")) {
+                stdout.printf("stdout: %s\n", line);
+            }
 
-        // Forward child stderr to application stderr
-        // TODO: only forward stderr on non-0 exit code
-        FileStream stderr_stream = FileStream.fdopen(stderr_fd, "r");
+            // Print stderr
+            foreach (string line in process.get_stderr().split("\n")) {
+                stdout.printf("stderr: %s\n", line);
+            }
 
-        const int BUF_STDERR_LEN = 4096;
-        uint8 buf_stderr[BUF_STDERR_LEN];
-        size_t t_stderr;
-        while ((t_stderr = stderr_stream.read(buf_stderr, 1)) != 0) {
-            stderr.write(buf_stderr[0:t_stderr], 1);
-        }
+            if (process.get_success()) {
+                stdout.printf("GPG: Success\n");
+            } else {
+                stdout.printf("GPG: Failure\n");
+            }
+        });
+
+        return process;
     }
 }

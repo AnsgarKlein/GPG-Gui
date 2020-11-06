@@ -446,20 +446,18 @@ public class MainFrame : Gtk.Window {
     }
 
     private void run() {
-        // No need to check if everything is !null, because button to
-        // call this function is only clickable if everything is ok
-        // see check_runable()
+        GPGProcess process;
 
-        string input_file = cmd_file_path;
-
+        // Spawn child process
         if (selected_operation == GPGOperationType.ENCRYPT) {
-            this.gpg_handler.encrypt(
+            string input_file = cmd_file_path;
+
+            process = this.gpg_handler.encrypt(
                 pwfield1.get_text(),
                 input_file,
                 selected_cipher_algo,
                 selected_digest_algo,
                 cmd_hash_strengthen == "maximum");
-
         } else {
             // Output file will be named like the input file but
             // with .gpg removed if it ends with .gpg input
@@ -467,6 +465,7 @@ public class MainFrame : Gtk.Window {
             //  - encryptedfile       => encryptedfile_DECRYPTED
             //  - secretphoto.jpg.gpg => secretphoto.jpg
 
+            string input_file = cmd_file_path;
             string output_file;
             if (input_file.length > 4 &&
             input_file.slice(-4, input_file.length) == ".gpg") {
@@ -475,7 +474,7 @@ public class MainFrame : Gtk.Window {
                 output_file = input_file + "_DECRYPTED";
             }
 
-            this.gpg_handler.decrypt(
+            process = this.gpg_handler.decrypt(
                 pwfield1.get_text(),
                 input_file,
                 output_file);
