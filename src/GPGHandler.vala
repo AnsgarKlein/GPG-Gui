@@ -319,6 +319,8 @@ public class GPGHandler : Object {
         argv.append_val("--passphrase-fd");
         argv.append_val("0");
         argv.append_val("--decrypt");
+        argv.append_val("--output");
+        argv.append_val(output_file);
         argv.append_val(input_file);
 
         // Start decryption
@@ -347,18 +349,6 @@ public class GPGHandler : Object {
         FileStream stdin_stream = FileStream.fdopen(stdin_fd, "w");
         stdin_stream.printf("%s\n", passphrase);
         stdin_stream.flush();
-
-        // TODO: replace this with --output option
-        // Write gpg stdout to target file
-        FileStream stdout_stream = FileStream.fdopen(stdout_fd, "r");
-        FileStream output_stream = FileStream.open(output_file, "w");
-
-        const int BUF_STDOUT_LEN = 4096;
-        uint8 buf_stdout[BUF_STDOUT_LEN];
-        size_t t_stdout;
-        while ((t_stdout = stdout_stream.read(buf_stdout, 1)) != 0) {
-            output_stream.write(buf_stdout[0:t_stdout], 1);
-        }
 
         // Forward child stderr to application stderr
         // TODO: only forward stderr on non-0 exit code
