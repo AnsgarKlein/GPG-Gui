@@ -96,6 +96,7 @@ public class MainFrame : Gtk.Window {
 
     public MainFrame() {
         Object(type: Gtk.WindowType.TOPLEVEL);
+        this.set_position(Gtk.WindowPosition.CENTER);
 
         this.title = "GPG-Gui";
         this.border_width = 10;
