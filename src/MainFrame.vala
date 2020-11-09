@@ -111,19 +111,47 @@ public class MainFrame : Gtk.Window {
     }
 
     private void set_application_icon() {
-        const string[] icons = {
+        const string[] PREFERRED_ICON_NAMES = {
             "gdu-encrypted-lock",
             "stock_keyring",
             "keyring-manager",
             "application-x-executable"
         };
 
-        foreach (string icon in icons) {
+        const int[] DESIRED_ICON_SIZES = { 48, 32, 16, 64, 128, };
+
+        Gtk.IconTheme theme = Gtk.IconTheme.get_default();
+
+        foreach (string icon_name in PREFERRED_ICON_NAMES) {
             try {
-                this.icon = Gtk.IconTheme.get_default().load_icon(icon, 48, 0);
+                // Try to get selected icon
+                // This may throw error in which case we try next icon
+                Gdk.Pixbuf first_icon = theme.load_icon(
+                    icon_name,
+                    DESIRED_ICON_SIZES[0],
+                    Gtk.IconLookupFlags.FORCE_SIZE);
+
+                // Icon is contained in icon theme
+                // => Get icon in multiple sizes
+                var icon_list = new List<Gdk.Pixbuf>();
+                icon_list.append(first_icon);
+
+                for (int i = 1; i < DESIRED_ICON_SIZES.length; i++) {
+                    int icon_size = DESIRED_ICON_SIZES[i];
+
+                    Gdk.Pixbuf icon = theme.load_icon(
+                        icon_name,
+                        icon_size,
+                        0);
+                    if (icon != null) {
+                        icon_list.append(icon);
+                    }
+                }
+
+                this.set_icon_list(icon_list);
             } catch (Error e) {
-                stderr.printf(
-                    "Could not load icon: " + icon + ". Using fallback icon...\n");
+                // Could not find icon in current theme
+                // => Try next icon
                 continue;
             }
 
