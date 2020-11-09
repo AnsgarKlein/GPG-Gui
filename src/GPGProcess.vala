@@ -147,14 +147,16 @@ public class GPGProcess {
         set_state(State.RUNNING);
 
         // Send passphrase to gpg stdin in separate thread
-        new Thread<void>("gpg stdin writer", () => {
+        new Thread<int>("gpg stdin writer", () => {
             FileStream process_stdin = FileStream.fdopen(stdin_fd, "w");
             process_stdin.printf("%s\n", passphrase);
             process_stdin.flush();
+
+            return 0;
         });
 
         // Add thread that saves all stderr output
-        new Thread<void>("gpg stderr watchdog", () => {
+        new Thread<int>("gpg stderr watchdog", () => {
             FileStream process_stderr = FileStream.fdopen(stderr_fd, "r");
             StringBuilder builder = new StringBuilder();
             string? line = null;
@@ -165,10 +167,12 @@ public class GPGProcess {
             }
 
             set_stderr(builder.str);
+
+            return 0;
         });
 
         // Add thread that saves all stdout output
-        new Thread<void>("gpg stdout watchdog", () => {
+        new Thread<int>("gpg stdout watchdog", () => {
             FileStream process_stdout = FileStream.fdopen(stdout_fd, "r");
             StringBuilder builder = new StringBuilder();
             string? line = null;
@@ -179,6 +183,8 @@ public class GPGProcess {
             }
 
             set_stdout(builder.str);
+
+            return 0;
         });
 
         // Add child watch because we specified DO_NOT_REAP_CHILD
