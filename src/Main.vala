@@ -14,6 +14,13 @@
 **/
 
 static void main(string[] args) {
+    // Check if threads are supported
+    if (!Thread.supported()) {
+        stderr.printf("Threads are not supported!\n");
+        stderr.printf("Cannot run without thread support!\n");
+        return;
+    }
+
     // Set default locale
     Intl.setlocale();
 
