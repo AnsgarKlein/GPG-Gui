@@ -346,14 +346,12 @@ public class MainWindow : Gtk.Window {
     }
 
     private void open_file_chooser() {
-        Gtk.FileChooserDialog file_chooser = new Gtk.FileChooserDialog(
+        Gtk.FileChooserNative file_chooser = new Gtk.FileChooserNative(
             "Open File",
             this,
             Gtk.FileChooserAction.OPEN,
-            dgettext("gtk30", "_Cancel"),
-            Gtk.ResponseType.CANCEL,
             dgettext("gtk30", "_Open"),
-            Gtk.ResponseType.ACCEPT
+            dgettext("gtk30", "_Cancel")
         );
 
         if (file_chooser.run() == Gtk.ResponseType.ACCEPT) {
