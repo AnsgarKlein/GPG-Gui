@@ -6,7 +6,7 @@ sources = files([
     'src/GPGProcess.vala',
     'src/Helper.vala',
     'src/Main.vala',
-    'src/MainFrame.vala',
+    'src/MainWindow.vala',
 ])
 
 dependencies = [

@@ -26,6 +26,6 @@ static void main(string[] args) {
 
     // Start Gtk main loop
     Gtk.init(ref args);
-    new MainFrame();
+    new MainWindow();
     Gtk.main();
 }

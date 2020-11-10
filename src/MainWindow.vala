@@ -13,7 +13,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-public class MainFrame : Gtk.Window {
+public class MainWindow : Gtk.Window {
 
     /**
      * Currently selected type operation: decrypt / encrypt
@@ -94,7 +94,7 @@ public class MainFrame : Gtk.Window {
 
     private GPGHandler gpg_handler;
 
-    public MainFrame() {
+    public MainWindow() {
         Object(type: Gtk.WindowType.TOPLEVEL);
         this.set_position(Gtk.WindowPosition.CENTER);
 
