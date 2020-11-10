@@ -77,6 +77,9 @@ public class MainWindow : Gtk.Window {
 
     private string[] hash_strengthen_values = {"normal", "maximum"};
 
+    private Gtk.RadioButton mode_selector1;
+    private Gtk.RadioButton mode_selector2;
+
     private Gtk.Entry open_text_field;
     private Gtk.Label crypto_label;
     private Gtk.ComboBoxText crypto_box;
@@ -171,10 +174,10 @@ public class MainWindow : Gtk.Window {
 
 
         // Encrypt / Decrypt operation buttons
-        Gtk.RadioButton mode_selector1 = new Gtk.RadioButton.with_label(
+        mode_selector1 = new Gtk.RadioButton.with_label(
             null,
             "Encrypt");
-        Gtk.RadioButton mode_selector2 = new Gtk.RadioButton.with_label_from_widget(
+        mode_selector2 = new Gtk.RadioButton.with_label_from_widget(
             mode_selector1,
             "Decrypt");
         mode_selector1.toggled.connect(set_encrypt);
