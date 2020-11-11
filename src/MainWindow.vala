@@ -95,6 +95,8 @@ public class MainWindow : Gtk.Window {
 
     private Gtk.Button run_button;
 
+    private ProgressIndicator progress_indicator;
+
     private GPGHandler gpg_handler;
 
     public MainWindow() {
@@ -312,6 +314,18 @@ public class MainWindow : Gtk.Window {
             Gtk.PositionType.BOTTOM);
 
 
+        // Progress indicator
+        progress_indicator = new ProgressIndicator();
+        main_grid.attach_next_to(
+            progress_indicator,
+            null,
+            Gtk.PositionType.BOTTOM,
+            2, 1);
+        progress_indicator.finished.connect( () => {
+            set_mode_ready();
+        });
+
+
         // Expand all widgets inside table
         main_grid.foreach( (child) => {
             child.set_hexpand(true);
@@ -345,7 +359,9 @@ public class MainWindow : Gtk.Window {
 
         check_runable();
 
+        // Show all widgets except the progress indicator
         this.show_all();
+        progress_indicator.hide();
     }
 
     private void open_file_chooser() {
@@ -439,6 +455,56 @@ public class MainWindow : Gtk.Window {
         check_runable();
     }
 
+    private void set_mode_running() {
+        progress_indicator.show_all();
+
+        mode_selector1.set_sensitive(false);
+        mode_selector2.set_sensitive(false);
+
+        open_text_field.set_sensitive(false);
+        crypto_label.set_sensitive(false);
+        crypto_box.set_sensitive(false);
+        hash_label.set_sensitive(false);
+        hash_box.set_sensitive(false);
+        hash_strengthen_label.set_sensitive(false);
+        hash_strengthen_box.set_sensitive(false);
+
+        pwlabel1.set_sensitive(false);
+        pwfield1.set_sensitive(false);
+        pwlabel2.set_sensitive(false);
+        pwfield2.set_sensitive(false);
+
+        run_button.set_sensitive(false);
+    }
+
+    private void set_mode_ready() {
+        progress_indicator.hide();
+
+        mode_selector1.set_sensitive(true);
+        mode_selector2.set_sensitive(true);
+
+        open_text_field.set_sensitive(true);
+        crypto_label.set_sensitive(true);
+        crypto_box.set_sensitive(true);
+        hash_label.set_sensitive(true);
+        hash_box.set_sensitive(true);
+        hash_strengthen_label.set_sensitive(true);
+        hash_strengthen_box.set_sensitive(true);
+
+        pwlabel1.set_sensitive(true);
+        pwfield1.set_sensitive(true);
+        pwlabel2.set_sensitive(true);
+        pwfield2.set_sensitive(true);
+
+        run_button.set_sensitive(true);
+
+        if (mode_selector1.get_active()) {
+            set_encrypt();
+        } else {
+            set_decrypt();
+        }
+    }
+
     private void check_runable() {
         bool runable = true;
 
@@ -476,6 +542,8 @@ public class MainWindow : Gtk.Window {
     }
 
     private void run() {
+        // Show progress indicator for child process
+        set_mode_running();
         GPGProcess process;
 
         // Spawn child process
@@ -509,5 +577,8 @@ public class MainWindow : Gtk.Window {
                 input_file,
                 output_file);
         }
+
+        // Show progress of child process
+        this.progress_indicator.set_process(process);
     }
 }

@@ -7,6 +7,7 @@ sources = files([
     'src/Helper.vala',
     'src/Main.vala',
     'src/MainWindow.vala',
+    'src/ProgressIndicator.vala',
 ])
 
 dependencies = [
