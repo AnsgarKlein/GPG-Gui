@@ -19,9 +19,7 @@
  */
 public class ProgressIndicator : Gtk.Box {
 
-    private Object gpg_process_lock = new Object();
     private GPGProcess? gpg_process;
-    private Thread<int> gpg_process_thread;
 
     private Gtk.ProgressBar progress_bar;
     private Gtk.Button abort_button;
@@ -71,40 +69,25 @@ public class ProgressIndicator : Gtk.Box {
      * Set to null to stop monitoring the current process.
      */
     public void set_process(GPGProcess? gpg_process) {
+        this.gpg_process = gpg_process;
+
         if (gpg_process == null) {
-            lock (this.gpg_process_lock) {
-                this.gpg_process = null;
-                this.gpg_process_thread = null;
-            }
             return;
         }
 
-        lock (this.gpg_process_lock) {
-            this.gpg_process = gpg_process;
-        }
-
         // Poll gpg process and update progress bar
-        this.gpg_process_thread = new Thread<int>("progress bar refresher", () => {
-            while (true) {
-                Thread.usleep(100 * 1000);
-                lock (this.gpg_process_lock) {
-                    if (this.gpg_process == null) {
-                        break;
-                    }
-
-                    if (this.gpg_process.get_state() == GPGProcess.State.STARTING) {
-                        progress_bar.set_fraction(0.0);
-                    } else if (this.gpg_process.get_state() == GPGProcess.State.FINISHED) {
-                        progress_bar.set_fraction(1.0);
-                        this.finished();
-                        break;
-                    } else {
-                        progress_bar.pulse();
-                    }
-                }
+        Timeout.add(100, () => {
+            if (this.gpg_process.get_state() == GPGProcess.State.STARTING) {
+                progress_bar.set_fraction(0.0);
+                return Source.CONTINUE;
+            } else if (this.gpg_process.get_state() == GPGProcess.State.FINISHED) {
+                progress_bar.set_fraction(1.0);
+                finished();
+                return Source.REMOVE;
+            } else {
+                progress_bar.pulse();
+                return Source.CONTINUE;
             }
-            Thread.exit(0);
-            return 0;
         });
     }
 }
