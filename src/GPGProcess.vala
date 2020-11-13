@@ -46,6 +46,14 @@ public class GPGProcess {
      */
     private bool process_success;
 
+    /**
+     * Private variables that when set will (with some delay)
+     * emit the corresponding signals in the correct thread.
+     */
+    private bool _stdout_changed = false;
+    private bool _stderr_changed = false;
+    private bool _state_changed = false;
+
     public signal void stdout_changed();
     public signal void stderr_changed();
     public signal void state_changed();
@@ -53,6 +61,31 @@ public class GPGProcess {
     public GPGProcess(string[] args, string passphrase) {
         // Start process
         start(args, passphrase);
+
+        // Check if state, stdout or stderr changed in asynchronous function
+        // and emit signal if they changed.
+        Timeout.add(100, () => {
+            if (_stdout_changed) {
+                stdout_changed();
+                lock (_stdout_changed) {
+                    _stdout_changed = false;
+                }
+            }
+            if (_stderr_changed) {
+                stderr_changed();
+                lock (_stderr_changed) {
+                    _stderr_changed = false;
+                }
+            }
+            if (_state_changed) {
+                state_changed();
+                lock (_state_changed) {
+                    _state_changed = false;
+                }
+            }
+
+            return (get_state() == State.FINISHED) ? Source.REMOVE : Source.CONTINUE;
+        });
     }
 
     /**
@@ -68,7 +101,9 @@ public class GPGProcess {
         lock (state) {
             state = s;
         }
-        state_changed();
+        lock (_state_changed) {
+            _state_changed = true;
+        }
     }
 
     /**
@@ -84,7 +119,9 @@ public class GPGProcess {
         lock (process_stdout) {
             process_stdout = str;
         }
-        stdout_changed();
+        lock (_stdout_changed) {
+            _stdout_changed = true;
+        }
     }
 
     /**
@@ -100,7 +137,9 @@ public class GPGProcess {
         lock (process_stderr) {
             process_stderr = str;
         }
-        stderr_changed();
+        lock (_stderr_changed) {
+            _stderr_changed = true;
+        }
     }
 
     /**
