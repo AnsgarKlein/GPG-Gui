@@ -251,7 +251,13 @@ public class MainWindow : Gtk.Window {
             "Decrypt");
         mode_selector1.toggled.connect(on_mode_button_select);
         mode_selector2.toggled.connect(on_mode_button_select);
+
+        mode_selector1.set_hexpand(true);
+        mode_selector1.set_vexpand(true);
         main_grid.add(mode_selector1);
+
+        mode_selector2.set_hexpand(true);
+        mode_selector2.set_vexpand(true);
         main_grid.attach_next_to(
             mode_selector2,
             mode_selector1,
@@ -262,6 +268,8 @@ public class MainWindow : Gtk.Window {
         Gtk.Label file_label = new Gtk.Label("File:");
         file_label.set_xalign(1);
         file_label.set_yalign((float)0.5);
+        file_label.set_hexpand(true);
+        file_label.set_vexpand(true);
         main_grid.add(file_label);
 
         file_text_field = new Gtk.Entry();
@@ -282,8 +290,17 @@ public class MainWindow : Gtk.Window {
 
         Gtk.Box file_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL,0);
         file_box.set_homogeneous(false);
+
+        file_text_field.set_hexpand(true);
+        file_text_field.set_vexpand(true);
         file_box.pack_start(file_text_field);
+
+        open_button.set_hexpand(true);
+        open_button.set_vexpand(true);
         file_box.pack_start(open_button);
+
+        file_box.set_hexpand(true);
+        file_box.set_vexpand(true);
         main_grid.attach_next_to(file_box, file_label, Gtk.PositionType.RIGHT);
 
 
@@ -291,25 +308,35 @@ public class MainWindow : Gtk.Window {
         pwlabel1 = new Gtk.Label("Password:");
         pwlabel1.set_xalign(1);
         pwlabel1.set_yalign((float)0.5);
+        pwlabel1.set_hexpand(true);
+        pwlabel1.set_vexpand(true);
+        main_grid.add(pwlabel1);
+
         pwfield1 = new Gtk.Entry();
         pwfield1.set_visibility(false);
         pwfield1.set_input_hints(Gtk.InputHints.NO_SPELLCHECK);
         pwfield1.set_input_purpose(Gtk.InputPurpose.PASSWORD);
         pwfield1.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "dialog-password");
         pwfield1.changed.connect(on_pw_input);
-        main_grid.add(pwlabel1);
+        pwfield1.set_hexpand(true);
+        pwfield1.set_vexpand(true);
         main_grid.attach_next_to(pwfield1, pwlabel1, Gtk.PositionType.RIGHT);
 
         pwlabel2 = new Gtk.Label("Confirm Password:");
         pwlabel2.set_xalign(1);
         pwlabel2.set_yalign((float)0.5);
+        pwlabel2.set_hexpand(true);
+        pwlabel2.set_vexpand(true);
+        main_grid.add(pwlabel2);
+
         pwfield2 = new Gtk.Entry();
         pwfield2.set_visibility(false);
         pwfield2.set_input_hints(Gtk.InputHints.NO_SPELLCHECK);
         pwfield2.set_input_purpose(Gtk.InputPurpose.PASSWORD);
         pwfield2.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "dialog-password");
         pwfield2.changed.connect(on_pw_input);
-        main_grid.add(pwlabel2);
+        pwfield2.set_hexpand(true);
+        pwfield2.set_vexpand(true);
         main_grid.attach_next_to(pwfield2, pwlabel2, Gtk.PositionType.RIGHT);
 
 
@@ -319,6 +346,8 @@ public class MainWindow : Gtk.Window {
         crypto_label.set_yalign((float)0.5);
         crypto_label.set_tooltip_text(
             "TWOFISH, AES256, and CAMELLIA256 are the strongest ciphers.");
+        crypto_label.set_hexpand(true);
+        crypto_label.set_vexpand(true);
         main_grid.add(crypto_label);
 
         crypto_box = new Gtk.ComboBoxText();
@@ -328,6 +357,8 @@ public class MainWindow : Gtk.Window {
         foreach (string algo in cipher_algos) {
             crypto_box.append_text(algo);
         }
+        crypto_box.set_hexpand(true);
+        crypto_box.set_vexpand(true);
         main_grid.attach_next_to(crypto_box, crypto_label, Gtk.PositionType.RIGHT);
 
 
@@ -336,6 +367,8 @@ public class MainWindow : Gtk.Window {
         hash_label.set_xalign(1);
         hash_label.set_yalign((float)0.5);
         hash_label.set_tooltip_text("SHA512 is the strongest hash.");
+        hash_label.set_hexpand(true);
+        hash_label.set_vexpand(true);
         main_grid.add(hash_label);
 
         hash_box = new Gtk.ComboBoxText();
@@ -344,6 +377,8 @@ public class MainWindow : Gtk.Window {
         foreach (string algo in digest_algos) {
             hash_box.append_text(algo);
         }
+        hash_box.set_hexpand(true);
+        hash_box.set_vexpand(true);
         main_grid.attach_next_to(hash_box, hash_label, Gtk.PositionType.RIGHT);
 
 
@@ -353,6 +388,8 @@ public class MainWindow : Gtk.Window {
         hash_strengthen_label.set_yalign((float)0.5);
         hash_strengthen_label.set_tooltip_text(
             "'normal' is faster, 'maximum' is stronger.");
+        hash_strengthen_label.set_hexpand(true);
+        hash_strengthen_label.set_vexpand(true);
         main_grid.add(hash_strengthen_label);
 
         hash_strengthen_box = new Gtk.ComboBoxText();
@@ -362,6 +399,8 @@ public class MainWindow : Gtk.Window {
         foreach (string str in hash_strengthen_values) {
             hash_strengthen_box.append_text(str);
         }
+        hash_strengthen_box.set_hexpand(true);
+        hash_strengthen_box.set_vexpand(true);
         main_grid.attach_next_to(
             hash_strengthen_box,
             hash_strengthen_label,
@@ -376,6 +415,8 @@ public class MainWindow : Gtk.Window {
         run_button.set_image(run_button_image);
         run_button.set_image_position(Gtk.PositionType.LEFT);
         run_button.clicked.connect(on_run_button);
+        run_button.set_hexpand(true);
+        run_button.set_vexpand(true);
         main_grid.attach_next_to(
             run_button,
             hash_strengthen_box,
@@ -384,6 +425,8 @@ public class MainWindow : Gtk.Window {
 
         // Progress indicator
         progress_indicator = new ProgressIndicator();
+        progress_indicator.set_hexpand(true);
+        progress_indicator.set_vexpand(true);
         main_grid.attach_next_to(
             progress_indicator,
             null,
@@ -396,13 +439,6 @@ public class MainWindow : Gtk.Window {
             } else {
                 this.mode = Mode.READY_DECRYPT;
             }
-        });
-
-
-        // Expand all widgets inside table
-        main_grid.foreach( (child) => {
-            child.set_hexpand(true);
-            child.set_vexpand(true);
         });
 
 
