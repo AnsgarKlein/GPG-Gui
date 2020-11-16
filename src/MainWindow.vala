@@ -15,18 +15,33 @@
 
 public class MainWindow : Gtk.Window {
 
-    /**
-     * Currently selected type operation: decrypt / encrypt
-     */
-    private GPGOperationType selected_operation;
+    private enum Mode {
+        READY_ENCRYPT,
+        READY_DECRYPT,
+        RUNNING,
+    }
 
     /**
-     * Currently selected cipher algorithm or null if no cipher algorithm
+     * The currently selected input file or empty string if no file
+     * has been selected.
+     */
+    private string selected_file {
+        get {
+            if (file_text_field == null) {
+                return "";
+            }
+
+            return file_text_field.get_text();
+        }
+    }
+
+    /**
+     * The currently selected cipher algorithm or null if no cipher algorithm
      * has been selected.
      */
     private string? selected_cipher_algo {
         get {
-            if (crypto_box == null || cipher_algos == null) {
+            if (crypto_box == null) {
                 return null;
             }
 
@@ -41,12 +56,12 @@ public class MainWindow : Gtk.Window {
     }
 
     /**
-     * Currently selected digest algorithm or null if no digest algorithm
+     * The currently selected digest algorithm or null if no digest algorithm
      * has been selected.
      */
     private string? selected_digest_algo {
         get {
-            if (hash_box == null || digest_algos == null) {
+            if (hash_box == null) {
                 return null;
             }
 
@@ -60,27 +75,78 @@ public class MainWindow : Gtk.Window {
         }
     }
 
-    private string cmd_hash_strengthen;
-    private string cmd_file_path;
+    /**
+     * The currently selected hash strengthen value or null if no
+     * hash strengthen value has been selected.
+     */
+    private string? selected_hash_strengthen {
+        get {
+            if (hash_strengthen_box == null) {
+                return null;
+            }
 
+            int selection = hash_strengthen_box.get_active();
+            if (selection < 0 || selection > hash_strengthen_values.length - 1) {
+                // Selection out of scope
+                return null;
+            }
+
+            return hash_strengthen_values[selection];
+        }
+    }
+
+    /**
+     * Array of all available cipher algos
+     */
     private string[] cipher_algos {
         get {
             return gpg_handler.get_cipher_algos();
         }
     }
 
+    /**
+     * Array of all available digest algos
+     */
     private string[] digest_algos {
         get {
             return gpg_handler.get_digest_algos();
         }
     }
 
-    private string[] hash_strengthen_values = {"normal", "maximum"};
+    /**
+     * Array of all possible hash strengthen values
+     */
+    private const string[] hash_strengthen_values = { "normal", "maximum" };
 
+    /**
+     * Handler representing all gpg functionality
+     */
+    private GPGHandler gpg_handler;
+
+    /**
+     * Currently active mode of this application
+     */
+    private Mode _mode;
+    private Mode mode {
+        set {
+            _mode = value;
+            mode_changed();
+        }
+        get {
+            return _mode;
+        }
+    }
+
+    /**
+     * Signal is emitted when mode is changed
+     */
+    private signal void mode_changed();
+
+    // Gtk widgets
     private Gtk.RadioButton mode_selector1;
     private Gtk.RadioButton mode_selector2;
 
-    private Gtk.Entry open_text_field;
+    private Gtk.Entry file_text_field;
     private Gtk.Label crypto_label;
     private Gtk.ComboBoxText crypto_box;
     private Gtk.Label hash_label;
@@ -97,8 +163,6 @@ public class MainWindow : Gtk.Window {
 
     private ProgressIndicator progress_indicator;
 
-    private GPGHandler gpg_handler;
-
     public MainWindow() {
         Object(type: Gtk.WindowType.TOPLEVEL);
         this.set_position(Gtk.WindowPosition.CENTER);
@@ -114,6 +178,9 @@ public class MainWindow : Gtk.Window {
         this.style_updated.connect(set_application_icon);
 
         build_gui();
+        set_defaults();
+
+        this.mode_changed.connect(on_mode_change);
     }
 
     private void set_application_icon() {
@@ -182,8 +249,8 @@ public class MainWindow : Gtk.Window {
         mode_selector2 = new Gtk.RadioButton.with_label_from_widget(
             mode_selector1,
             "Decrypt");
-        mode_selector1.toggled.connect(set_encrypt);
-        mode_selector2.toggled.connect(set_decrypt);
+        mode_selector1.toggled.connect(on_mode_button_select);
+        mode_selector2.toggled.connect(on_mode_button_select);
         main_grid.add(mode_selector1);
         main_grid.attach_next_to(
             mode_selector2,
@@ -197,11 +264,12 @@ public class MainWindow : Gtk.Window {
         file_label.set_yalign((float)0.5);
         main_grid.add(file_label);
 
-        open_text_field = new Gtk.Entry();
-        open_text_field.set_text("...");
-        open_text_field.set_icon_from_icon_name(
+        file_text_field = new Gtk.Entry();
+        file_text_field.set_text("...");
+        file_text_field.set_icon_from_icon_name(
             Gtk.EntryIconPosition.PRIMARY,
             "drive-harddisk");
+        file_text_field.changed.connect(on_file_text_input);
 
         Gtk.Image open_button_image = new Gtk.Image.from_icon_name(
             "document-open",
@@ -210,11 +278,11 @@ public class MainWindow : Gtk.Window {
             dgettext("gtk30", "_Open"));
         open_button.set_image(open_button_image);
         open_button.set_image_position(Gtk.PositionType.LEFT);
-        open_button.clicked.connect(open_file_chooser);
+        open_button.clicked.connect(on_file_chooser_button);
 
         Gtk.Box file_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL,0);
         file_box.set_homogeneous(false);
-        file_box.pack_start(open_text_field);
+        file_box.pack_start(file_text_field);
         file_box.pack_start(open_button);
         main_grid.attach_next_to(file_box, file_label, Gtk.PositionType.RIGHT);
 
@@ -228,7 +296,7 @@ public class MainWindow : Gtk.Window {
         pwfield1.set_input_hints(Gtk.InputHints.NO_SPELLCHECK);
         pwfield1.set_input_purpose(Gtk.InputPurpose.PASSWORD);
         pwfield1.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "dialog-password");
-        pwfield1.changed.connect(on_pw_change);
+        pwfield1.changed.connect(on_pw_input);
         main_grid.add(pwlabel1);
         main_grid.attach_next_to(pwfield1, pwlabel1, Gtk.PositionType.RIGHT);
 
@@ -240,7 +308,7 @@ public class MainWindow : Gtk.Window {
         pwfield2.set_input_hints(Gtk.InputHints.NO_SPELLCHECK);
         pwfield2.set_input_purpose(Gtk.InputPurpose.PASSWORD);
         pwfield2.set_icon_from_icon_name(Gtk.EntryIconPosition.PRIMARY, "dialog-password");
-        pwfield2.changed.connect(on_pw_change);
+        pwfield2.changed.connect(on_pw_input);
         main_grid.add(pwlabel2);
         main_grid.attach_next_to(pwfield2, pwlabel2, Gtk.PositionType.RIGHT);
 
@@ -256,7 +324,7 @@ public class MainWindow : Gtk.Window {
         crypto_box = new Gtk.ComboBoxText();
         crypto_box.set_tooltip_text(
             "TWOFISH, AES256, and CAMELLIA256 are the strongest ciphers.");
-        crypto_box.changed.connect(check_runable);
+        crypto_box.changed.connect(refresh_widgets);
         foreach (string algo in cipher_algos) {
             crypto_box.append_text(algo);
         }
@@ -272,7 +340,7 @@ public class MainWindow : Gtk.Window {
 
         hash_box = new Gtk.ComboBoxText();
         hash_box.set_tooltip_text("SHA512 is the strongest hash.");
-        hash_box.changed.connect(check_runable);
+        hash_box.changed.connect(refresh_widgets);
         foreach (string algo in digest_algos) {
             hash_box.append_text(algo);
         }
@@ -290,7 +358,7 @@ public class MainWindow : Gtk.Window {
         hash_strengthen_box = new Gtk.ComboBoxText();
         hash_strengthen_box.set_tooltip_text(
             "'normal' is faster, 'maximum' is stronger.");
-        hash_strengthen_box.changed.connect(set_hash_strengthen);
+        hash_strengthen_box.changed.connect(refresh_widgets);
         foreach (string str in hash_strengthen_values) {
             hash_strengthen_box.append_text(str);
         }
@@ -307,7 +375,7 @@ public class MainWindow : Gtk.Window {
         run_button = new Gtk.Button.with_label("Run");
         run_button.set_image(run_button_image);
         run_button.set_image_position(Gtk.PositionType.LEFT);
-        run_button.clicked.connect(run);
+        run_button.clicked.connect(on_run_button);
         main_grid.attach_next_to(
             run_button,
             hash_strengthen_box,
@@ -322,7 +390,12 @@ public class MainWindow : Gtk.Window {
             Gtk.PositionType.BOTTOM,
             2, 1);
         progress_indicator.finished.connect( () => {
-            set_mode_ready();
+            // Set mode to mode selected by buttons
+            if (mode_selector1.get_active()) {
+                this.mode = Mode.READY_ENCRYPT;
+            } else {
+                this.mode = Mode.READY_DECRYPT;
+            }
         });
 
 
@@ -333,9 +406,15 @@ public class MainWindow : Gtk.Window {
         });
 
 
+        // Show all widgets except the progress indicator
+        this.show_all();
+        progress_indicator.hide();
+    }
+
+    private void set_defaults() {
         // Select default options
         mode_selector1.set_active(true);
-        set_encrypt();
+        this.mode = Mode.READY_ENCRYPT;
 
         // Set TWOFISH cipher as default
         crypto_box.set_active(0);
@@ -357,14 +436,27 @@ public class MainWindow : Gtk.Window {
         // Set 'normal' as default
         hash_strengthen_box.set_active(0);
 
-        check_runable();
-
-        // Show all widgets except the progress indicator
-        this.show_all();
-        progress_indicator.hide();
+        refresh_widgets();
     }
 
-    private void open_file_chooser() {
+    private void on_mode_change() {
+        refresh_widgets();
+    }
+
+    private void on_mode_button_select() {
+        if (mode_selector1.get_active()) {
+            this.mode = Mode.READY_ENCRYPT;
+        } else {
+            this.mode = Mode.READY_DECRYPT;
+        }
+    }
+
+    private void on_file_text_input() {
+        refresh_widgets();
+    }
+
+    private void on_file_chooser_button() {
+        // Open file chooser
         Gtk.FileChooserNative file_chooser = new Gtk.FileChooserNative(
             "Open File",
             this,
@@ -373,68 +465,15 @@ public class MainWindow : Gtk.Window {
             dgettext("gtk30", "_Cancel")
         );
 
+        // Set content of text field to selected file
         if (file_chooser.run() == Gtk.ResponseType.ACCEPT) {
-            string filepath = file_chooser.get_filename();
-
-            //Abort if file doesn't exists
-            if (!FileUtils.test(filepath, FileTest.EXISTS)) {
-                return;
-            }
-
-            //set cmd_file_path to selected file
-            set_file(filepath);
-
-            //set textFieldText to selected file
-            string filename = Filename.display_basename(filepath);
-            open_text_field.set_text(filename);
+            file_text_field.set_text(file_chooser.get_filename());
         }
 
         file_chooser.destroy();
     }
 
-    private void set_file(string str) {
-        cmd_file_path = str;
-        check_runable();
-    }
-
-    private void set_encrypt() {
-        selected_operation = GPGOperationType.ENCRYPT;
-
-        //Change sensitivity of some widgets
-        pwlabel2.set_sensitive(true);
-        pwfield2.set_sensitive(true);
-        crypto_label.set_sensitive(true);
-        crypto_box.set_sensitive(true);
-        hash_label.set_sensitive(true);
-        hash_box.set_sensitive(true);
-        hash_strengthen_label.set_sensitive(true);
-        hash_strengthen_box.set_sensitive(true);
-
-        check_runable();
-    }
-
-    private void set_decrypt() {
-        selected_operation = GPGOperationType.DECRYPT;
-
-        // Change sensitivity of some widgets
-        pwlabel2.set_sensitive(false);
-        pwfield2.set_sensitive(false);
-        crypto_label.set_sensitive(false);
-        crypto_box.set_sensitive(false);
-        hash_label.set_sensitive(false);
-        hash_box.set_sensitive(false);
-        hash_strengthen_label.set_sensitive(false);
-        hash_strengthen_box.set_sensitive(false);
-
-        check_runable();
-    }
-
-    private void set_hash_strengthen() {
-        cmd_hash_strengthen = hash_strengthen_values[hash_strengthen_box.get_active()];
-        check_runable();
-    }
-
-    private void on_pw_change() {
+    private void on_pw_input() {
         const string pw_warning = "Passwords do not match";
 
         // If both password entries don't have same content
@@ -452,118 +491,135 @@ public class MainWindow : Gtk.Window {
                 null);
         }
 
-        check_runable();
+        refresh_widgets();
     }
 
-    private void set_mode_running() {
-        progress_indicator.show_all();
+    /**
+     * Set sensitivity of all window widgets depending on mode
+     * and other variables.
+     */
+    private void refresh_widgets() {
+        if (this.mode == Mode.READY_ENCRYPT) {
+            progress_indicator.hide();
 
-        mode_selector1.set_sensitive(false);
-        mode_selector2.set_sensitive(false);
+            mode_selector1.set_sensitive(true);
+            mode_selector2.set_sensitive(true);
 
-        open_text_field.set_sensitive(false);
-        crypto_label.set_sensitive(false);
-        crypto_box.set_sensitive(false);
-        hash_label.set_sensitive(false);
-        hash_box.set_sensitive(false);
-        hash_strengthen_label.set_sensitive(false);
-        hash_strengthen_box.set_sensitive(false);
+            file_text_field.set_sensitive(true);
+            crypto_label.set_sensitive(true);
+            crypto_box.set_sensitive(true);
+            hash_label.set_sensitive(true);
+            hash_box.set_sensitive(true);
+            hash_strengthen_label.set_sensitive(true);
+            hash_strengthen_box.set_sensitive(true);
 
-        pwlabel1.set_sensitive(false);
-        pwfield1.set_sensitive(false);
-        pwlabel2.set_sensitive(false);
-        pwfield2.set_sensitive(false);
+            pwlabel1.set_sensitive(true);
+            pwfield1.set_sensitive(true);
+            pwlabel2.set_sensitive(true);
+            pwfield2.set_sensitive(true);
+        } else if (this.mode == Mode.READY_DECRYPT) {
+            progress_indicator.hide();
 
-        run_button.set_sensitive(false);
-    }
+            mode_selector1.set_sensitive(true);
+            mode_selector2.set_sensitive(true);
 
-    private void set_mode_ready() {
-        progress_indicator.hide();
+            file_text_field.set_sensitive(true);
+            crypto_label.set_sensitive(false);
+            crypto_box.set_sensitive(false);
+            hash_label.set_sensitive(false);
+            hash_box.set_sensitive(false);
+            hash_strengthen_label.set_sensitive(false);
+            hash_strengthen_box.set_sensitive(false);
 
-        mode_selector1.set_sensitive(true);
-        mode_selector2.set_sensitive(true);
-
-        open_text_field.set_sensitive(true);
-        crypto_label.set_sensitive(true);
-        crypto_box.set_sensitive(true);
-        hash_label.set_sensitive(true);
-        hash_box.set_sensitive(true);
-        hash_strengthen_label.set_sensitive(true);
-        hash_strengthen_box.set_sensitive(true);
-
-        pwlabel1.set_sensitive(true);
-        pwfield1.set_sensitive(true);
-        pwlabel2.set_sensitive(true);
-        pwfield2.set_sensitive(true);
-
-        run_button.set_sensitive(true);
-
-        if (mode_selector1.get_active()) {
-            set_encrypt();
+            pwlabel1.set_sensitive(true);
+            pwfield1.set_sensitive(true);
+            pwlabel2.set_sensitive(false);
+            pwfield2.set_sensitive(false);
         } else {
-            set_decrypt();
+            progress_indicator.show_all();
+
+            mode_selector1.set_sensitive(false);
+            mode_selector2.set_sensitive(false);
+
+            file_text_field.set_sensitive(false);
+            crypto_label.set_sensitive(false);
+            crypto_box.set_sensitive(false);
+            hash_label.set_sensitive(false);
+            hash_box.set_sensitive(false);
+            hash_strengthen_label.set_sensitive(false);
+            hash_strengthen_box.set_sensitive(false);
+
+            pwlabel1.set_sensitive(false);
+            pwfield1.set_sensitive(false);
+            pwlabel2.set_sensitive(false);
+            pwfield2.set_sensitive(false);
         }
+
+        run_button.set_sensitive(check_runable());
     }
 
-    private void check_runable() {
-        bool runable = true;
-
-        //Check if everything is ok, otherwise set runable to false
-        if (selected_operation == GPGOperationType.ENCRYPT) {
-            if (cmd_file_path == null || cmd_file_path == "") {
-                runable = false;
-            } else if (pwfield1.get_text() == "") {
-                runable = false;
-            } else if (pwfield2.get_text() == "") {
-                runable = false;
-            } else if (pwfield1.get_text() != pwfield2.get_text()) {
-                runable = false;
-            } else if (selected_cipher_algo == null) {
-                runable = false;
-            } else if (selected_digest_algo == null) {
-                runable = false;
-            } else if (cmd_hash_strengthen == null || cmd_hash_strengthen == "") {
-                runable = false;
+    /**
+     * Check whether the run button should be active
+     */
+    private bool check_runable() {
+        if (this.mode  == Mode.READY_ENCRYPT) {
+            if (selected_file == "" || !FileUtils.test(selected_file, FileTest.EXISTS)) {
+                return false;
             }
-        } else if (selected_operation == GPGOperationType.DECRYPT) {
-            if (cmd_file_path == null || cmd_file_path == "") {
-                runable = false;
-            } else if (pwfield1.get_text() == "") {
-                runable = false;
+            if (pwfield1.get_text() == "") {
+                return false;
             }
-        }
-
-        // Enable or disable the run button
-        if (runable == false) {
-            run_button.set_sensitive(false);
+            if (pwfield2.get_text() == "") {
+                return false;
+            }
+            if (pwfield1.get_text() != pwfield2.get_text()) {
+                return false;
+            }
+            if (selected_cipher_algo == null) {
+                return false;
+            }
+            if (selected_digest_algo == null) {
+                return false;
+            }
+            if (selected_hash_strengthen == null) {
+                return false;
+            }
+        } else if (this.mode == Mode.READY_DECRYPT) {
+            if (selected_file == "" || !FileUtils.test(selected_file, FileTest.EXISTS)) {
+                return false;
+            }
+            if (pwfield1.get_text() == "") {
+                return false;
+            }
         } else {
-            run_button.set_sensitive(true);
+            return false;
         }
+
+        return true;
     }
 
-    private void run() {
+    private void on_run_button() {
         // Show progress indicator for child process
-        set_mode_running();
         GPGProcess process;
 
         // Spawn child process
-        if (selected_operation == GPGOperationType.ENCRYPT) {
-            string input_file = cmd_file_path;
+        if (this.mode == Mode.READY_ENCRYPT) {
+            string input_file = selected_file;
 
             process = this.gpg_handler.encrypt(
                 pwfield1.get_text(),
                 input_file,
                 selected_cipher_algo,
                 selected_digest_algo,
-                cmd_hash_strengthen == "maximum");
-        } else {
+                selected_hash_strengthen == "maximum");
+        } else if (this.mode == Mode.READY_DECRYPT) {
             // Output file will be named like the input file but
             // with .gpg removed if it ends with .gpg input
             // _DECRYPTED will be added as suffix:
             //  - encryptedfile       => encryptedfile_DECRYPTED
             //  - secretphoto.jpg.gpg => secretphoto.jpg
 
-            string input_file = cmd_file_path;
+            string input_file = selected_file;
             string output_file;
             if (input_file.length > 4 &&
             input_file.slice(-4, input_file.length) == ".gpg") {
@@ -576,9 +632,14 @@ public class MainWindow : Gtk.Window {
                 pwfield1.get_text(),
                 input_file,
                 output_file);
+        } else {
+            // No valid mode selected - error
+            stderr.printf("Error: Unknown mode (encrypt/decrypt) selected\n");
+            return;
         }
 
         // Show progress of child process
         this.progress_indicator.set_process(process);
+        this.mode = Mode.RUNNING;
     }
 }
