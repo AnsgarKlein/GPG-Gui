@@ -136,17 +136,16 @@ public class MainWindow : Gtk.Window {
     private Gtk.RadioButton mode_selector2;
 
     private Gtk.Entry file_text_field;
+    private Gtk.Label pwlabel1;
+    private Gtk.Entry pwfield1;
+    private Gtk.Label pwlabel2;
+    private Gtk.Entry pwfield2;
     private Gtk.Label crypto_label;
     private Gtk.ComboBoxText crypto_box;
     private Gtk.Label hash_label;
     private Gtk.ComboBoxText hash_box;
     private Gtk.Label hash_strengthen_label;
     private Gtk.CheckButton hash_strengthen_button;
-
-    private Gtk.Label pwlabel1;
-    private Gtk.Entry pwfield1;
-    private Gtk.Label pwlabel2;
-    private Gtk.Entry pwfield2;
 
     private Gtk.Button run_button;
 
@@ -522,12 +521,14 @@ public class MainWindow : Gtk.Window {
      */
     private void refresh_widgets() {
         if (this.mode == Mode.READY_ENCRYPT) {
-            progress_indicator.hide();
-
             mode_selector1.set_sensitive(true);
             mode_selector2.set_sensitive(true);
 
             file_text_field.set_sensitive(true);
+            pwlabel1.set_sensitive(true);
+            pwfield1.set_sensitive(true);
+            pwlabel2.set_sensitive(true);
+            pwfield2.set_sensitive(true);
             crypto_label.set_sensitive(true);
             crypto_box.set_sensitive(true);
             hash_label.set_sensitive(true);
@@ -535,35 +536,16 @@ public class MainWindow : Gtk.Window {
             hash_strengthen_label.set_sensitive(true);
             hash_strengthen_button.set_sensitive(true);
 
-            pwlabel1.set_sensitive(true);
-            pwfield1.set_sensitive(true);
-            pwlabel2.set_sensitive(true);
-            pwfield2.set_sensitive(true);
-        } else if (this.mode == Mode.READY_DECRYPT) {
             progress_indicator.hide();
-
+        } else if (this.mode == Mode.READY_DECRYPT) {
             mode_selector1.set_sensitive(true);
             mode_selector2.set_sensitive(true);
 
             file_text_field.set_sensitive(true);
-            crypto_label.set_sensitive(false);
-            crypto_box.set_sensitive(false);
-            hash_label.set_sensitive(false);
-            hash_box.set_sensitive(false);
-            hash_strengthen_label.set_sensitive(false);
-            hash_strengthen_button.set_sensitive(false);
-
             pwlabel1.set_sensitive(true);
             pwfield1.set_sensitive(true);
             pwlabel2.set_sensitive(false);
             pwfield2.set_sensitive(false);
-        } else {
-            progress_indicator.show_all();
-
-            mode_selector1.set_sensitive(false);
-            mode_selector2.set_sensitive(false);
-
-            file_text_field.set_sensitive(false);
             crypto_label.set_sensitive(false);
             crypto_box.set_sensitive(false);
             hash_label.set_sensitive(false);
@@ -571,10 +553,24 @@ public class MainWindow : Gtk.Window {
             hash_strengthen_label.set_sensitive(false);
             hash_strengthen_button.set_sensitive(false);
 
+            progress_indicator.hide();
+        } else {
+            mode_selector1.set_sensitive(false);
+            mode_selector2.set_sensitive(false);
+
+            file_text_field.set_sensitive(false);
             pwlabel1.set_sensitive(false);
             pwfield1.set_sensitive(false);
             pwlabel2.set_sensitive(false);
             pwfield2.set_sensitive(false);
+            crypto_label.set_sensitive(false);
+            crypto_box.set_sensitive(false);
+            hash_label.set_sensitive(false);
+            hash_box.set_sensitive(false);
+            hash_strengthen_label.set_sensitive(false);
+            hash_strengthen_button.set_sensitive(false);
+
+            progress_indicator.show_all();
         }
 
         run_button.set_sensitive(check_runable());
