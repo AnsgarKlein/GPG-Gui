@@ -135,6 +135,7 @@ public class MainWindow : Gtk.Window {
     private Gtk.RadioButton mode_selector1;
     private Gtk.RadioButton mode_selector2;
 
+    private Gtk.Label file_label;
     private Gtk.Entry file_text_field;
     private Gtk.Label pwlabel1;
     private Gtk.Entry pwfield1;
@@ -253,7 +254,7 @@ public class MainWindow : Gtk.Window {
 
 
         // File chooser
-        Gtk.Label file_label = new Gtk.Label("File:");
+        file_label = new Gtk.Label("File:");
         file_label.set_xalign(1);
         file_label.set_yalign((float)0.5);
         file_label.set_hexpand(true);
@@ -524,6 +525,7 @@ public class MainWindow : Gtk.Window {
             mode_selector1.set_sensitive(true);
             mode_selector2.set_sensitive(true);
 
+            file_label.set_sensitive(true);
             file_text_field.set_sensitive(true);
             pwlabel1.set_sensitive(true);
             pwfield1.set_sensitive(true);
@@ -541,6 +543,7 @@ public class MainWindow : Gtk.Window {
             mode_selector1.set_sensitive(true);
             mode_selector2.set_sensitive(true);
 
+            file_label.set_sensitive(true);
             file_text_field.set_sensitive(true);
             pwlabel1.set_sensitive(true);
             pwfield1.set_sensitive(true);
@@ -558,6 +561,7 @@ public class MainWindow : Gtk.Window {
             mode_selector1.set_sensitive(false);
             mode_selector2.set_sensitive(false);
 
+            file_label.set_sensitive(false);
             file_text_field.set_sensitive(false);
             pwlabel1.set_sensitive(false);
             pwfield1.set_sensitive(false);
