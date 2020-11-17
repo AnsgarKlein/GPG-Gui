@@ -76,22 +76,16 @@ public class MainWindow : Gtk.Window {
     }
 
     /**
-     * The currently selected hash strengthen value or null if no
-     * hash strengthen value has been selected.
+     * The currently selected hash strengthen selection or false if no
+     * selection can be determined.
      */
-    private string? selected_hash_strengthen {
+    private bool selected_hash_strengthen {
         get {
-            if (hash_strengthen_box == null) {
-                return null;
+            if (hash_strengthen_button == null) {
+                return false;
             }
 
-            int selection = hash_strengthen_box.get_active();
-            if (selection < 0 || selection > hash_strengthen_values.length - 1) {
-                // Selection out of scope
-                return null;
-            }
-
-            return hash_strengthen_values[selection];
+            return hash_strengthen_button.get_active();
         }
     }
 
@@ -112,11 +106,6 @@ public class MainWindow : Gtk.Window {
             return gpg_handler.get_digest_algos();
         }
     }
-
-    /**
-     * Array of all possible hash strengthen values
-     */
-    private const string[] hash_strengthen_values = { "normal", "maximum" };
 
     /**
      * Handler representing all gpg functionality
@@ -152,7 +141,7 @@ public class MainWindow : Gtk.Window {
     private Gtk.Label hash_label;
     private Gtk.ComboBoxText hash_box;
     private Gtk.Label hash_strengthen_label;
-    private Gtk.ComboBoxText hash_strengthen_box;
+    private Gtk.CheckButton hash_strengthen_button;
 
     private Gtk.Label pwlabel1;
     private Gtk.Entry pwfield1;
@@ -382,27 +371,24 @@ public class MainWindow : Gtk.Window {
         main_grid.attach_next_to(hash_box, hash_label, Gtk.PositionType.RIGHT);
 
 
-        // Hash strengthen selection
+        // Hash strengthen button
         hash_strengthen_label = new Gtk.Label("Hash Strengthen:");
         hash_strengthen_label.set_xalign(1);
         hash_strengthen_label.set_yalign((float)0.5);
         hash_strengthen_label.set_tooltip_text(
-            "'normal' is faster, 'maximum' is stronger.");
+            "Strengthening increases security but increases encryption time");
         hash_strengthen_label.set_hexpand(true);
         hash_strengthen_label.set_vexpand(true);
         main_grid.add(hash_strengthen_label);
 
-        hash_strengthen_box = new Gtk.ComboBoxText();
-        hash_strengthen_box.set_tooltip_text(
-            "'normal' is faster, 'maximum' is stronger.");
-        hash_strengthen_box.changed.connect(refresh_widgets);
-        foreach (string str in hash_strengthen_values) {
-            hash_strengthen_box.append_text(str);
-        }
-        hash_strengthen_box.set_hexpand(true);
-        hash_strengthen_box.set_vexpand(true);
+        hash_strengthen_button = new Gtk.CheckButton();
+        hash_strengthen_button.set_tooltip_text(
+            "Strengthening increases security but increases encryption time");
+        hash_strengthen_button.toggled.connect(refresh_widgets);
+        hash_strengthen_button.set_hexpand(true);
+        hash_strengthen_button.set_vexpand(true);
         main_grid.attach_next_to(
-            hash_strengthen_box,
+            hash_strengthen_button,
             hash_strengthen_label,
             Gtk.PositionType.RIGHT);
 
@@ -419,7 +405,7 @@ public class MainWindow : Gtk.Window {
         run_button.set_vexpand(true);
         main_grid.attach_next_to(
             run_button,
-            hash_strengthen_box,
+            hash_strengthen_button,
             Gtk.PositionType.BOTTOM);
 
 
@@ -469,8 +455,8 @@ public class MainWindow : Gtk.Window {
             }
         }
 
-        // Set 'normal' as default
-        hash_strengthen_box.set_active(0);
+        // Disable hash strengthening per default
+        hash_strengthen_button.set_active(false);
 
         refresh_widgets();
     }
@@ -547,7 +533,7 @@ public class MainWindow : Gtk.Window {
             hash_label.set_sensitive(true);
             hash_box.set_sensitive(true);
             hash_strengthen_label.set_sensitive(true);
-            hash_strengthen_box.set_sensitive(true);
+            hash_strengthen_button.set_sensitive(true);
 
             pwlabel1.set_sensitive(true);
             pwfield1.set_sensitive(true);
@@ -565,7 +551,7 @@ public class MainWindow : Gtk.Window {
             hash_label.set_sensitive(false);
             hash_box.set_sensitive(false);
             hash_strengthen_label.set_sensitive(false);
-            hash_strengthen_box.set_sensitive(false);
+            hash_strengthen_button.set_sensitive(false);
 
             pwlabel1.set_sensitive(true);
             pwfield1.set_sensitive(true);
@@ -583,7 +569,7 @@ public class MainWindow : Gtk.Window {
             hash_label.set_sensitive(false);
             hash_box.set_sensitive(false);
             hash_strengthen_label.set_sensitive(false);
-            hash_strengthen_box.set_sensitive(false);
+            hash_strengthen_button.set_sensitive(false);
 
             pwlabel1.set_sensitive(false);
             pwfield1.set_sensitive(false);
@@ -617,9 +603,6 @@ public class MainWindow : Gtk.Window {
             if (selected_digest_algo == null) {
                 return false;
             }
-            if (selected_hash_strengthen == null) {
-                return false;
-            }
         } else if (this.mode == Mode.READY_DECRYPT) {
             if (selected_file == "" || !FileUtils.test(selected_file, FileTest.EXISTS)) {
                 return false;
@@ -647,7 +630,7 @@ public class MainWindow : Gtk.Window {
                 input_file,
                 selected_cipher_algo,
                 selected_digest_algo,
-                selected_hash_strengthen == "maximum");
+                selected_hash_strengthen);
         } else if (this.mode == Mode.READY_DECRYPT) {
             // Output file will be named like the input file but
             // with .gpg removed if it ends with .gpg input
