@@ -227,6 +227,9 @@ public class GPGHandler : Object {
         return this.digest_algos;
     }
 
+    /**
+     * Start GPG process for encrypting a given file
+     */
     public GPGProcess encrypt(
             string passphrase,
             string input_file,
@@ -278,45 +281,12 @@ public class GPGHandler : Object {
         args.append_val(input_file);
 
         // Start encryption
-        GPGProcess process = new GPGProcess(args.data, passphrase);
-
-        process.state_changed.connect(() => {
-            if (process.get_state() != GPGProcess.State.FINISHED) {
-                return;
-            }
-
-            // Print stdout
-            {
-                string[] out_lines = process.get_stdout().split("\n");
-                for (int i = 0; i < out_lines.length; i++) {
-                    string line = out_lines[i];
-                    if (i + 1 != out_lines.length || line != "") {
-                        stdout.printf("stdout: %s\n", line);
-                    }
-                }
-            }
-
-            // Print stderr
-            {
-                string[] err_lines = process.get_stderr().split("\n");
-                for (int i = 0; i < err_lines.length; i++) {
-                    string line = err_lines[i];
-                    if (i + 1 != err_lines.length || line != "") {
-                        stdout.printf("stderr: %s\n", line);
-                    }
-                }
-            }
-
-            if (process.get_success()) {
-                stdout.printf("GPG: Success\n");
-            } else {
-                stdout.printf("GPG: Failure\n");
-            }
-        });
-
-        return process;
+        return start_process(args.data, passphrase);
     }
 
+    /**
+     * Start GPG process for decrypting a given file
+     */
     public GPGProcess decrypt(
             string passphrase,
             string input_file,
@@ -334,7 +304,16 @@ public class GPGHandler : Object {
         args.append_val(input_file);
 
         // Start decryption
-        GPGProcess process = new GPGProcess(args.data, passphrase);
+        return start_process(args.data, passphrase);
+    }
+
+    /**
+     * Helper function for encrypt / decrypt functions that creates a
+     * GPG process with given arguments.
+     */
+    private inline GPGProcess start_process(string[] args, string passphrase) {
+        // Start process
+        GPGProcess process = new GPGProcess(args, passphrase);
 
         process.state_changed.connect(() => {
             if (process.get_state() != GPGProcess.State.FINISHED) {
