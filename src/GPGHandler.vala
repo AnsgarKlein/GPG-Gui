@@ -286,13 +286,25 @@ public class GPGHandler : Object {
             }
 
             // Print stdout
-            foreach (string line in process.get_stdout().split("\n")) {
-                stdout.printf("stdout: %s\n", line);
+            {
+                string[] out_lines = process.get_stdout().split("\n");
+                for (int i = 0; i < out_lines.length; i++) {
+                    string line = out_lines[i];
+                    if (i + 1 != out_lines.length || line != "") {
+                        stdout.printf("stdout: %s\n", line);
+                    }
+                }
             }
 
             // Print stderr
-            foreach (string line in process.get_stderr().split("\n")) {
-                stdout.printf("stderr: %s\n", line);
+            {
+                string[] err_lines = process.get_stderr().split("\n");
+                for (int i = 0; i < err_lines.length; i++) {
+                    string line = err_lines[i];
+                    if (i + 1 != err_lines.length || line != "") {
+                        stdout.printf("stderr: %s\n", line);
+                    }
+                }
             }
 
             if (process.get_success()) {
@@ -330,13 +342,25 @@ public class GPGHandler : Object {
             }
 
             // Print stdout
-            foreach (string line in process.get_stdout().split("\n")) {
-                stdout.printf("stdout: %s\n", line);
+            {
+                string[] out_lines = process.get_stdout().split("\n");
+                for (int i = 0; i < out_lines.length; i++) {
+                    string line = out_lines[i];
+                    if (i + 1 != out_lines.length || line != "") {
+                        stdout.printf("stdout: %s\n", line);
+                    }
+                }
             }
 
             // Print stderr
-            foreach (string line in process.get_stderr().split("\n")) {
-                stdout.printf("stderr: %s\n", line);
+            {
+                string[] err_lines = process.get_stderr().split("\n");
+                for (int i = 0; i < err_lines.length; i++) {
+                    string line = err_lines[i];
+                    if (i + 1 != err_lines.length || line != "") {
+                        stdout.printf("stderr: %s\n", line);
+                    }
+                }
             }
 
             if (process.get_success()) {
