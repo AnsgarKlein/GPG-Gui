@@ -232,7 +232,8 @@ public class GPGHandler : Object {
             string input_file,
             string? cipher_algo,
             string? digest_algo,
-            bool digest_strengthen) {
+            bool digest_strengthen,
+            bool compress) {
 
         Array<string> args = new Array<string>();
         args.append_val(this.path);
@@ -263,6 +264,14 @@ public class GPGHandler : Object {
         if (cipher_algo != null) {
             args.append_val("--cipher-algo");
             args.append_val(cipher_algo);
+        }
+
+        // Instruct to compress if desired
+        if (compress) {
+            args.append_val("--compress-level");
+            args.append_val("9");
+            args.append_val("--compress-algo");
+            args.append_val("zip");
         }
 
         // Specify input file

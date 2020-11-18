@@ -90,6 +90,20 @@ public class MainWindow : Gtk.Window {
     }
 
     /**
+     * The currently selected compression selection or false if no
+     * selection can be determined.
+     */
+    private bool selected_compression {
+        get {
+            if (compression_button == null) {
+                return false;
+            }
+
+            return compression_button.get_active();
+        }
+    }
+
+    /**
      * Array of all available cipher algos
      */
     private string[] cipher_algos {
@@ -147,6 +161,8 @@ public class MainWindow : Gtk.Window {
     private Gtk.ComboBoxText hash_box;
     private Gtk.Label hash_strengthen_label;
     private Gtk.CheckButton hash_strengthen_button;
+    private Gtk.Label compression_label;
+    private Gtk.CheckButton compression_button;
 
     private Gtk.Button run_button;
 
@@ -393,6 +409,24 @@ public class MainWindow : Gtk.Window {
             Gtk.PositionType.RIGHT);
 
 
+        // Compression button
+        compression_label = new Gtk.Label("Compress:");
+        compression_label.set_xalign(1);
+        compression_label.set_yalign((float)0.5);
+        compression_label.set_hexpand(true);
+        compression_label.set_vexpand(true);
+        main_grid.add(compression_label);
+
+        compression_button = new Gtk.CheckButton();
+        compression_button.toggled.connect(refresh_widgets);
+        compression_button.set_hexpand(true);
+        compression_button.set_vexpand(true);
+        main_grid.attach_next_to(
+            compression_button,
+            compression_label,
+            Gtk.PositionType.RIGHT);
+
+
         // Run button
         Gtk.Image run_button_image = new Gtk.Image.from_icon_name(
             "system-run",
@@ -405,7 +439,7 @@ public class MainWindow : Gtk.Window {
         run_button.set_vexpand(true);
         main_grid.attach_next_to(
             run_button,
-            hash_strengthen_button,
+            compression_button,
             Gtk.PositionType.BOTTOM);
 
 
@@ -537,6 +571,8 @@ public class MainWindow : Gtk.Window {
             hash_box.set_sensitive(true);
             hash_strengthen_label.set_sensitive(true);
             hash_strengthen_button.set_sensitive(true);
+            compression_label.set_sensitive(true);
+            compression_button.set_sensitive(true);
 
             progress_indicator.hide();
         } else if (this.mode == Mode.READY_DECRYPT) {
@@ -555,6 +591,8 @@ public class MainWindow : Gtk.Window {
             hash_box.set_sensitive(false);
             hash_strengthen_label.set_sensitive(false);
             hash_strengthen_button.set_sensitive(false);
+            compression_label.set_sensitive(false);
+            compression_button.set_sensitive(false);
 
             progress_indicator.hide();
         } else {
@@ -573,6 +611,8 @@ public class MainWindow : Gtk.Window {
             hash_box.set_sensitive(false);
             hash_strengthen_label.set_sensitive(false);
             hash_strengthen_button.set_sensitive(false);
+            compression_label.set_sensitive(false);
+            compression_button.set_sensitive(false);
 
             progress_indicator.show_all();
         }
@@ -630,7 +670,8 @@ public class MainWindow : Gtk.Window {
                 input_file,
                 selected_cipher_algo,
                 selected_digest_algo,
-                selected_hash_strengthen);
+                selected_hash_strengthen,
+                selected_compression);
         } else if (this.mode == Mode.READY_DECRYPT) {
             // Output file will be named like the input file but
             // with .gpg removed if it ends with .gpg input
