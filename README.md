@@ -22,15 +22,6 @@ Symmetric encryption is used: a password, not a private key file.
 The GPG cipher, hash algorithm, and hash strengthening can be changed in the GUI.
 
 
-## OS Support
-
-+ Linux
-
-+ Windows  
-  Not tested. If you can get all requirements to work (vala, gtk, ...)
-  it should work too.
-
-
 ## Requirements
 
 + GPG  
