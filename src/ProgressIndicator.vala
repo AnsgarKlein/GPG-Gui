@@ -58,9 +58,7 @@ public class ProgressIndicator : Gtk.Box {
             dgettext("gtk30", "_Cancel"));
         abort_button.set_image(abort_button_image);
         abort_button.set_image_position(Gtk.PositionType.LEFT);
-        abort_button.clicked.connect( () => {
-            stderr.printf("Aborting action not currently implemented\n");
-        });
+        abort_button.clicked.connect(on_abort_button);
         this.add(abort_button);
     }
 
@@ -89,5 +87,11 @@ public class ProgressIndicator : Gtk.Box {
                 return Source.CONTINUE;
             }
         });
+    }
+
+    private void on_abort_button() {
+        if (gpg_process != null) {
+            gpg_process.stop();
+        }
     }
 }

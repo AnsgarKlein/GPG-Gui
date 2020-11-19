@@ -28,6 +28,12 @@ public class GPGProcess {
     private State state = State.STARTING;
 
     /**
+     * PID of the child process if started or stopped.
+     * -1 if not yet started.
+     */
+    private int process_pid = -1;
+
+    /**
      * The current stdout output of the child process.
      * Access with get_stdout()
      */
@@ -143,6 +149,15 @@ public class GPGProcess {
     }
 
     /**
+     * Send SIGINT signal to child process telling it to stop.
+     */
+    public void stop() {
+        if (process_pid > 0) {
+            Posix.kill(process_pid, Posix.Signal.INT);
+        }
+    }
+
+    /**
      * Returns whether the process finished successfully or with errors.
      * Only meaningful output when process is in finished state.
      */
@@ -160,7 +175,6 @@ public class GPGProcess {
 
     private void start(string[] args, string passphrase) {
         // Start gpg process
-        int process_pid;
         int stdin_fd;
         int stdout_fd;
         int stderr_fd;
