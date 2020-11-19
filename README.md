@@ -1,4 +1,3 @@
-
 # GPG-Gui
 
 ### GUI interface for GnuPG (GPG) file encryption.
@@ -12,37 +11,47 @@
 ## Purpose
 
 A simple GUI frontend that interacts with the GPG application to encrypt and
-decrypt files.
+decrypt files symmetrically (using passwords not private / public keys).
 
 The GUI provides a convenient way to use GPG, rather than through the terminal,
-along with encryption-strengthening switches.
-
-Symmetric encryption is used: a password, not a private key file.
-
-The GPG cipher, hash algorithm, and hash strengthening can be changed in the GUI.
+making it usable for unexperienced users.
 
 
 ## Requirements
 
-+ GPG  
-  (just the gpg binary)
-  
+### Requirements at runtime
+
++ GnuPG  
+  (Just the `gpg` or `gpg2` binary)
 + GTK+ 3  
-  (Probably already installed on your linux machine)
+  (Very likely already installed in your favourite Linux distribution)
 
 
-## Build Requirements
+### Build requirements
 
-+ Vala Compiler (valac)
-
-+ GTK+ 3  
-  (including its development files)
++ Vala Compiler (*valac*)  
+  Likely available in your distributions repositories
++ [Meson](https://mesonbuild.com) build system (probably with
+  [Ninja](https://ninja-build.org) backend)  
+  Likely available in your distributions repositories
++ C Compiler  
+  *Clang* or *gcc* are tested. Probably best to install your distributions
+  development *meta package* / *bundle* / *group*.
++ GTK+ 3
+  - Its header files  
+    (Probably installable via a *-dev* or *-devel* package in your distro)
+  - Its vala `.vapi` file  
+    (Either included with vala compiler or GTK+ 3 development package)
++ GLib, GObject
+  - Their header files
+  - Their vala `.vapi` files
+  - They are a dependency of GTK+ 3 and will probably be installed
+    automatically when installing development package for GTK+ 3
 
 
 ## Build
 
-gpg-gui builds out-of-tree with [Meson](https://mesonbuild.com)
-and [Ninja](https://ninja-build.org):
+gpg-gui builds out-of-tree with Meson and Ninja:
 
 ```bash
     meson setup build
