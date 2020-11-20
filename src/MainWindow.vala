@@ -188,6 +188,10 @@ public class MainWindow : Gtk.Window {
         this.mode_changed.connect(on_mode_change);
     }
 
+    /**
+     * Function sets up correct application icon.
+     * Function is called everytime icon theme changes.
+     */
     private void set_application_icon() {
         const string[] PREFERRED_ICON_NAMES = {
             "gdu-encrypted-lock",
@@ -238,6 +242,9 @@ public class MainWindow : Gtk.Window {
         }
     }
 
+    /**
+     * Helper function for constructor that creates the GTK interface
+     */
     private void build_gui() {
         // Set up main grid
         Gtk.Grid main_grid = new Gtk.Grid();
