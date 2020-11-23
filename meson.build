@@ -2,6 +2,7 @@ project('GPG-Gui', 'vala', 'c')
 
 sources = files([
     'src/GPGHandler.vala',
+    'src/GPGOperation.vala',
     'src/GPGProcess.vala',
     'src/Helper.vala',
     'src/Main.vala',

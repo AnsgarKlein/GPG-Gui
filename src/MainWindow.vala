@@ -15,10 +15,38 @@
 
 public class MainWindow : Gtk.Window {
 
-    private enum Mode {
-        READY_ENCRYPT,
-        READY_DECRYPT,
-        RUNNING,
+    /**
+     * Current state of this window
+     */
+    private State _window_state;
+    private State window_state {
+        set {
+            _window_state = value;
+            window_state_changed();
+        }
+        get {
+            return _window_state;
+        }
+    }
+
+    /**
+     * Currently selected gpg operation
+     */
+    private GPGOperation _selected_operation;
+    private GPGOperation selected_operation {
+        set {
+            _selected_operation = value;
+
+            if (value == GPGOperation.ENCRYPT && operation_selector1 != null) {
+                operation_selector1.set_active(true);
+            } else if (value == GPGOperation.DECRYPT && operation_selector2 != null) {
+                operation_selector2.set_active(true);
+            }
+            operation_changed();
+        }
+        get {
+            return _selected_operation;
+        }
     }
 
     /**
@@ -104,6 +132,14 @@ public class MainWindow : Gtk.Window {
     }
 
     /**
+     * Possible states this window can be in
+     */
+    private enum State {
+        READY,
+        RUNNING,
+    }
+
+    /**
      * Array of all available cipher algos
      */
     private string[] cipher_algos {
@@ -127,27 +163,18 @@ public class MainWindow : Gtk.Window {
     private GPGHandler gpg_handler;
 
     /**
-     * Currently active mode of this application
+     * Signal is emitted when window state changes
      */
-    private Mode _mode;
-    private Mode mode {
-        set {
-            _mode = value;
-            mode_changed();
-        }
-        get {
-            return _mode;
-        }
-    }
+    private signal void window_state_changed();
 
     /**
-     * Signal is emitted when mode is changed
+     * Signal is emitted when selected operation is changed
      */
-    private signal void mode_changed();
+    private signal void operation_changed();
 
     // Gtk widgets
-    private Gtk.RadioButton mode_selector1;
-    private Gtk.RadioButton mode_selector2;
+    private Gtk.RadioButton operation_selector1;
+    private Gtk.RadioButton operation_selector2;
 
     private Gtk.Label file_label;
     private Gtk.Entry file_text_field;
@@ -185,7 +212,8 @@ public class MainWindow : Gtk.Window {
         build_gui();
         set_defaults();
 
-        this.mode_changed.connect(on_mode_change);
+        this.window_state_changed.connect(on_window_state_changed);
+        this.operation_changed.connect(on_operation_changed);
     }
 
     /**
@@ -255,24 +283,24 @@ public class MainWindow : Gtk.Window {
 
 
         // Encrypt / Decrypt operation buttons
-        mode_selector1 = new Gtk.RadioButton.with_label(
+        operation_selector1 = new Gtk.RadioButton.with_label(
             null,
             "Encrypt");
-        mode_selector2 = new Gtk.RadioButton.with_label_from_widget(
-            mode_selector1,
+        operation_selector2 = new Gtk.RadioButton.with_label_from_widget(
+            operation_selector1,
             "Decrypt");
-        mode_selector1.toggled.connect(on_mode_button_select);
-        mode_selector2.toggled.connect(on_mode_button_select);
+        operation_selector1.toggled.connect(on_operation_button_select);
+        operation_selector2.toggled.connect(on_operation_button_select);
 
-        mode_selector1.set_hexpand(true);
-        mode_selector1.set_vexpand(true);
-        main_grid.add(mode_selector1);
+        operation_selector1.set_hexpand(true);
+        operation_selector1.set_vexpand(true);
+        main_grid.add(operation_selector1);
 
-        mode_selector2.set_hexpand(true);
-        mode_selector2.set_vexpand(true);
+        operation_selector2.set_hexpand(true);
+        operation_selector2.set_vexpand(true);
         main_grid.attach_next_to(
-            mode_selector2,
-            mode_selector1,
+            operation_selector2,
+            operation_selector1,
             Gtk.PositionType.RIGHT);
 
 
@@ -460,12 +488,8 @@ public class MainWindow : Gtk.Window {
             Gtk.PositionType.BOTTOM,
             2, 1);
         progress_indicator.finished.connect( () => {
-            // Set mode to mode selected by buttons
-            if (mode_selector1.get_active()) {
-                this.mode = Mode.READY_ENCRYPT;
-            } else {
-                this.mode = Mode.READY_DECRYPT;
-            }
+            // Return to ready state when gpg process is done
+            this.window_state = State.READY;
         });
 
 
@@ -475,9 +499,8 @@ public class MainWindow : Gtk.Window {
     }
 
     private void set_defaults() {
-        // Select default options
-        mode_selector1.set_active(true);
-        this.mode = Mode.READY_ENCRYPT;
+        // Select default mode
+        this.selected_operation = GPGOperation.ENCRYPT;
 
         // Set TWOFISH cipher as default
         crypto_box.set_active(0);
@@ -502,15 +525,19 @@ public class MainWindow : Gtk.Window {
         refresh_widgets();
     }
 
-    private void on_mode_change() {
+    private void on_operation_changed() {
         refresh_widgets();
     }
 
-    private void on_mode_button_select() {
-        if (mode_selector1.get_active()) {
-            this.mode = Mode.READY_ENCRYPT;
+    private void on_window_state_changed() {
+        refresh_widgets();
+    }
+
+    private void on_operation_button_select() {
+        if (operation_selector1.get_active()) {
+            this.selected_operation = GPGOperation.ENCRYPT;
         } else {
-            this.mode = Mode.READY_DECRYPT;
+            this.selected_operation = GPGOperation.DECRYPT;
         }
     }
 
@@ -558,53 +585,13 @@ public class MainWindow : Gtk.Window {
     }
 
     /**
-     * Set sensitivity of all window widgets depending on mode
-     * and other variables.
+     * Set sensitivity of all window widgets depending on state
+     * and selected operation.
      */
     private void refresh_widgets() {
-        if (this.mode == Mode.READY_ENCRYPT) {
-            mode_selector1.set_sensitive(true);
-            mode_selector2.set_sensitive(true);
-
-            file_label.set_sensitive(true);
-            file_text_field.set_sensitive(true);
-            pwlabel1.set_sensitive(true);
-            pwfield1.set_sensitive(true);
-            pwlabel2.set_sensitive(true);
-            pwfield2.set_sensitive(true);
-            crypto_label.set_sensitive(true);
-            crypto_box.set_sensitive(true);
-            hash_label.set_sensitive(true);
-            hash_box.set_sensitive(true);
-            hash_strengthen_label.set_sensitive(true);
-            hash_strengthen_button.set_sensitive(true);
-            compression_label.set_sensitive(true);
-            compression_button.set_sensitive(true);
-
-            progress_indicator.hide();
-        } else if (this.mode == Mode.READY_DECRYPT) {
-            mode_selector1.set_sensitive(true);
-            mode_selector2.set_sensitive(true);
-
-            file_label.set_sensitive(true);
-            file_text_field.set_sensitive(true);
-            pwlabel1.set_sensitive(true);
-            pwfield1.set_sensitive(true);
-            pwlabel2.set_sensitive(false);
-            pwfield2.set_sensitive(false);
-            crypto_label.set_sensitive(false);
-            crypto_box.set_sensitive(false);
-            hash_label.set_sensitive(false);
-            hash_box.set_sensitive(false);
-            hash_strengthen_label.set_sensitive(false);
-            hash_strengthen_button.set_sensitive(false);
-            compression_label.set_sensitive(false);
-            compression_button.set_sensitive(false);
-
-            progress_indicator.hide();
-        } else {
-            mode_selector1.set_sensitive(false);
-            mode_selector2.set_sensitive(false);
+        if (window_state == RUNNING) {
+            operation_selector1.set_sensitive(false);
+            operation_selector2.set_sensitive(false);
 
             file_label.set_sensitive(false);
             file_text_field.set_sensitive(false);
@@ -622,6 +609,48 @@ public class MainWindow : Gtk.Window {
             compression_button.set_sensitive(false);
 
             progress_indicator.show_all();
+        } else {
+            if (selected_operation == GPGOperation.ENCRYPT) {
+                operation_selector1.set_sensitive(true);
+                operation_selector2.set_sensitive(true);
+
+                file_label.set_sensitive(true);
+                file_text_field.set_sensitive(true);
+                pwlabel1.set_sensitive(true);
+                pwfield1.set_sensitive(true);
+                pwlabel2.set_sensitive(true);
+                pwfield2.set_sensitive(true);
+                crypto_label.set_sensitive(true);
+                crypto_box.set_sensitive(true);
+                hash_label.set_sensitive(true);
+                hash_box.set_sensitive(true);
+                hash_strengthen_label.set_sensitive(true);
+                hash_strengthen_button.set_sensitive(true);
+                compression_label.set_sensitive(true);
+                compression_button.set_sensitive(true);
+
+                progress_indicator.hide();
+            } else if (selected_operation == GPGOperation.DECRYPT) {
+                operation_selector1.set_sensitive(true);
+                operation_selector2.set_sensitive(true);
+
+                file_label.set_sensitive(true);
+                file_text_field.set_sensitive(true);
+                pwlabel1.set_sensitive(true);
+                pwfield1.set_sensitive(true);
+                pwlabel2.set_sensitive(false);
+                pwfield2.set_sensitive(false);
+                crypto_label.set_sensitive(false);
+                crypto_box.set_sensitive(false);
+                hash_label.set_sensitive(false);
+                hash_box.set_sensitive(false);
+                hash_strengthen_label.set_sensitive(false);
+                hash_strengthen_button.set_sensitive(false);
+                compression_label.set_sensitive(false);
+                compression_button.set_sensitive(false);
+
+                progress_indicator.hide();
+            }
         }
 
         run_button.set_sensitive(check_runable());
@@ -631,7 +660,7 @@ public class MainWindow : Gtk.Window {
      * Check whether the run button should be active
      */
     private bool check_runable() {
-        if (this.mode  == Mode.READY_ENCRYPT) {
+        if (selected_operation  == GPGOperation.ENCRYPT) {
             if (selected_file == "" || !FileUtils.test(selected_file, FileTest.EXISTS)) {
                 return false;
             }
@@ -650,7 +679,7 @@ public class MainWindow : Gtk.Window {
             if (selected_digest_algo == null) {
                 return false;
             }
-        } else if (this.mode == Mode.READY_DECRYPT) {
+        } else if (selected_operation == GPGOperation.DECRYPT) {
             if (selected_file == "" || !FileUtils.test(selected_file, FileTest.EXISTS)) {
                 return false;
             }
@@ -669,7 +698,7 @@ public class MainWindow : Gtk.Window {
         GPGProcess process;
 
         // Spawn child process
-        if (this.mode == Mode.READY_ENCRYPT) {
+        if (this.selected_operation == GPGOperation.ENCRYPT) {
             string input_file = selected_file;
 
             process = this.gpg_handler.encrypt(
@@ -679,7 +708,7 @@ public class MainWindow : Gtk.Window {
                 selected_digest_algo,
                 selected_hash_strengthen,
                 selected_compression);
-        } else if (this.mode == Mode.READY_DECRYPT) {
+        } else if (this.selected_operation == GPGOperation.DECRYPT) {
             // Output file will be named like the input file but
             // with .gpg removed if it ends with .gpg input
             // _DECRYPTED will be added as suffix:
@@ -707,6 +736,6 @@ public class MainWindow : Gtk.Window {
 
         // Show progress of child process
         this.progress_indicator.set_process(process);
-        this.mode = Mode.RUNNING;
+        this.window_state = State.RUNNING;
     }
 }
