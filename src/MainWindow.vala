@@ -108,6 +108,11 @@ public class MainWindow : Gtk.Window {
      * selection can be determined.
      */
     private bool selected_hash_strengthen {
+        set {
+            if (hash_strengthen_button != null) {
+                hash_strengthen_button.set_active(value);
+            }
+        }
         get {
             if (hash_strengthen_button == null) {
                 return false;
@@ -122,6 +127,11 @@ public class MainWindow : Gtk.Window {
      * selection can be determined.
      */
     private bool selected_compression {
+        set {
+            if (compression_button != null) {
+                compression_button.set_active(value);
+            }
+        }
         get {
             if (compression_button == null) {
                 return false;
@@ -161,6 +171,35 @@ public class MainWindow : Gtk.Window {
      * Handler representing all gpg functionality
      */
     private GPGHandler gpg_handler;
+
+    /**
+     * Default operation
+     */
+    private const GPGOperation DEFAULT_OPERATION = GPGOperation.ENCRYPT;
+
+    /**
+     * Default cipher algorithm.
+     * This is an array because supported ciphers are gpg version dependant.
+     * Use the first value that is supported by gpg as default.
+     */
+    private const string[] DEFAULT_CIPHER_ALGO = { "TWOFISH", "AES256", "AES" };
+
+    /**
+     * Default digest algorithm.
+     * This is an array because supported digests are gpg version dependant.
+     * Use the first value that is supported by gpg as default.
+     */
+    private const string[] DEFAULT_DIGEST_ALGO = { "SHA256", "SHA1" };
+
+    /**
+     * Default value for hash strengthening
+     */
+    private const bool DEFAULT_HASH_STRENGTHEN = false;
+
+    /**
+     * Default value for gpg compression
+     */
+    private const bool DEFAULT_COMPRESSION = true;
 
     /**
      * Signal is emitted when window state changes
@@ -500,27 +539,45 @@ public class MainWindow : Gtk.Window {
 
     private void set_defaults() {
         // Select default mode
-        this.selected_operation = GPGOperation.ENCRYPT;
+        this.selected_operation = DEFAULT_OPERATION;
 
-        // Set TWOFISH cipher as default
+        // Select the first default algorithm that is supported
         crypto_box.set_active(0);
-        for (int i = 0; i < cipher_algos.length; i++) {
-            if (cipher_algos[i] == "TWOFISH") {
-                crypto_box.set_active(i);
+        foreach (string algo in DEFAULT_CIPHER_ALGO) {
+            bool found_algo = false;
+            for (int i = 0; i < cipher_algos.length; i++) {
+                if (cipher_algos[i] == algo) {
+                    crypto_box.set_active(i);
+                    found_algo = true;
+                    break;
+                }
+            }
+            if (found_algo) {
                 break;
             }
         }
 
-        // Set SHA256 hash as default
+        // Set the first default algorithm that is supported
         hash_box.set_active(0);
-        for (int i = 0; i < digest_algos.length; i++) {
-            if (digest_algos[i] == "SHA256") {
-                hash_box.set_active(i);
+        foreach (string algo in DEFAULT_DIGEST_ALGO) {
+            bool found_algo = false;
+            for (int i = 0; i < digest_algos.length; i++) {
+                if (digest_algos[i] == algo) {
+                    hash_box.set_active(i);
+                    found_algo = true;
+                    break;
+                }
+            }
+            if (found_algo) {
+                break;
             }
         }
 
-        // Disable hash strengthening per default
-        hash_strengthen_button.set_active(false);
+        // Set default value for hash strengthening
+        selected_hash_strengthen = DEFAULT_HASH_STRENGTHEN;
+
+        // Set default value for compression
+        selected_compression = DEFAULT_COMPRESSION;
 
         refresh_widgets();
     }
