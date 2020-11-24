@@ -54,6 +54,13 @@ public class MainWindow : Gtk.Window {
      * has been selected.
      */
     private string selected_file {
+        set {
+            if (file_text_field == null) {
+                return;
+            }
+
+            file_text_field.set_text(value);
+        }
         get {
             if (file_text_field == null) {
                 return "";
@@ -580,6 +587,20 @@ public class MainWindow : Gtk.Window {
         selected_compression = DEFAULT_COMPRESSION;
 
         refresh_widgets();
+    }
+
+    /**
+     * Set selected operation to given operation
+     */
+    public void set_operation(GPGOperation operation) {
+        this.selected_operation = operation;
+    }
+
+    /**
+     * Set selected file to given file
+     */
+    public void set_file(string path) {
+        this.selected_file = path;
     }
 
     private void on_operation_changed() {

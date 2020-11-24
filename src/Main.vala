@@ -13,19 +13,75 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-static void main(string[] args) {
+private int main(string[] args) {
     // Check if threads are supported
     if (!Thread.supported()) {
         stderr.printf("Threads are not supported!\n");
         stderr.printf("Cannot run without thread support!\n");
-        return;
+        return 1;
     }
 
     // Set default locale
     Intl.setlocale();
 
-    // Start Gtk main loop
+    // Initialize Gtk
+    // This removes all Gtk specific command line options from array
     Gtk.init(ref args);
-    new MainWindow();
+
+    // Parse application specific command line options
+    string? arg_file = null;
+    GPGOperation? arg_op = null;
+    for (int i = 1; i < args.length; i++) {
+        string arg1 = args[i];
+        string arg2 = (i + 1) > args.length ? null : args[i + 1];
+
+        if (arg1 == "-d" || arg1 == "--decrypt") {
+            arg_op = GPGOperation.DECRYPT;
+        } else if (arg1 == "-e" || arg1 == "--encrypt") {
+            arg_op = GPGOperation.ENCRYPT;
+        } else if (arg1 == "-f" || arg1 == "--file") {
+            if (arg2 == null) {
+                stderr.printf("Expected file after \"%s\"\n", arg1);
+                print_help(args[0]);
+                return 1;
+            }
+            arg_file = arg2;
+            i++;
+        } else if (arg1 == "-h" || arg1 == "--help") {
+            print_help(args[0]);
+            return 0;
+        } else {
+            stderr.printf("Unknown option \"%s\"\n", arg1);
+            print_help(args[0]);
+            return 1;
+        }
+    }
+
+    // Create main window and apply parsed application parameters
+    var window = new MainWindow();
+    if (arg_file != null) {
+        window.set_file(arg_file);
+    }
+    if (arg_op != null) {
+        window.set_operation(arg_op);
+    }
+
+    // Start gtk main loop
     Gtk.main();
+
+    return 0;
+}
+
+private void print_help(string application_name) {
+    stdout.printf("%s [OPTIONS]\n", application_name);
+    stdout.printf("\n");
+    stdout.printf("gpg-gui always starts with a GUI. Options can be preselected via command line\n");
+    stdout.printf("options though.\n");
+    stdout.printf("\n");
+    stdout.printf("OPTIONS\n");
+    stdout.printf("  -d, --decrypt         Start gpg-gui in decryption mode\n");
+    stdout.printf("  -e, --encrypt         Start gpg-gui in encryption mode\n");
+    stdout.printf("  -f FILE, --file FILE  Start gpg-gui with FILE selected for\n");
+    stdout.printf("                        encryption / decryption\n");
+    stdout.printf("  -h, --help            Print this help and exit\n");
 }
