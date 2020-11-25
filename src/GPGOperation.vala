@@ -13,6 +13,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
+/**
+ * Defines a type of symmetric gpg operation.
+ * ENCRYPT: Symmetric encryption of a file with a passphrase
+ * DECRYPT: Symmetric decryption of a file with a passphrase
+ */
 public enum GPGOperation {
     ENCRYPT,
     DECRYPT

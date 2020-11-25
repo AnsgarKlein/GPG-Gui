@@ -43,7 +43,14 @@ public class GPGHandler : Object {
         "SHA512",
     };
 
+    /**
+     * List of supported cipher algos of this gpg binary
+     */
     private string[] cipher_algos;
+
+    /**
+     * List of supported digest algos of this gpg binary
+     */
     private string[] digest_algos;
     private string? path = null;
 
@@ -80,7 +87,7 @@ public class GPGHandler : Object {
      */
     public GPGHandler.for_path(string path) {
         // TODO: Test if binary path exists, is binary, etc.
-        assert(false);
+        assert_not_reached();
     }
 
     /**

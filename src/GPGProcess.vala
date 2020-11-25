@@ -15,6 +15,19 @@
 
 public class GPGProcess {
 
+    /**
+     * Enum representing the state of a gpg process:
+     *
+     * STARTING: The process is currently being started. The process has not
+     *           yet been spawned.
+     *
+     * RUNNING:  The process has been spawned and is running.
+     *
+     * FINISHED: The process has finished executing. No more progress is
+     *           expected to happen. This might be because spawning the process
+     *           failed or because the process ran successfully and is now
+     *           finished.
+     */
     public enum State {
         STARTING,
         RUNNING,
@@ -60,6 +73,10 @@ public class GPGProcess {
     private bool _stderr_changed = false;
     private bool _state_changed = false;
 
+    /**
+     * Signals that will be emitted when the corresponding
+     * property changes.
+     */
     public signal void stdout_changed();
     public signal void stderr_changed();
     public signal void state_changed();
@@ -173,6 +190,9 @@ public class GPGProcess {
         }
     }
 
+    /**
+     * Start this process
+     */
     private void start(string[] args, string passphrase) {
         // Start gpg process
         int stdin_fd;

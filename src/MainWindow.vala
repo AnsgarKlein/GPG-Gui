@@ -15,6 +15,8 @@
 
 public class MainWindow : Gtk.Window {
 
+    // Current state for selectable options
+
     /**
      * Current state of this window
      */
@@ -148,6 +150,8 @@ public class MainWindow : Gtk.Window {
         }
     }
 
+    // Available states for selectable options
+
     /**
      * Possible states this window can be in
      */
@@ -174,10 +178,7 @@ public class MainWindow : Gtk.Window {
         }
     }
 
-    /**
-     * Handler representing all gpg functionality
-     */
-    private GPGHandler gpg_handler;
+    // Defaults for selectable options
 
     /**
      * Default operation
@@ -207,6 +208,8 @@ public class MainWindow : Gtk.Window {
      * Default value for gpg compression
      */
     private const bool DEFAULT_COMPRESSION = true;
+
+    // Signals
 
     /**
      * Signal is emitted when window state changes
@@ -241,6 +244,11 @@ public class MainWindow : Gtk.Window {
 
     private ProgressIndicator progress_indicator;
 
+    /**
+     * Handler representing all gpg functionality
+     */
+    private GPGHandler gpg_handler;
+
     public MainWindow() {
         Object(type: Gtk.WindowType.TOPLEVEL);
         this.set_position(Gtk.WindowPosition.CENTER);
@@ -258,6 +266,7 @@ public class MainWindow : Gtk.Window {
         build_gui();
         set_defaults();
 
+        // Connect helper functions to signals
         this.window_state_changed.connect(on_window_state_changed);
         this.operation_changed.connect(on_operation_changed);
     }
@@ -544,6 +553,9 @@ public class MainWindow : Gtk.Window {
         progress_indicator.hide();
     }
 
+    /**
+     * Apply defaults for selectable options
+     */
     private void set_defaults() {
         // Select default mode
         this.selected_operation = DEFAULT_OPERATION;
@@ -603,14 +615,26 @@ public class MainWindow : Gtk.Window {
         this.selected_file = path;
     }
 
+    /**
+     * This function gets executed if the selected
+     * operation changed.
+     */
     private void on_operation_changed() {
         refresh_widgets();
     }
 
+    /**
+     * This function gets executed if the current mode
+     * of this window changed.
+     */
     private void on_window_state_changed() {
         refresh_widgets();
     }
 
+    /**
+     * This function gets executed if a selection via the
+     * operation buttons has been made.
+     */
     private void on_operation_button_select() {
         if (operation_selector1.get_active()) {
             this.selected_operation = GPGOperation.ENCRYPT;
@@ -619,10 +643,19 @@ public class MainWindow : Gtk.Window {
         }
     }
 
+    /**
+     * This function gets executed if the text of the file entry
+     * changed.
+     */
     private void on_file_text_input() {
         refresh_widgets();
     }
 
+    /**
+     * This function gets executed if the file chooser button
+     * is pressed.
+     * It opens a filer chooser for selecting a file.
+     */
     private void on_file_chooser_button() {
         // Open file chooser
         Gtk.FileChooserNative file_chooser = new Gtk.FileChooserNative(
@@ -641,6 +674,12 @@ public class MainWindow : Gtk.Window {
         file_chooser.destroy();
     }
 
+    /**
+     * This function gets executed if the text of one of the password
+     * text fields changed.
+     * It checks whether the content of both passwords fields match
+     * and displays a tooltip warning if it does not.
+     */
     private void on_pw_input() {
         const string pw_warning = "Passwords do not match";
 
@@ -663,8 +702,10 @@ public class MainWindow : Gtk.Window {
     }
 
     /**
-     * Set sensitivity of all window widgets depending on state
-     * and selected operation.
+     * Set sensitivity of all window widgets depending selected options
+     * and state.
+     * This function should get executed whenever a selected option
+     * changes which could influence the sensitivity of other widgets.
      */
     private void refresh_widgets() {
         if (window_state == RUNNING) {
@@ -735,7 +776,8 @@ public class MainWindow : Gtk.Window {
     }
 
     /**
-     * Check whether the run button should be active
+     * Check whether the run button should be active.
+     * Returns true if run button should be clickable, false otherwise.
      */
     private bool check_runable() {
         if (selected_operation  == GPGOperation.ENCRYPT) {
@@ -771,6 +813,10 @@ public class MainWindow : Gtk.Window {
         return true;
     }
 
+    /**
+     * This function gets executed if the run button is pressed.
+     * It starts the selected gpg operation with the selected options.
+     */
     private void on_run_button() {
         // Show progress indicator for child process
         GPGProcess process;

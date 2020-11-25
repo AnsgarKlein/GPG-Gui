@@ -19,6 +19,10 @@
  */
 public class ProgressIndicator : Gtk.Box {
 
+    /**
+     * The gpg process this widget monitors the progress of.
+     * null if not currently monitoring the progress of any process.
+     */
     private GPGProcess? gpg_process;
 
     private Gtk.ProgressBar progress_bar;
@@ -89,6 +93,9 @@ public class ProgressIndicator : Gtk.Box {
         });
     }
 
+    /**
+     * This function gets executed if the abort button is clicked.
+     */
     private void on_abort_button() {
         if (gpg_process != null) {
             gpg_process.stop();
