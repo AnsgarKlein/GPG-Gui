@@ -68,7 +68,9 @@ public class ProgressIndicator : Gtk.Box {
 
     /**
      * Set gpg process this progress indicator should monitor.
-     * Set to null to stop monitoring the current process.
+     *
+     * Set to null to stop monitoring the current process
+     * (This will *not* stop the process, only the monitoring!)
      */
     public void set_process(GPGProcess? gpg_process) {
         this.gpg_process = gpg_process;
@@ -79,6 +81,10 @@ public class ProgressIndicator : Gtk.Box {
 
         // Poll gpg process and update progress bar
         Timeout.add(100, () => {
+            if (this.gpg_process == null) {
+                return Source.REMOVE;
+            }
+
             if (this.gpg_process.get_state() == GPGProcess.State.STARTING) {
                 progress_bar.set_fraction(0.0);
                 return Source.CONTINUE;
