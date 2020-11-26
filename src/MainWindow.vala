@@ -227,6 +227,7 @@ public class MainWindow : Gtk.Window {
 
     private Gtk.Label file_label;
     private Gtk.Entry file_text_field;
+    private Gtk.Button file_button;
     private Gtk.Label pwlabel1;
     private Gtk.Entry pwfield1;
     private Gtk.Label pwlabel2;
@@ -374,14 +375,14 @@ public class MainWindow : Gtk.Window {
             "drive-harddisk");
         file_text_field.changed.connect(on_file_text_input);
 
-        Gtk.Image open_button_image = new Gtk.Image.from_icon_name(
+        Gtk.Image file_button_image = new Gtk.Image.from_icon_name(
             "document-open",
             Gtk.IconSize.BUTTON);
-        Gtk.Button open_button = new Gtk.Button.with_mnemonic(
+        file_button = new Gtk.Button.with_mnemonic(
             dgettext("gtk30", "_Open"));
-        open_button.set_image(open_button_image);
-        open_button.set_image_position(Gtk.PositionType.LEFT);
-        open_button.clicked.connect(on_file_chooser_button);
+        file_button.set_image(file_button_image);
+        file_button.set_image_position(Gtk.PositionType.LEFT);
+        file_button.clicked.connect(on_file_chooser_button);
 
         Gtk.Box file_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL,0);
         file_box.set_homogeneous(false);
@@ -390,9 +391,9 @@ public class MainWindow : Gtk.Window {
         file_text_field.set_vexpand(true);
         file_box.pack_start(file_text_field);
 
-        open_button.set_hexpand(true);
-        open_button.set_vexpand(true);
-        file_box.pack_start(open_button);
+        file_button.set_hexpand(true);
+        file_button.set_vexpand(true);
+        file_box.pack_start(file_button);
 
         file_box.set_hexpand(true);
         file_box.set_vexpand(true);
@@ -714,6 +715,7 @@ public class MainWindow : Gtk.Window {
 
             file_label.set_sensitive(false);
             file_text_field.set_sensitive(false);
+            file_button.set_sensitive(false);
             pwlabel1.set_sensitive(false);
             pwfield1.set_sensitive(false);
             pwlabel2.set_sensitive(false);
@@ -735,6 +737,7 @@ public class MainWindow : Gtk.Window {
 
                 file_label.set_sensitive(true);
                 file_text_field.set_sensitive(true);
+                file_button.set_sensitive(true);
                 pwlabel1.set_sensitive(true);
                 pwfield1.set_sensitive(true);
                 pwlabel2.set_sensitive(true);
@@ -755,6 +758,7 @@ public class MainWindow : Gtk.Window {
 
                 file_label.set_sensitive(true);
                 file_text_field.set_sensitive(true);
+                file_button.set_sensitive(true);
                 pwlabel1.set_sensitive(true);
                 pwfield1.set_sensitive(true);
                 pwlabel2.set_sensitive(false);
@@ -780,8 +784,16 @@ public class MainWindow : Gtk.Window {
      * Returns true if run button should be clickable, false otherwise.
      */
     private bool check_runable() {
+        // If there is already a process running don't start another one
+        if (window_state == State.RUNNING) {
+            return false;
+        }
+
         if (selected_operation  == GPGOperation.ENCRYPT) {
-            if (selected_file == "" || !FileUtils.test(selected_file, FileTest.EXISTS)) {
+            if (selected_file == "") {
+                return false;
+            }
+            if (!FileUtils.test(selected_file, FileTest.EXISTS)) {
                 return false;
             }
             if (pwfield1.get_text() == "") {
@@ -800,7 +812,10 @@ public class MainWindow : Gtk.Window {
                 return false;
             }
         } else if (selected_operation == GPGOperation.DECRYPT) {
-            if (selected_file == "" || !FileUtils.test(selected_file, FileTest.EXISTS)) {
+            if (selected_file == "") {
+                return false;
+            }
+            if (!FileUtils.test(selected_file, FileTest.EXISTS)) {
                 return false;
             }
             if (pwfield1.get_text() == "") {
