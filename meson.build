@@ -5,16 +5,8 @@ valac = meson.get_compiler('vala')
 # Main binary to build
 binary = meson.project_name()
 
-# Source files for binary
-sources = files([
-  'src/GPGHandler.vala',
-  'src/GPGOperation.vala',
-  'src/GPGProcess.vala',
-  'src/Helper.vala',
-  'src/Main.vala',
-  'src/MainWindow.vala',
-  'src/ProgressIndicator.vala',
-])
+# Source files for binary (will be defined later)
+sources = []
 
 # Dependencies of the main binary
 dependencies = [
@@ -25,6 +17,8 @@ dependencies = [
 ]
 
 add_project_arguments('-DGETTEXT_PACKAGE', language: 'c')
+
+subdir('src')
 
 # Main target
 executable(

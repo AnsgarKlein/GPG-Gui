@@ -2,7 +2,7 @@
 
 """
 This script prints all vala source files for this project
-as relative paths starting at project root.
+as relative paths starting at source directory.
 """
 
 import os, sys, re
@@ -23,7 +23,7 @@ def main():
     files = vala_files(os.path.abspath(os.getcwd()))
 
     # Convert to relative paths
-    files = [ os.path.relpath(f, os.path.join(*PRJ_PATH)) for f in files ]
+    files = [ os.path.relpath(f, os.path.join(*SRC_PATH)) for f in files ]
 
     # Sort
     files.sort()
