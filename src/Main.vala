@@ -21,8 +21,11 @@ private int main(string[] args) {
         return 1;
     }
 
-    // Set default locale
-    Intl.setlocale();
+    // Set default locale according to user selection
+    Intl.setlocale(LocaleCategory.ALL, "");
+
+    // Set textdomain
+    Intl.textdomain(GETTEXT_PACKAGE);
 
     // Initialize Gtk
     // This removes all Gtk specific command line options from array

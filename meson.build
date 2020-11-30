@@ -8,6 +8,9 @@ binary = meson.project_name()
 # Source files for binary (will be defined later)
 sources = []
 
+# Extra directories for header files
+include_dirs = []
+
 # Dependencies of the main binary
 dependencies = [
   dependency('glib-2.0'),
@@ -16,14 +19,18 @@ dependencies = [
   valac.find_library('posix'),
 ]
 
-add_project_arguments('-DGETTEXT_PACKAGE', language: 'c')
+gettext_package = meson.project_name()
+add_project_arguments('-DGETTEXT_PACKAGE=' + gettext_package, language: 'c')
 
 subdir('src')
+subdir('include')
+subdir('vapi')
 
 # Main target
 executable(
   binary,
   sources,
   dependencies: dependencies,
+  include_directories: include_dirs,
   install: true,
 )

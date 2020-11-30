@@ -1,0 +1,13 @@
+/*
+ * Will be filled by the Meson build system.
+ */
+
+/*
+ * This file is made available to the application via a .vapi file.
+ * The corresponding .vapi file needs to be adjusted as well when
+ * adding / removing values here.
+ */
+
+#pragma once
+
+#define GETTEXT_PACKAGE "@GETTEXT_PACKAGE@"
