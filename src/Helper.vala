@@ -115,3 +115,64 @@ private static string[] gpg_path_suggestions() {
 
     return suggestions.data;
 }
+
+/**
+ * Generate path for encryption output depending on input file
+ * used for encryption.
+ */
+private static string? encryption_output_path(string input_path) {
+    // Output file is input file with .gpg appended
+    StringBuilder builder = new StringBuilder();
+    builder.append(input_path);
+    builder.append(".gpg");
+    string output_path = builder.str;
+
+    // Keep appending .gpg as long as file exists
+    int prefixes = 1;
+    while (File.new_for_path(output_path).query_exists()) {
+        // Fail after adding 5 '.gpg' prefixes
+        if (prefixes >= 5) {
+            return null;
+        }
+
+        builder.append(".gpg");
+        output_path = builder.str;
+
+        prefixes++;
+    }
+
+    return output_path;
+}
+
+/**
+ * Generate path for decryption output depending on input file
+ * used for decryption.
+ */
+private static string? decryption_output_path(string input_path) {
+    string input_dir = Path.get_dirname(input_path);
+    string input_file = Path.get_basename(input_path);
+
+    // If input file ends with '.gpg' output file is input file
+    // with '.gpg' suffix removed
+    if (input_file.length > 4 &&
+    input_file.slice(-4, input_file.length) == ".gpg") {
+        string output_file = input_file.slice(0, -4);
+        string output_path = Path.build_filename(input_dir, output_file);
+
+        if (!File.new_for_path(output_path).query_exists()) {
+            return output_path;
+        }
+    }
+
+    // If input file does not have '.gpg' suffix or file with suffix removed
+    // already exists then output file is input file with '_DECRYPTED'
+    // appended.
+    string output_path = input_path + "_DECRYPTED";
+
+    if (!File.new_for_path(output_path).query_exists()) {
+        return output_path;
+    }
+
+    // We could not determine output path for given input path
+    return null;
+}

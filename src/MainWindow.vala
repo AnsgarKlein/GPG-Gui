@@ -847,9 +847,17 @@ public class MainWindow : Gtk.Window {
                 return;
             }
 
+            // Generate encryption output path from input
+            string? output_file = encryption_output_path(input_file);
+            if (output_file == null) {
+                stderr.printf("Error: Could not determine output file from input file\n");
+                return;
+            }
+
             process = this.gpg_handler.encrypt(
                 pwfield1.get_text(),
                 input_file,
+                output_file,
                 selected_cipher_algo,
                 selected_digest_algo,
                 selected_hash_strengthen,
@@ -860,17 +868,11 @@ public class MainWindow : Gtk.Window {
                 return;
             }
 
-            // Output file will be named like the input file but
-            // with .gpg removed if it ends with .gpg input
-            // _DECRYPTED will be added as suffix:
-            //  - encryptedfile       => encryptedfile_DECRYPTED
-            //  - secretphoto.jpg.gpg => secretphoto.jpg
-            string output_file;
-            if (input_file.length > 4 &&
-            input_file.slice(-4, input_file.length) == ".gpg") {
-                output_file = input_file.slice(0, -4);
-            } else {
-                output_file = input_file + "_DECRYPTED";
+            // Generate decryption output path from input
+            string? output_file = decryption_output_path(input_file);
+            if (output_file == null) {
+                stderr.printf("Error: Could not determine output file from input file\n");
+                return;
             }
 
             process = this.gpg_handler.decrypt(

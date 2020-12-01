@@ -240,6 +240,7 @@ public class GPGHandler : Object {
     public GPGProcess encrypt(
             string passphrase,
             string input_file,
+            string output_file,
             string? cipher_algo,
             string? digest_algo,
             bool digest_strengthen,
@@ -283,6 +284,10 @@ public class GPGHandler : Object {
             args.append_val("--compress-algo");
             args.append_val("zip");
         }
+
+        // Specify output file
+        args.append_val("--output");
+        args.append_val(output_file);
 
         // Specify input file
         args.append_val(input_file);
