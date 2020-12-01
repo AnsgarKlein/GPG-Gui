@@ -55,17 +55,21 @@ public class MainWindow : Gtk.Window {
      * The currently selected input file or empty string if no file
      * has been selected.
      */
-    private string selected_file {
+    private string? selected_file {
         set {
             if (file_text_field == null) {
                 return;
             }
 
-            file_text_field.set_text(value);
+            if (value == null) {
+                file_text_field.set_text("");
+            } else {
+                file_text_field.set_text(value);
+            }
         }
         get {
             if (file_text_field == null) {
-                return "";
+                return null;
             }
 
             return file_text_field.get_text();
@@ -790,7 +794,7 @@ public class MainWindow : Gtk.Window {
         }
 
         if (selected_operation  == GPGOperation.ENCRYPT) {
-            if (selected_file == "") {
+            if (selected_file == null) {
                 return false;
             }
             if (!FileUtils.test(selected_file, FileTest.EXISTS)) {
@@ -812,7 +816,7 @@ public class MainWindow : Gtk.Window {
                 return false;
             }
         } else if (selected_operation == GPGOperation.DECRYPT) {
-            if (selected_file == "") {
+            if (selected_file == null) {
                 return false;
             }
             if (!FileUtils.test(selected_file, FileTest.EXISTS)) {
@@ -838,7 +842,10 @@ public class MainWindow : Gtk.Window {
 
         // Spawn child process
         if (this.selected_operation == GPGOperation.ENCRYPT) {
-            string input_file = selected_file;
+            string? input_file = selected_file;
+            if (input_file == null) {
+                return;
+            }
 
             process = this.gpg_handler.encrypt(
                 pwfield1.get_text(),
@@ -848,13 +855,16 @@ public class MainWindow : Gtk.Window {
                 selected_hash_strengthen,
                 selected_compression);
         } else if (this.selected_operation == GPGOperation.DECRYPT) {
+            string? input_file = selected_file;
+            if (input_file == null) {
+                return;
+            }
+
             // Output file will be named like the input file but
             // with .gpg removed if it ends with .gpg input
             // _DECRYPTED will be added as suffix:
             //  - encryptedfile       => encryptedfile_DECRYPTED
             //  - secretphoto.jpg.gpg => secretphoto.jpg
-
-            string input_file = selected_file;
             string output_file;
             if (input_file.length > 4 &&
             input_file.slice(-4, input_file.length) == ".gpg") {
