@@ -121,25 +121,37 @@ private static string[] gpg_path_suggestions() {
  * used for encryption.
  */
 private static string? encryption_output_path(string input_path) {
-    // Output file is input file with .gpg appended
-    StringBuilder builder = new StringBuilder();
-    builder.append(input_path);
-    builder.append(".gpg");
-    string output_path = builder.str;
+    const int max_loop = 100;
 
-    // Keep appending .gpg as long as file exists
-    int prefixes = 1;
-    while (File.new_for_path(output_path).query_exists()) {
-        // Fail after adding 5 '.gpg' prefixes
-        if (prefixes >= 5) {
+    // Output file is input file with .gpg appended
+    string output_path = input_path + ".gpg";
+    if (!File.new_for_path(output_path).query_exists()) {
+        return output_path;
+    }
+
+    // If input file with .gpg suffix appended already exists keep
+    // adding " (x)" suffix:
+    //   "input (1).gpg"
+    //   "input (2).gpg"
+    //   "input (3).gpg"
+    //   ...
+    // up to a maximum until the file does not already exist.
+    StringBuilder builder = new StringBuilder.sized(input_path.length + 8);
+    int loop = 1;
+    do {
+        builder.truncate(0);
+        builder.append(input_path);
+        builder.append_printf(" (%d).gpg", loop);
+
+        output_path = builder.str;
+
+        // Fail after maximum attempts
+        if (loop >= max_loop) {
             return null;
         }
 
-        builder.append(".gpg");
-        output_path = builder.str;
-
-        prefixes++;
-    }
+        loop++;
+    } while (File.new_for_path(output_path).query_exists());
 
     return output_path;
 }
@@ -165,9 +177,9 @@ private static string? decryption_output_path(string input_path) {
     }
 
     // If input file does not have '.gpg' suffix or file with suffix removed
-    // already exists then output file is input file with '_DECRYPTED'
+    // already exists then output file is input file with '.decrypted'
     // appended.
-    string output_path = input_path + "_DECRYPTED";
+    string output_path = input_path + ".decrypted";
 
     if (!File.new_for_path(output_path).query_exists()) {
         return output_path;
