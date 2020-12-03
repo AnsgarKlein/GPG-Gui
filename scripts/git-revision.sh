@@ -6,4 +6,4 @@ if ! cd "$(dirname "$0")"; then
     exit 1
 fi
 
-git describe --tags --long --dirty --broken
+git describe --tags --long --match 'v[0-9]*' --dirty --broken
