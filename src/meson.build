@@ -1,5 +1,6 @@
 # All source files
 sources = files([
+  'AboutDialog.vala',
   'GPGHandler.vala',
   'GPGOperation.vala',
   'GPGProcess.vala',
