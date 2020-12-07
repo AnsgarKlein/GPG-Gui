@@ -1,6 +1,6 @@
 # GPG-Gui
 
-### GUI interface for GnuPG (GPG) file encryption.
+### Graphical user interface for GnuPG (GPG) file encryption
 
 ![Build Status](https://github.com/AnsgarKlein/GPG-Gui/workflows/Build/badge.svg)
 ![License](https://img.shields.io/github/license/AnsgarKlein/GPG-Gui?color=blue)
