@@ -3,6 +3,7 @@ config_values = [
   ['GETTEXT_PACKAGE', gettext_package],
   ['GPG_GUI_NAME',    'GPG-Gui'],
   ['GPG_GUI_WEBSITE', 'https://github.com/AnsgarKlein/GPG-Gui'],
+  ['GPG_GUI_VERSION', gpg_gui_version],
 ]
 
 # Create configuration object from configuration array

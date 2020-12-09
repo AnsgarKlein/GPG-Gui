@@ -25,5 +25,6 @@ public class AboutDialog : Gtk.AboutDialog {
         set_license_type(Gtk.License.GPL_3_0);
         set_website(GPG_GUI_WEBSITE);
         set_website_label("GitHub");
+        set_version(GPG_GUI_VERSION);
     }
 }

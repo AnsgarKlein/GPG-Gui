@@ -22,6 +22,7 @@ dependencies = [
 gettext_package = meson.project_name()
 add_project_arguments('-DGETTEXT_PACKAGE=' + gettext_package, language: 'c')
 
+subdir('scripts')
 subdir('src')
 subdir('include')
 subdir('vapi')
