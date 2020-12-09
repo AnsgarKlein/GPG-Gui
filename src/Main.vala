@@ -53,6 +53,9 @@ private int main(string[] args) {
         } else if (arg1 == "-h" || arg1 == "--help") {
             print_help(args[0]);
             return 0;
+        } else if (arg1 == "--version") {
+            stdout.printf("%s\n", GPG_GUI_VERSION);
+            return 0;
         } else {
             stderr.printf("Unknown option \"%s\"\n", arg1);
             print_help(args[0]);
@@ -87,4 +90,5 @@ private void print_help(string application_name) {
     stdout.printf("  -f FILE, --file FILE  Start gpg-gui with FILE selected for\n");
     stdout.printf("                        encryption / decryption\n");
     stdout.printf("  -h, --help            Print this help and exit\n");
+    stdout.printf("  --version             Print version and exit\n");
 }
