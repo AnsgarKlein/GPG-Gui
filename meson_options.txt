@@ -1,0 +1,4 @@
+option('GPG_GUI_CSD',
+  type: 'boolean',
+  value: true,
+  description: 'Use client-side decoration')

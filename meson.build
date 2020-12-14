@@ -22,6 +22,11 @@ dependencies = [
 gettext_package = meson.project_name()
 add_project_arguments('-DGETTEXT_PACKAGE=' + gettext_package, language: 'c')
 
+# Enable client-side decorations if desired
+if get_option('GPG_GUI_CSD')
+  add_project_arguments(['-D', 'GPG_GUI_CSD'], language: 'vala')
+endif
+
 subdir('scripts')
 subdir('src')
 subdir('include')

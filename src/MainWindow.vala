@@ -226,6 +226,8 @@ public class MainWindow : Gtk.Window {
     private signal void operation_changed();
 
     // Gtk widgets
+    private Gtk.Box content;
+
     private Gtk.RadioButton operation_selector1;
     private Gtk.RadioButton operation_selector2;
 
@@ -257,9 +259,6 @@ public class MainWindow : Gtk.Window {
     public MainWindow() {
         Object(type: Gtk.WindowType.TOPLEVEL);
         this.set_position(Gtk.WindowPosition.CENTER);
-
-        this.title = "GPG-Gui";
-        this.border_width = 10;
         this.destroy.connect(Gtk.main_quit);
 
         this.gpg_handler = new GPGHandler();
@@ -268,6 +267,10 @@ public class MainWindow : Gtk.Window {
         set_application_icon();
         this.style_updated.connect(set_application_icon);
 
+        // Construct window contents
+        this.content = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
+        this.add(this.content);
+        build_menu();
         build_gui();
         set_defaults();
 
@@ -331,15 +334,90 @@ public class MainWindow : Gtk.Window {
     }
 
     /**
+     * Helper function for constructor that creates the windows menu(s)
+     */
+    private void build_menu() {
+        // Define actions
+        const string action_namespace = "menu";
+        GLib.SimpleActionGroup menu_actions = new GLib.SimpleActionGroup();
+        {
+            var about_action = new SimpleAction("about", null);
+            about_action.activate.connect( () => {
+                AboutDialog dialog = new AboutDialog(this);
+                dialog.present();
+            });
+            menu_actions.add_action(about_action);
+        }
+        {
+            // ...
+        }
+        {
+            // Define all actions for all menu items here
+        }
+
+        // Depending on what kind of menu we want either create a traditional
+        // Gtk.MenuBar or use client-side-decorations and create a single
+        // menu button in a Gtk.HeaderBar spawning a Gtk.Popover containing
+        // the menu.
+        #if GPG_GUI_CSD
+        {
+            // Create client-side titlebar
+            Gtk.HeaderBar header = new Gtk.HeaderBar();
+            header.set_title(GPG_GUI_NAME);
+            header.set_show_close_button(true);
+            this.set_titlebar(header);
+
+            // Button for opening global menu
+            var menu_button_image = new Gtk.Image.from_icon_name(
+                "open-menu-symbolic",
+                Gtk.IconSize.BUTTON);
+
+            var menu_button = new Gtk.MenuButton();
+            menu_button.set_image(menu_button_image);
+            header.pack_end(menu_button);
+
+            // Popover containing the menu
+            var popover = new Gtk.Popover(menu_button);
+            popover.insert_action_group(action_namespace, menu_actions);
+            menu_button.set_popover(popover);
+
+            // Define menu model
+            GLib.Menu global_menu = new GLib.Menu();
+            global_menu.append("About", "about");
+            popover.bind_model(global_menu, action_namespace);
+        }
+        #else
+        {
+            // Set window title (non client-side decorated)
+            this.title = GPG_GUI_NAME;
+
+            // Create traditional menu bar
+            var menu_bar = new Gtk.MenuBar();
+            menu_bar.insert_action_group(action_namespace, menu_actions);
+            this.content.add(menu_bar);
+
+            // Define menu model
+            GLib.Menu menu = new GLib.Menu();
+            menu_bar.bind_model(menu, action_namespace, false);
+
+            GLib.Menu help_menu = new GLib.Menu();
+            help_menu.append("About", "about");
+            menu.append_submenu("Help", help_menu);
+        }
+        #endif
+    }
+
+    /**
      * Helper function for constructor that creates the GTK interface
      */
     private void build_gui() {
         // Set up main grid
         Gtk.Grid main_grid = new Gtk.Grid();
-        main_grid.set_orientation(Gtk.Orientation.VERTICAL);
+        main_grid.border_width = 10;
         main_grid.set_row_spacing(10);
         main_grid.set_column_spacing(50);
-        this.add(main_grid);
+        main_grid.set_orientation(Gtk.Orientation.VERTICAL);
+        this.content.add(main_grid);
 
 
         // Encrypt / Decrypt operation buttons
