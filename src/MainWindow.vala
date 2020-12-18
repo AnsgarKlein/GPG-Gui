@@ -232,8 +232,8 @@ public class MainWindow : Gtk.Window {
 
     private Gtk.Box content;
 
-    private Gtk.ToggleButton operation_selector1;
-    private Gtk.ToggleButton operation_selector2;
+    private Gtk.RadioButton operation_selector1;
+    private Gtk.RadioButton operation_selector2;
 
     private Gtk.Label file_label;
     private Gtk.Entry file_text_field;
@@ -423,7 +423,17 @@ public class MainWindow : Gtk.Window {
         main_grid.set_orientation(Gtk.Orientation.VERTICAL);
         this.content.add(main_grid);
 
+
         // Encrypt / Decrypt operation buttons
+        operation_selector1 = new Gtk.RadioButton.with_label(
+            null,
+            "Encrypt");
+        operation_selector2 = new Gtk.RadioButton.with_label_from_widget(
+            operation_selector1,
+            "Decrypt");
+
+        operation_selector1.toggled.connect(on_operation_button_select);
+        operation_selector2.toggled.connect(on_operation_button_select);
 
         // Depending on what kind of window titlebar we have (client-side
         // decorated or traditional) we either create two Gtk.RadioButton
@@ -431,54 +441,20 @@ public class MainWindow : Gtk.Window {
         // inside a Gtk.StackSwitcher into the titlebar.
         #if GPG_GUI_CSD
         {
+            operation_selector1.set_mode(false);
+            operation_selector2.set_mode(false);
+
             // Create button box with css class "linked" to visually link
             // all contained buttons
             Gtk.ButtonBox operation_selector_box = new Gtk.ButtonBox(Gtk.Orientation.HORIZONTAL);
             operation_selector_box.set_layout(Gtk.ButtonBoxStyle.CENTER);
             operation_selector_box.get_style_context().add_class("linked");
-            header.set_custom_title(operation_selector_box);
-
-            // Create two toggle buttons with special callback that ensures
-            // only one button is active at the same time.
-            operation_selector1 = new Gtk.ToggleButton.with_label("Encrypt");
-            operation_selector2 = new Gtk.ToggleButton.with_label("Decrypt");
-
-            operation_selector1.toggled.connect(() => {
-                if (operation_selector1.get_active()) {
-                    operation_selector2.set_active(false);
-                }
-                on_operation_button_select();
-                });
-            operation_selector2.toggled.connect(() => {
-                if (operation_selector2.get_active()) {
-                    operation_selector1.set_active(false);
-                }
-                on_operation_button_select();
-            });
-
-            // Add the two buttons inside the button box
             operation_selector_box.add(operation_selector1);
             operation_selector_box.add(operation_selector2);
+            header.set_custom_title(operation_selector_box);
         }
         #else
         {
-            // Create two radio buttons
-            Gtk.RadioButton operation_selector1_radio;
-            Gtk.RadioButton operation_selector2_radio;
-            operation_selector1_radio = new Gtk.RadioButton.with_label(
-                null,
-                "Encrypt");
-            operation_selector2_radio = new Gtk.RadioButton.with_label_from_widget(
-                operation_selector1_radio,
-                "Decrypt");
-            operation_selector1 = (Gtk.ToggleButton)operation_selector1_radio;
-            operation_selector2 = (Gtk.ToggleButton)operation_selector2_radio;
-
-            // Radio buttons ensure automatically that only one buttons is
-            // active at the same time
-            operation_selector1.toggled.connect(on_operation_button_select);
-            operation_selector2.toggled.connect(on_operation_button_select);
-
             operation_selector1.set_hexpand(true);
             operation_selector1.set_vexpand(true);
             main_grid.add(operation_selector1);
