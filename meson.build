@@ -31,6 +31,7 @@ subdir('scripts')
 subdir('src')
 subdir('include')
 subdir('vapi')
+subdir('data')
 
 # Main target
 executable(

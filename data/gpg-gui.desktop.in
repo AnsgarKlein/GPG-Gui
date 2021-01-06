@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=@binary@
+Comment=GUI for GPG file encryption
+Exec=@binary@
+TryExec=@binary@
+Terminal=false
+Type=Application
+Icon=@icon@
+Categories=Utility;Archiving;FileTools;
