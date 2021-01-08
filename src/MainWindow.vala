@@ -946,7 +946,8 @@ public class MainWindow : Gtk.Window {
         GPGProcess process;
 
         // Spawn child process
-        if (this.selected_operation == GPGOperation.ENCRYPT) {
+        switch (this.selected_operation) {
+        case GPGOperation.ENCRYPT:
             string? input_file = selected_file;
             if (input_file == null) {
                 return;
@@ -967,7 +968,9 @@ public class MainWindow : Gtk.Window {
                 selected_digest_algo,
                 selected_hash_strengthen,
                 selected_compression);
-        } else if (this.selected_operation == GPGOperation.DECRYPT) {
+
+            break;
+        case GPGOperation.DECRYPT:
             string? input_file = selected_file;
             if (input_file == null) {
                 return;
@@ -984,9 +987,10 @@ public class MainWindow : Gtk.Window {
                 pwfield1.get_text(),
                 input_file,
                 output_file);
-        } else {
-            // No valid mode selected - error
-            stderr.printf("Error: Unknown mode (encrypt/decrypt) selected\n");
+
+            break;
+        default:
+            // No valid mode selected
             return;
         }
 
