@@ -247,9 +247,9 @@ public class MainWindow : Gtk.Window {
     private Gtk.Label hash_label;
     private Gtk.ComboBoxText hash_box;
     private Gtk.Label hash_strengthen_label;
-    private Gtk.CheckButton hash_strengthen_button;
+    private Gtk.Switch hash_strengthen_button;
     private Gtk.Label compression_label;
-    private Gtk.CheckButton compression_button;
+    private Gtk.Switch compression_button;
 
     private Gtk.Button run_button;
 
@@ -611,13 +611,16 @@ public class MainWindow : Gtk.Window {
         hash_strengthen_label.set_valign(Gtk.Align.CENTER);
         main_grid.add(hash_strengthen_label);
 
-        hash_strengthen_button = new Gtk.CheckButton();
+        hash_strengthen_button = new Gtk.Switch();
         hash_strengthen_button.set_tooltip_text(
             "Strengthening increases security but increases encryption time");
-        hash_strengthen_button.toggled.connect(refresh_widgets);
+        hash_strengthen_button.state_set.connect((b) => {
+            refresh_widgets();
+            return false;
+        });
         hash_strengthen_button.set_hexpand(false);
         hash_strengthen_button.set_vexpand(true);
-        hash_strengthen_button.set_halign(Gtk.Align.CENTER);
+        hash_strengthen_button.set_halign(Gtk.Align.END);
         hash_strengthen_button.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(
             hash_strengthen_button,
@@ -633,11 +636,14 @@ public class MainWindow : Gtk.Window {
         compression_label.set_valign(Gtk.Align.CENTER);
         main_grid.add(compression_label);
 
-        compression_button = new Gtk.CheckButton();
-        compression_button.toggled.connect(refresh_widgets);
+        compression_button = new Gtk.Switch();
+        compression_button.state_set.connect((b) => {
+            refresh_widgets();
+            return false;
+        });
         compression_button.set_hexpand(false);
         compression_button.set_vexpand(true);
-        compression_button.set_halign(Gtk.Align.CENTER);
+        compression_button.set_halign(Gtk.Align.END);
         compression_button.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(
             compression_button,
