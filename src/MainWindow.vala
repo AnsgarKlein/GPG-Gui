@@ -417,9 +417,9 @@ public class MainWindow : Gtk.Window {
     private void build_gui() {
         // Set up main grid
         Gtk.Grid main_grid = new Gtk.Grid();
-        main_grid.border_width = 10;
+        main_grid.border_width = 12;
         main_grid.set_row_spacing(10);
-        main_grid.set_column_spacing(50);
+        main_grid.set_column_spacing(24);
         main_grid.set_orientation(Gtk.Orientation.VERTICAL);
         this.content.add(main_grid);
 
@@ -457,10 +457,14 @@ public class MainWindow : Gtk.Window {
         {
             operation_selector1.set_hexpand(true);
             operation_selector1.set_vexpand(true);
+            operation_selector1.set_halign(Gtk.Align.CENTER);
+            operation_selector1.set_valign(Gtk.Align.CENTER);
             main_grid.add(operation_selector1);
 
             operation_selector2.set_hexpand(true);
             operation_selector2.set_vexpand(true);
+            operation_selector2.set_halign(Gtk.Align.CENTER);
+            operation_selector2.set_valign(Gtk.Align.CENTER);
             main_grid.attach_next_to(
                 operation_selector2,
                 operation_selector1,
@@ -471,10 +475,10 @@ public class MainWindow : Gtk.Window {
 
         // File chooser
         file_label = new Gtk.Label("File:");
-        file_label.set_xalign(1);
-        file_label.set_yalign((float)0.5);
-        file_label.set_hexpand(true);
+        file_label.set_hexpand(false);
         file_label.set_vexpand(true);
+        file_label.set_halign(Gtk.Align.END);
+        file_label.set_valign(Gtk.Align.CENTER);
         main_grid.add(file_label);
 
         file_text_field = new Gtk.Entry();
@@ -495,26 +499,28 @@ public class MainWindow : Gtk.Window {
 
         Gtk.Box file_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL,0);
         file_box.set_homogeneous(false);
+        file_box.set_spacing(0);
+        main_grid.attach_next_to(file_box, file_label, Gtk.PositionType.RIGHT);
 
         file_text_field.set_hexpand(true);
         file_text_field.set_vexpand(true);
-        file_box.pack_start(file_text_field);
+        file_text_field.set_halign(Gtk.Align.FILL);
+        file_text_field.set_valign(Gtk.Align.CENTER);
+        file_box.pack_start(file_text_field, true, true);
 
-        file_button.set_hexpand(true);
+        file_button.set_hexpand(false);
         file_button.set_vexpand(true);
-        file_box.pack_start(file_button);
-
-        file_box.set_hexpand(true);
-        file_box.set_vexpand(true);
-        main_grid.attach_next_to(file_box, file_label, Gtk.PositionType.RIGHT);
+        file_button.set_halign(Gtk.Align.START);
+        file_button.set_valign(Gtk.Align.CENTER);
+        file_box.pack_end(file_button, false, false);
 
 
         // Password fields
         pwlabel1 = new Gtk.Label("Password:");
-        pwlabel1.set_xalign(1);
-        pwlabel1.set_yalign((float)0.5);
-        pwlabel1.set_hexpand(true);
+        pwlabel1.set_hexpand(false);
         pwlabel1.set_vexpand(true);
+        pwlabel1.set_halign(Gtk.Align.END);
+        pwlabel1.set_valign(Gtk.Align.CENTER);
         main_grid.add(pwlabel1);
 
         pwfield1 = new Gtk.Entry();
@@ -525,13 +531,15 @@ public class MainWindow : Gtk.Window {
         pwfield1.changed.connect(on_pw_input);
         pwfield1.set_hexpand(true);
         pwfield1.set_vexpand(true);
+        pwfield1.set_halign(Gtk.Align.FILL);
+        pwfield1.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(pwfield1, pwlabel1, Gtk.PositionType.RIGHT);
 
         pwlabel2 = new Gtk.Label("Confirm Password:");
-        pwlabel2.set_xalign(1);
-        pwlabel2.set_yalign((float)0.5);
-        pwlabel2.set_hexpand(true);
+        pwlabel2.set_hexpand(false);
         pwlabel2.set_vexpand(true);
+        pwlabel2.set_halign(Gtk.Align.END);
+        pwlabel2.set_valign(Gtk.Align.CENTER);
         main_grid.add(pwlabel2);
 
         pwfield2 = new Gtk.Entry();
@@ -542,17 +550,19 @@ public class MainWindow : Gtk.Window {
         pwfield2.changed.connect(on_pw_input);
         pwfield2.set_hexpand(true);
         pwfield2.set_vexpand(true);
+        pwfield2.set_halign(Gtk.Align.FILL);
+        pwfield2.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(pwfield2, pwlabel2, Gtk.PositionType.RIGHT);
 
 
         // Crypto selection
         crypto_label = new Gtk.Label("Encryption Cipher:");
-        crypto_label.set_xalign(1);
-        crypto_label.set_yalign((float)0.5);
         crypto_label.set_tooltip_text(
             "TWOFISH, AES256, and CAMELLIA256 are the strongest ciphers.");
-        crypto_label.set_hexpand(true);
+        crypto_label.set_hexpand(false);
         crypto_label.set_vexpand(true);
+        crypto_label.set_halign(Gtk.Align.END);
+        crypto_label.set_valign(Gtk.Align.CENTER);
         main_grid.add(crypto_label);
 
         crypto_box = new Gtk.ComboBoxText();
@@ -564,16 +574,18 @@ public class MainWindow : Gtk.Window {
         }
         crypto_box.set_hexpand(true);
         crypto_box.set_vexpand(true);
+        crypto_box.set_halign(Gtk.Align.FILL);
+        crypto_box.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(crypto_box, crypto_label, Gtk.PositionType.RIGHT);
 
 
         // Hash selection
         hash_label = new Gtk.Label("Hash Algorithm:");
-        hash_label.set_xalign(1);
-        hash_label.set_yalign((float)0.5);
         hash_label.set_tooltip_text("SHA512 is the strongest hash.");
-        hash_label.set_hexpand(true);
+        hash_label.set_hexpand(false);
         hash_label.set_vexpand(true);
+        hash_label.set_halign(Gtk.Align.END);
+        hash_label.set_valign(Gtk.Align.CENTER);
         main_grid.add(hash_label);
 
         hash_box = new Gtk.ComboBoxText();
@@ -584,25 +596,29 @@ public class MainWindow : Gtk.Window {
         }
         hash_box.set_hexpand(true);
         hash_box.set_vexpand(true);
+        hash_box.set_halign(Gtk.Align.FILL);
+        hash_box.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(hash_box, hash_label, Gtk.PositionType.RIGHT);
 
 
         // Hash strengthen button
         hash_strengthen_label = new Gtk.Label("Hash Strengthen:");
-        hash_strengthen_label.set_xalign(1);
-        hash_strengthen_label.set_yalign((float)0.5);
         hash_strengthen_label.set_tooltip_text(
             "Strengthening increases security but increases encryption time");
-        hash_strengthen_label.set_hexpand(true);
+        hash_strengthen_label.set_hexpand(false);
         hash_strengthen_label.set_vexpand(true);
+        hash_strengthen_label.set_halign(Gtk.Align.END);
+        hash_strengthen_label.set_valign(Gtk.Align.CENTER);
         main_grid.add(hash_strengthen_label);
 
         hash_strengthen_button = new Gtk.CheckButton();
         hash_strengthen_button.set_tooltip_text(
             "Strengthening increases security but increases encryption time");
         hash_strengthen_button.toggled.connect(refresh_widgets);
-        hash_strengthen_button.set_hexpand(true);
+        hash_strengthen_button.set_hexpand(false);
         hash_strengthen_button.set_vexpand(true);
+        hash_strengthen_button.set_halign(Gtk.Align.CENTER);
+        hash_strengthen_button.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(
             hash_strengthen_button,
             hash_strengthen_label,
@@ -611,16 +627,18 @@ public class MainWindow : Gtk.Window {
 
         // Compression button
         compression_label = new Gtk.Label("Compress:");
-        compression_label.set_xalign(1);
-        compression_label.set_yalign((float)0.5);
-        compression_label.set_hexpand(true);
+        compression_label.set_hexpand(false);
         compression_label.set_vexpand(true);
+        compression_label.set_halign(Gtk.Align.END);
+        compression_label.set_valign(Gtk.Align.CENTER);
         main_grid.add(compression_label);
 
         compression_button = new Gtk.CheckButton();
         compression_button.toggled.connect(refresh_widgets);
-        compression_button.set_hexpand(true);
+        compression_button.set_hexpand(false);
         compression_button.set_vexpand(true);
+        compression_button.set_halign(Gtk.Align.CENTER);
+        compression_button.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(
             compression_button,
             compression_label,
@@ -637,6 +655,8 @@ public class MainWindow : Gtk.Window {
         run_button.clicked.connect(on_run_button);
         run_button.set_hexpand(true);
         run_button.set_vexpand(true);
+        run_button.set_halign(Gtk.Align.FILL);
+        run_button.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(
             run_button,
             compression_button,
@@ -647,6 +667,8 @@ public class MainWindow : Gtk.Window {
         progress_indicator = new ProgressIndicator();
         progress_indicator.set_hexpand(true);
         progress_indicator.set_vexpand(true);
+        progress_indicator.set_halign(Gtk.Align.FILL);
+        progress_indicator.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(
             progress_indicator,
             null,
