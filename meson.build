@@ -2,8 +2,15 @@ project('gpg-gui', 'vala', 'c')
 
 valac = meson.get_compiler('vala')
 
-# Main binary to build
-binary = meson.project_name()
+# Application names in different styles
+reverse_dns = 'com.github.ansgarklein.gpggui'
+application_name = 'GPG-Gui'
+
+if get_option('GPG_GUI_RDNS_NAMING')
+  binary_name = reverse_dns
+else
+  binary_name = meson.project_name()
+endif
 
 # Source files for binary (will be defined later)
 sources = []
@@ -19,7 +26,7 @@ dependencies = [
   valac.find_library('posix'),
 ]
 
-gettext_package = meson.project_name()
+gettext_package = reverse_dns
 add_project_arguments('-DGETTEXT_PACKAGE=' + gettext_package, language: 'c')
 
 # Enable client-side decorations if desired
@@ -35,7 +42,7 @@ subdir('data')
 
 # Main target
 executable(
-  binary,
+  binary_name,
   sources,
   dependencies: dependencies,
   include_directories: include_dirs,

@@ -1,9 +1,10 @@
 # Array of configuration key-value pairs
 config_values = [
-  ['GETTEXT_PACKAGE', gettext_package],
-  ['GPG_GUI_NAME',    'GPG-Gui'],
-  ['GPG_GUI_WEBSITE', 'https://github.com/AnsgarKlein/GPG-Gui'],
-  ['GPG_GUI_VERSION', gpg_gui_version],
+  ['GETTEXT_PACKAGE',     gettext_package],
+  ['GPG_GUI_NAME',        application_name],
+  ['GPG_GUI_REVERSE_DNS', reverse_dns],
+  ['GPG_GUI_WEBSITE',     'https://github.com/AnsgarKlein/GPG-Gui'],
+  ['GPG_GUI_VERSION',     gpg_gui_version],
 ]
 
 # Create configuration object from configuration array

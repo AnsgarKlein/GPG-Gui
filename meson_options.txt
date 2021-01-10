@@ -2,3 +2,8 @@ option('GPG_GUI_CSD',
   type: 'boolean',
   value: true,
   description: 'Use client-side decoration')
+
+option('GPG_GUI_RDNS_NAMING',
+  type: 'boolean',
+  value: false,
+  description: 'Use reverse-DNS naming scheme for files')

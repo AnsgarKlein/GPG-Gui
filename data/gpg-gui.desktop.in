@@ -1,9 +1,9 @@
 [Desktop Entry]
-Name=@binary@
+Name=@application_name@
 Comment=GUI for GPG file encryption
-Exec=@binary@
-TryExec=@binary@
+Exec=@binary_name@
+TryExec=@binary_name@
 Terminal=false
 Type=Application
-Icon=@icon@
+Icon=@icon_name@
 Categories=Utility;Archiving;FileTools;
