@@ -36,9 +36,9 @@ endif
 
 subdir('scripts')
 subdir('src')
+subdir('data')
 subdir('include')
 subdir('vapi')
-subdir('data')
 
 # Main target
 executable(

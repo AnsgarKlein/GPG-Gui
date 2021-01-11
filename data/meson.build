@@ -1,10 +1,12 @@
+subdir('icons')
+
 # Select name for desktop file based on binary name.
 # This could be in reverse-dns style notation.
 desktop = binary_name + '.desktop'
 
 desktop_config = configuration_data()
 desktop_config.set('application_name', application_name)
-desktop_config.set('icon_name',        'application-x-executable')
+desktop_config.set('icon_name',        icon_name)
 desktop_config.set('binary_name',      binary_name)
 
 configure_file(

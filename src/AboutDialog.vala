@@ -35,7 +35,7 @@ public class AboutDialog : Gtk.AboutDialog {
 
         set_program_name(GPG_GUI_NAME);
         set_comments("Graphical user interface for GnuPG (GPG) file encryption");
-        set_logo_icon_name("application-x-executable");
+        set_logo_icon_name(GPG_GUI_ICON);
         set_license(GPL3_LICENSE_SHORT);
         set_website(GPG_GUI_WEBSITE);
         set_website_label("GitHub");

@@ -14,5 +14,6 @@
 
 #define GPG_GUI_NAME        "@GPG_GUI_NAME@"
 #define GPG_GUI_REVERSE_DNS "@GPG_GUI_REVERSE_DNS@"
+#define GPG_GUI_ICON        "@GPG_GUI_ICON@"
 #define GPG_GUI_WEBSITE     "@GPG_GUI_WEBSITE@"
 #define GPG_GUI_VERSION     "@GPG_GUI_VERSION@"

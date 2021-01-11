@@ -289,6 +289,7 @@ public class MainWindow : Gtk.Window {
      */
     private void set_application_icon() {
         const string[] PREFERRED_ICON_NAMES = {
+            GPG_GUI_ICON,
             "gdu-encrypted-lock",
             "stock_keyring",
             "keyring-manager",
