@@ -3,9 +3,13 @@ name: Build
 on: [ push, pull_request ]
 
 jobs:
-  build-clang-gcc:
-    name: Build with clang and gcc
-    runs-on: ubuntu-latest
+  build-all:
+    strategy:
+      matrix:
+        distro: [ 'ubuntu-18.04', 'ubuntu-20.04' ]
+        cc: [ 'gcc', 'clang' ]
+    name: Build
+    runs-on: ${{ matrix.distro }}
     steps:
 
       - name: Update repositories
@@ -29,18 +33,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Prepare compilation with Meson (gcc)
-        run: meson setup build-$CC
+      - name: Prepare compilation with Meson
+        run: meson setup build
         env:
-          CC: gcc
+          CC: ${{ matrix.cc }}
 
-      - name: Prepare compilation with Meson (clang)
-        run: meson setup build-$CC
+      - name: Compile with Ninja
+        run: ninja -C build
         env:
-          CC: clang
-
-      - name: Compile with Ninja (gcc)
-        run: ninja -C build-gcc
-
-      - name: Compile with Ninja (clang)
-        run: ninja -C build-clang
+          CC: ${{ matrix.cc }}
