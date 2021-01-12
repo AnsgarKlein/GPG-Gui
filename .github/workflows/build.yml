@@ -33,12 +33,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Prepare compilation with Meson
-        run: meson setup build
+      - name: Prepare compilation with Meson (debug build)
+        run: |
+          meson setup build-debug
+          meson configure -Dbuildtype=debug build-debug
+          meson configure build-debug
         env:
           CC: ${{ matrix.cc }}
 
-      - name: Compile with Ninja
-        run: ninja -C build
+      - name: Compile with Ninja (debug build)
+        run: ninja -C build-debug
+        env:
+          CC: ${{ matrix.cc }}
+
+      - name: Prepare compilation with Meson (release build)
+        run: |
+          meson setup build-release
+          meson configure -Dbuildtype=release build-release
+          meson configure build-release
+        env:
+          CC: ${{ matrix.cc }}
+
+      - name: Compile with Ninja (release build)
+        run: ninja -C build-release
         env:
           CC: ${{ matrix.cc }}
