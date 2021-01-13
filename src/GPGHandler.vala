@@ -283,6 +283,9 @@ public class GPGHandler : Object {
             args.append_val("9");
             args.append_val("--compress-algo");
             args.append_val("zip");
+        } else {
+            args.append_val("--compress-algo");
+            args.append_val("none");
         }
 
         // Specify output file
