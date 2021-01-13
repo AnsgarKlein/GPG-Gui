@@ -1,4 +1,4 @@
-project('gpg-gui', 'vala', 'c')
+project('gpg-gui', 'vala', 'c', meson_version: '>=0.50')
 
 valac = meson.get_compiler('vala')
 
