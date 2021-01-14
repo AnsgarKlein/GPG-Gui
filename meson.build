@@ -40,6 +40,47 @@ subdir('data')
 subdir('include')
 subdir('vapi')
 
+# Print summary of build configuration
+if meson.version().version_compare('>=0.53')
+  summary({
+    'prefix':  get_option('prefix'),
+    'datadir': get_option('datadir'),
+    'bindir':  get_option('bindir'),
+    }, section: 'Directories'
+  )
+
+  summary({
+    'buildtype':    get_option('buildtype'),
+    'debug':        get_option('debug'),
+    'optimization': get_option('optimization'),
+    'unity':        get_option('unity'),
+    }, section: 'Build configuration'
+  )
+
+  summary({
+    'GPG_GUI_CSD':         get_option('GPG_GUI_CSD'),
+    'GPG_GUI_RDNS_NAMING': get_option('GPG_GUI_CSD'),
+    'application verson':  gpg_gui_version,
+    }, section: 'Application configuration'
+  )
+else
+  message('Directories')
+  message('prefix:  @0@'.format(get_option('prefix')))
+  message('datadir: @0@'.format(get_option('datadir')))
+  message('bindir:  @0@'.format(get_option('bindir')))
+  message('')
+  message('Build configuration')
+  message('buildtype:    @0@'.format(get_option('buildtype')))
+  message('debug:        @0@'.format(get_option('debug')))
+  message('optimization: @0@'.format(get_option('optimization')))
+  message('unity:        @0@'.format(get_option('unity')))
+  message('')
+  message('Application configuration')
+  message('GPG_GUI_CSD:         @0@'.format(get_option('GPG_GUI_CSD')))
+  message('GPG_GUI_RDNS_NAMING: @0@'.format(get_option('GPG_GUI_RDNS_NAMING')))
+  message('application version: @0@'.format(gpg_gui_version))
+endif
+
 # Main target
 executable(
   binary_name,
