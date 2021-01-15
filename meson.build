@@ -81,6 +81,18 @@ else
   message('application version: @0@'.format(gpg_gui_version))
 endif
 
+# Meson versions "0.52< version <0.56" will print warnings when using features
+# that were introduced in Meson versions older than the projects required Meson
+# version (specified in project() function) EVEN IF those features were wrapped
+# in a version comparison conditional and would not be used unless the installed
+# Meson version supported them. This is Meson bug #7590.
+# Remove this block once Meson 0.56 is a hard requirement (-> project()).
+if meson.version().version_compare('>0.53') and meson.version().version_compare('<0.56')
+  warning('Please ignore warnings about using features introduced in newer versions than this project is targeting.')
+  warning('Those messages are because of Meson bug #7590, which is fixed in Meson 0.56.')
+  warning('You can get rid of this message by using a newer version of Meson.')
+endif
+
 # Main target
 executable(
   binary_name,
