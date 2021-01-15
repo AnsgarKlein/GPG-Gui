@@ -12,7 +12,7 @@
 
 # cd to directory of this script
 if ! cd "$(dirname "$0")"; then
-    echo 'Could not cd to script directory' 2> /dev/stderr
+    echo 'Could not cd to script directory' > /dev/stderr
     exit 1
 fi
 
@@ -104,7 +104,7 @@ remove_prefix() {
 main() {
     # cd to directory above source directory
     if ! cd "$SRC_PATH/.."; then
-        echo 'Could not cd above source directory' 2> /dev/stderr
+        echo 'Could not cd above source directory' > /dev/stderr
         exit 1
     fi
 
