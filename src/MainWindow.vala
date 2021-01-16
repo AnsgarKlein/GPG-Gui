@@ -755,24 +755,25 @@ public class MainWindow : Gtk.Window {
     }
 
     /**
-     * This function gets executed if the selected
-     * operation changed.
+     * This function gets executed if the selected operation changed.
+     * It refreshes all widgets.
      */
     private void on_operation_changed() {
         refresh_widgets();
     }
 
     /**
-     * This function gets executed if the current mode
-     * of this window changed.
+     * This function gets executed if the current mode of this window changed.
+     * It refreshes all widgets.
      */
     private void on_window_state_changed() {
         refresh_widgets();
     }
 
     /**
-     * This function gets executed if a selection via the
-     * operation buttons has been made.
+     * This function gets executed if a selection via the operation buttons
+     * has been made.
+     * It changes the currently selected operation.
      */
     private void on_operation_button_select() {
         if (operation_selector1.get_active()) {
@@ -783,16 +784,15 @@ public class MainWindow : Gtk.Window {
     }
 
     /**
-     * This function gets executed if the text of the file entry
-     * changed.
+     * This function gets executed if the text of the file entry changed.
+     * It refreshes all widgets.
      */
     private void on_file_text_input() {
         refresh_widgets();
     }
 
     /**
-     * This function gets executed if the file chooser button
-     * is pressed.
+     * This function gets executed if the file chooser button is pressed.
      * It opens a filer chooser for selecting a file.
      */
     private void on_file_chooser_button() {
