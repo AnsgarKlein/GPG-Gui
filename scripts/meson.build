@@ -1,5 +1,6 @@
 scripts_dir = meson.current_source_dir()
 
+
 # Get version of application
 version_script = run_command('git-revision.sh')
 if version_script.returncode() != 0
@@ -9,3 +10,7 @@ if version_script.returncode() != 0
 else
   gpg_gui_version = version_script.stdout().strip()
 endif
+
+
+# Add post install script
+meson.add_install_script('meson-postinstall.sh')
