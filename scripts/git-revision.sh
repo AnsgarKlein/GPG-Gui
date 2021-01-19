@@ -17,7 +17,15 @@ fi
 git status > /dev/null 2>&1
 
 # Get version from git tags
-VERSION="$(git describe --tags --long --match 'v[0-9]*' --dirty --broken)"
+GIT_DESCRIBE="git describe --tags --long --dirty --broken"
+GIT_DESCRIBE="$GIT_DESCRIBE --match   v[0-9]*.[0-9]*.[0-9]*"
+GIT_DESCRIBE="$GIT_DESCRIBE --exclude v*[!0-9]*.*.*"
+GIT_DESCRIBE="$GIT_DESCRIBE --exclude v*.*[!0-9]*.*"
+GIT_DESCRIBE="$GIT_DESCRIBE --exclude v*.*.*[!0-9]*"
+if ! VERSION="$($GIT_DESCRIBE)"; then
+    echo 'git could not determine valid version string' > /dev/stderr
+    exit 1
+fi
 
 # Remove 'v' prefix from version string
 VERSION="$(echo "$VERSION" | sed 's/^v//')"
