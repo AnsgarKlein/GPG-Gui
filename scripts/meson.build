@@ -4,6 +4,8 @@ scripts_dir = meson.current_source_dir()
 # Get version of application
 version_script = run_command('git-revision.sh')
 if version_script.returncode() != 0
+  warning(version_script.stdout())
+  warning(version_script.stderr())
   warning('Could not determine application version via current git revision')
   warning('Using placeholder version string')
   gpg_gui_version = '0.0.0-unknown-version'
