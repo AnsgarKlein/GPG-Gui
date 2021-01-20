@@ -51,13 +51,20 @@ making it usable for unexperienced users.
 
 ## Build
 
-gpg-gui builds out-of-tree with Meson and Ninja:
+Build out-of-tree with Meson and Ninja:
 
 ```bash
-    meson setup build
-    ninja -C build
+meson setup build
+ninja -C build
 ```
 
+Configure build directory and install:
+
+```bash
+meson configure -Dprefix=/usr build
+meson configure -Dbuildtype=release build
+sudo ninja -C build install
+```
 
 ## Contributors
 
