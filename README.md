@@ -17,36 +17,25 @@ The GUI provides a convenient way to use GPG, rather than through the terminal,
 making it usable for unexperienced users.
 
 
-## Requirements
+## Dependencies
 
-### Requirements at runtime
+### Dependencies at runtime
 
 + GnuPG  
-  (Just the `gpg` or `gpg2` binary)
+  Just the `gpg` or `gpg2` binary
 + GTK+ 3  
-  (Very likely already installed in your favourite Linux distribution)
+  Very likely already installed in your favourite Linux distribution
 
 
-### Build requirements
+### Build dependencies
 
-+ Vala Compiler (*valac*)  
-  Likely available in your distributions repositories
-+ [Meson](https://mesonbuild.com) build system (probably with
-  [Ninja](https://ninja-build.org) backend)  
-  Likely available in your distributions repositories
-+ C Compiler  
-  *Clang* or *gcc* are tested. Probably best to install your distributions
-  development *meta package* / *bundle* / *group*.
-+ GTK+ 3
-  - Its header files  
-    (Probably installable via a *-dev* or *-devel* package in your distro)
-  - Its vala `.vapi` file  
-    (Either included with vala compiler or GTK+ 3 development package)
-+ GLib, GObject
-  - Their header files
-  - Their vala `.vapi` files
-  - They are a dependency of GTK+ 3 and will probably be installed
-    automatically when installing development package for GTK+ 3
+| Dependency                                  | Comment                                                       | Possible package names |
+|:-------------------------------------------:|:-------------------------------------------------------------:|:----------------------:|
+|Vala Compiler *valac*                        |Likely available in your distributions repositories            |`valac`, `vala`         |
+|[Meson](https://mesonbuild.com) build system |Installable via python pip, if distributions version is too old|`meson`                 |
+|[Ninja](https://ninja-build.org) build system|Likely available in your distributions repositories            |`ninja-build`           |
+|C Compiler: *gcc* or *clang*                 |Install from distributions repositories                        |`gcc`, `clang`          |
+|GTK+ 3                          |Library + Header + *.vapi* file<br>(*.vapi* might be included with *valac*) |`gtk+3.0` & `libgtk-3-dev`,<br>`gtk3` & `gtk3-devel`|
 
 
 ## Build
