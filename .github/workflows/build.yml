@@ -34,9 +34,11 @@ jobs:
 
       - name: Install gcc
         run: sudo apt-get -y install gcc
+        if: matrix.cc == 'gcc'
 
       - name: Install clang
         run: sudo apt-get -y install clang
+        if: matrix.cc == 'clang'
 
       - name: Install dependencies
         run: sudo apt-get -y install gtk+3.0 libgtk-3-dev
