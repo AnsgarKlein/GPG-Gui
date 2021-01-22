@@ -31,3 +31,6 @@ venv/
 
 # Ignore all build directories
 /build*/
+
+# Ignore automatically created version tag
+.version_tag

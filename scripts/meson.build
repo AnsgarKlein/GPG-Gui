@@ -2,7 +2,7 @@ scripts_dir = meson.current_source_dir()
 
 
 # Get version of application
-version_script = run_command('git-revision.sh')
+version_script = run_command('version.sh')
 if version_script.returncode() != 0
   warning(version_script.stdout())
   warning(version_script.stderr())
