@@ -652,7 +652,7 @@ public class MainWindow : Gtk.Window {
             Gtk.PositionType.RIGHT);
 
 
-        // Run button
+        // Run button (label will be overwritten)
         Gtk.Image run_button_image = new Gtk.Image.from_icon_name(
             "system-run",
             Gtk.IconSize.BUTTON);
@@ -662,7 +662,7 @@ public class MainWindow : Gtk.Window {
         run_button.clicked.connect(on_run_button);
         run_button.set_hexpand(true);
         run_button.set_vexpand(true);
-        run_button.set_halign(Gtk.Align.FILL);
+        run_button.set_halign(Gtk.Align.END);
         run_button.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(
             run_button,
@@ -756,9 +756,25 @@ public class MainWindow : Gtk.Window {
 
     /**
      * This function gets executed if the selected operation changed.
-     * It refreshes all widgets.
+     * It does:
+     * - Update the string of run button according to currently selected
+     *   operation
+     * - Refresh all widgets
      */
     private void on_operation_changed() {
+        // Update lable of run button
+        switch (selected_operation) {
+            case GPGOperation.ENCRYPT:
+                run_button.set_label("Encrypt");
+                break;
+            case GPGOperation.DECRYPT:
+                run_button.set_label("Decrypt");
+                break;
+            default:
+                break;
+        }
+
+        // Refresh widgets
         refresh_widgets();
     }
 
