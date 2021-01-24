@@ -5,7 +5,9 @@
 ![Build Status](https://github.com/AnsgarKlein/GPG-Gui/workflows/Build/badge.svg)
 ![License](https://img.shields.io/github/license/AnsgarKlein/GPG-Gui?color=blue)
 
-![example image](misc/gpg-gui.png)
+<p align="center">
+  <img src="misc/gpg-gui.png" alt="example image"/>
+</p>
 
 
 ## Purpose
