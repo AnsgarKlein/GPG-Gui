@@ -244,7 +244,8 @@ public class GPGHandler : Object {
             string? cipher_algo,
             string? digest_algo,
             bool digest_strengthen,
-            bool compress) {
+            bool compress,
+            bool armor) {
 
         Array<string> args = new Array<string>();
         args.append_val(this.path);
@@ -277,7 +278,7 @@ public class GPGHandler : Object {
             args.append_val(cipher_algo);
         }
 
-        // Instruct to compress if desired
+        // Compress output if desired
         if (compress) {
             args.append_val("--compress-level");
             args.append_val("9");
@@ -286,6 +287,11 @@ public class GPGHandler : Object {
         } else {
             args.append_val("--compress-algo");
             args.append_val("none");
+        }
+
+        // Use ASCII armored output if desired
+        if (armor) {
+            args.append_val("--armor");
         }
 
         // Specify output file

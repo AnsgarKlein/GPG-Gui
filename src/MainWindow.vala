@@ -154,6 +154,25 @@ public class MainWindow : Gtk.Window {
         }
     }
 
+    /**
+     * The currently selected armored selection or false if no
+     * selection can be determined.
+     */
+    private bool selected_armored {
+        set {
+            if (armored_button != null) {
+                armored_button.set_active(value);
+            }
+        }
+        get {
+            if (armored_button == null) {
+                return false;
+            }
+
+            return armored_button.get_active();
+        }
+    }
+
     // Available states for selectable options
 
     /**
@@ -213,6 +232,11 @@ public class MainWindow : Gtk.Window {
      */
     private const bool DEFAULT_COMPRESSION = true;
 
+    /**
+     * Default value for armored output
+     */
+    private const bool DEFAULT_ARMORED = false;
+
     // Signals
 
     /**
@@ -250,6 +274,8 @@ public class MainWindow : Gtk.Window {
     private Gtk.Switch hash_strengthen_button;
     private Gtk.Label compression_label;
     private Gtk.Switch compression_button;
+    private Gtk.Label armored_label;
+    private Gtk.Switch armored_button;
 
     private Gtk.Button run_button;
 
@@ -652,6 +678,25 @@ public class MainWindow : Gtk.Window {
             Gtk.PositionType.RIGHT);
 
 
+        // Armored button
+        armored_label = new Gtk.Label("Armored Output:");
+        armored_label.set_hexpand(false);
+        armored_label.set_vexpand(true);
+        armored_label.set_halign(Gtk.Align.END);
+        armored_label.set_valign(Gtk.Align.CENTER);
+        main_grid.add(armored_label);
+
+        armored_button = new Gtk.Switch();
+        armored_button.set_hexpand(false);
+        armored_button.set_vexpand(true);
+        armored_button.set_halign(Gtk.Align.END);
+        armored_button.set_valign(Gtk.Align.CENTER);
+        main_grid.attach_next_to(
+            armored_button,
+            armored_label,
+            Gtk.PositionType.RIGHT);
+
+
         // Run button (label will be overwritten)
         Gtk.Image run_button_image = new Gtk.Image.from_icon_name(
             "system-run",
@@ -666,7 +711,7 @@ public class MainWindow : Gtk.Window {
         run_button.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(
             run_button,
-            compression_button,
+            armored_button,
             Gtk.PositionType.BOTTOM);
 
 
@@ -736,6 +781,9 @@ public class MainWindow : Gtk.Window {
 
         // Set default value for compression
         selected_compression = DEFAULT_COMPRESSION;
+
+        // Set default value for armored output
+        selected_armored = DEFAULT_ARMORED;
 
         refresh_widgets();
     }
@@ -882,6 +930,8 @@ public class MainWindow : Gtk.Window {
             hash_strengthen_button.set_sensitive(false);
             compression_label.set_sensitive(false);
             compression_button.set_sensitive(false);
+            armored_label.set_sensitive(false);
+            armored_button.set_sensitive(false);
 
             progress_indicator.show_all();
         } else {
@@ -904,6 +954,8 @@ public class MainWindow : Gtk.Window {
                 hash_strengthen_button.set_sensitive(true);
                 compression_label.set_sensitive(true);
                 compression_button.set_sensitive(true);
+                armored_label.set_sensitive(true);
+                armored_button.set_sensitive(true);
 
                 progress_indicator.hide();
             } else if (selected_operation == GPGOperation.DECRYPT) {
@@ -925,6 +977,8 @@ public class MainWindow : Gtk.Window {
                 hash_strengthen_button.set_sensitive(false);
                 compression_label.set_sensitive(false);
                 compression_button.set_sensitive(false);
+                armored_label.set_sensitive(false);
+                armored_button.set_sensitive(false);
 
                 progress_indicator.hide();
             }
@@ -1012,7 +1066,8 @@ public class MainWindow : Gtk.Window {
                 selected_cipher_algo,
                 selected_digest_algo,
                 selected_hash_strengthen,
-                selected_compression);
+                selected_compression,
+                selected_armored);
 
             break;
         case GPGOperation.DECRYPT:
