@@ -40,22 +40,61 @@ making it usable for unexperienced users.
 |GTK+ 3                          |Library + Header + *.vapi* file<br>(*.vapi* might be included with *valac*) |`gtk+3.0` & `libgtk-3-dev`,<br>`gtk3` & `gtk3-devel`|
 
 
-## Build
+## Building
 
-Build out-of-tree with Meson and Ninja:
+### Setup build directory for out-of-tree build
 
 ```bash
 meson setup build
+```
+
+### Configure (optional)
+
+The build process can optionally be configured with variables. For example:
+
+Change prefix:
+
+```bash
+meson configure build -Dprefix=/usr
+```
+
+Build optimized build:
+
+```bash
+meson configure build -Dbuildtype=release
+meson configure build -Doptimization=3
+```
+
+Disable client-side decorations
+
+```bash
+meson configure build -DGPG_GUI_CSD=false
+```
+
+List all currently set build properties:
+
+```bash
+meson configure build
+```
+
+### Compile
+
+```bash
 ninja -C build
 ```
 
-Configure build directory and install:
+### Install
 
 ```bash
-meson configure -Dprefix=/usr build
-meson configure -Dbuildtype=release build
 sudo ninja -C build install
 ```
+
+If you are building a package you can adjust the `DESTDIR`:
+
+```bash
+DESTDIR="/path/to/destdir" ninja -C build install
+```
+
 
 ## Contributors
 
