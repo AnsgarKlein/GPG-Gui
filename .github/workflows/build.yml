@@ -3,13 +3,14 @@ name: Build
 on: [ push, pull_request ]
 
 jobs:
-  build-all:
+  build:
+    name: Build
     strategy:
       matrix:
         distro: [ 'ubuntu-18.04', 'ubuntu-20.04' ]
         cc: [ 'gcc', 'clang' ]
-    name: Build
     runs-on: ${{ matrix.distro }}
+    timeout-minutes: 10
     steps:
       - name: Update repositories
         run: sudo apt-get -y update
