@@ -1,0 +1,3 @@
+gpg
+libc6
+libgtk-3-0
