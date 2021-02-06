@@ -1,0 +1,1 @@
+../generic/package-name-deb.sh
