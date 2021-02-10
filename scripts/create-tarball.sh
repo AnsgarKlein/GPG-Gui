@@ -12,6 +12,7 @@ PROJECT_ROOT="$(cd "$(dirname "$0")/.." > /dev/null 2>&1 && pwd)"
 
 # Executing script generates file containing version string
 VERSION="$("$(dirname "$0")/version.sh")"
+VERSION_TAG='.version_tag'
 
 ARCHIVE="gpg-gui_${VERSION}"
 
@@ -25,15 +26,14 @@ fi
 # Get list of all files in tree that are not ignored via .gitignore
 # (except the version tag file)
 PROJECT_FILES="$(git ls-files --cached --modified --other --exclude-standard)"
-PROJECT_FILES="$(printf "${PROJECT_FILES}\n.version_tag")"
 PROJECT_FILES="$(echo "$PROJECT_FILES" | sort --dictionary --unique)"
 
-# Create empty archive
+# Create archive containing only version tag
 tar --create -f "${ARCHIVE}.tar" \
 --numeric-owner \
 --owner 0 \
 --group 0 \
---files-from '/dev/null'
+"$VERSION_TAG"
 
 # Add every single file separately to archive
 echo "$PROJECT_FILES" | while read -r file; do
