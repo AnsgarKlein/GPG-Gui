@@ -31,8 +31,8 @@ RUN apt-get -yq update ;\
      gcc \
      valac ;\
     rm -rf /var/lib/apt/lists/* ;\
-    python3 -m pip install --no-cache-dir --upgrade pip ;\
-    python3 -m pip install --no-cache-dir meson==0.50
+    python3 -m pip install --no-input --no-cache-dir --upgrade pip ;\
+    python3 -m pip install --no-input --no-cache-dir meson==0.50
 
 # Install dependencies
 RUN apt-get -yq update ;\
