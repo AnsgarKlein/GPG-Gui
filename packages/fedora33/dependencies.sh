@@ -1,0 +1,1 @@
+../generic/dependencies-rpm.sh

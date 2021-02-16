@@ -1,0 +1,1 @@
+../generic/version-rpm.sh
