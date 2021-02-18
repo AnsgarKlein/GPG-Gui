@@ -583,9 +583,17 @@ public class MainWindow : Gtk.Window {
 
 
         // Crypto selection
+        const string crypto_help =
+            "TWOFISH and AES256 are the strongest algorithms. AES has hardware "
+          + "acceleration support on most platforms and is probably fastest.\n"
+          + "OpenPGP compliant algorithms are IDEA, SAFER-SK128, 3DES, CAST5, "
+          + "BLOWFISH. Later versions include AES128, AES192, AES256, TWOFISH. "
+          + "Even later versions include CAMELLIA.\n"
+          + "3DES is required by all OpenPGP implementations.\n"
+          + "PGP until version 2.6 only supported IDEA.";
+
         crypto_label = new Gtk.Label("Encryption Cipher:");
-        crypto_label.set_tooltip_text(
-            "TWOFISH, AES256, and CAMELLIA256 are the strongest ciphers.");
+        crypto_label.set_tooltip_text(crypto_help);
         crypto_label.set_hexpand(false);
         crypto_label.set_vexpand(true);
         crypto_label.set_halign(Gtk.Align.END);
@@ -593,8 +601,7 @@ public class MainWindow : Gtk.Window {
         main_grid.add(crypto_label);
 
         crypto_box = new Gtk.ComboBoxText();
-        crypto_box.set_tooltip_text(
-            "TWOFISH, AES256, and CAMELLIA256 are the strongest ciphers.");
+        crypto_box.set_tooltip_text(crypto_help);
         crypto_box.changed.connect(refresh_widgets);
         foreach (string algo in cipher_algos) {
             crypto_box.append_text(algo);
@@ -607,8 +614,15 @@ public class MainWindow : Gtk.Window {
 
 
         // Hash selection
+        const string hash_help =
+            "SHA512 is the strongest algorithm. SHA algorithms have hardware "
+          + "acceleration support and are probably fastest.\n"
+          + "OpenPGP compliant algorithms are MD2, MD5, RIPE-MD/160, SHA-1. "
+          + "Later versions include SHA224, SHA256, SHA384, SHA512.\n"
+          + "SHA1 is required by all OpenPGP implementations.";
+
         hash_label = new Gtk.Label("Hash Algorithm:");
-        hash_label.set_tooltip_text("SHA512 is the strongest hash.");
+        hash_label.set_tooltip_text(hash_help);
         hash_label.set_hexpand(false);
         hash_label.set_vexpand(true);
         hash_label.set_halign(Gtk.Align.END);
@@ -616,7 +630,7 @@ public class MainWindow : Gtk.Window {
         main_grid.add(hash_label);
 
         hash_box = new Gtk.ComboBoxText();
-        hash_box.set_tooltip_text("SHA512 is the strongest hash.");
+        hash_box.set_tooltip_text(hash_help);
         hash_box.changed.connect(refresh_widgets);
         foreach (string algo in digest_algos) {
             hash_box.append_text(algo);
@@ -629,9 +643,13 @@ public class MainWindow : Gtk.Window {
 
 
         // Hash strengthen button
+        const string hash_strengthen_help =
+            "Enabling causes gpg to improve s2k passphrase mangling by hashing "
+          + "65011712 times. This increases the security against dictionary "
+          + "attacks at the cost of encryption time.";
+
         hash_strengthen_label = new Gtk.Label("Hash Strengthen:");
-        hash_strengthen_label.set_tooltip_text(
-            "Strengthening increases security but increases encryption time");
+        hash_strengthen_label.set_tooltip_text(hash_strengthen_help);
         hash_strengthen_label.set_hexpand(false);
         hash_strengthen_label.set_vexpand(true);
         hash_strengthen_label.set_halign(Gtk.Align.END);
@@ -639,8 +657,7 @@ public class MainWindow : Gtk.Window {
         main_grid.add(hash_strengthen_label);
 
         hash_strengthen_button = new Gtk.Switch();
-        hash_strengthen_button.set_tooltip_text(
-            "Strengthening increases security but increases encryption time");
+        hash_strengthen_button.set_tooltip_text(hash_strengthen_help);
         hash_strengthen_button.state_set.connect((b) => {
             refresh_widgets();
             return false;
@@ -656,7 +673,19 @@ public class MainWindow : Gtk.Window {
 
 
         // Compression button
+        const string compression_help =
+            "Enabling compression uses the zip algorithm since this is the "
+          + "only one that is compatible with PGP. Disabling will break PGP "
+          + "compatibility.\n"
+          + "Compressing increases entropy and can improve security of the "
+          + "encryption.\n"
+          + "Using compression on compressable content like text can "
+          + "significantly decrease file size. Using compression on "
+          + "uncompressable content like images may increase file size "
+          + "slightly.";
+
         compression_label = new Gtk.Label("Compress:");
+        compression_label.set_tooltip_text(compression_help);
         compression_label.set_hexpand(false);
         compression_label.set_vexpand(true);
         compression_label.set_halign(Gtk.Align.END);
@@ -664,6 +693,7 @@ public class MainWindow : Gtk.Window {
         main_grid.add(compression_label);
 
         compression_button = new Gtk.Switch();
+        compression_button.set_tooltip_text(compression_help);
         compression_button.state_set.connect((b) => {
             refresh_widgets();
             return false;
@@ -679,7 +709,13 @@ public class MainWindow : Gtk.Window {
 
 
         // Armored button
+        const string armored_help =
+            "Enabling causes output to be wrapped in ASCII armor. This "
+          + "significantly increases file size and is not recommended in "
+          + "most cases.";
+
         armored_label = new Gtk.Label("Armored Output:");
+        armored_label.set_tooltip_text(armored_help);
         armored_label.set_hexpand(false);
         armored_label.set_vexpand(true);
         armored_label.set_halign(Gtk.Align.END);
@@ -687,6 +723,7 @@ public class MainWindow : Gtk.Window {
         main_grid.add(armored_label);
 
         armored_button = new Gtk.Switch();
+        armored_button.set_tooltip_text(armored_help);
         armored_button.set_hexpand(false);
         armored_button.set_vexpand(true);
         armored_button.set_halign(Gtk.Align.END);
