@@ -2,7 +2,7 @@
 
 ### Graphical user interface for GnuPG (GPG) file encryption
 
-![Build Status](https://github.com/AnsgarKlein/GPG-Gui/workflows/Build/badge.svg)
+[![CI Status](https://github.com/AnsgarKlein/GPG-Gui/actions/workflows/ci.yml/badge.svg)](https://github.com/AnsgarKlein/GPG-Gui/actions)
 ![License](https://img.shields.io/github/license/AnsgarKlein/GPG-Gui?color=blue)
 
 <p align="center">
