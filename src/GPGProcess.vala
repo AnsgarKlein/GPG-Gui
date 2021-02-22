@@ -13,24 +13,36 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * GPGProcess represents a specific running (or at least starting) gpg
+ * process on this system.
+ */
 public class GPGProcess {
 
     /**
      * Enum representing the state of a gpg process:
-     *
-     * STARTING: The process is currently being started. The process has not
-     *           yet been spawned.
-     *
-     * RUNNING:  The process has been spawned and is running.
-     *
-     * FINISHED: The process has finished executing. No more progress is
-     *           expected to happen. This might be because spawning the process
-     *           failed or because the process ran successfully and is now
-     *           finished.
      */
     public enum State {
+        /**
+         * Indicates one of the following:
+         *
+         *  * The process is currently being started.
+         *  * The process has not yet been spawned.
+         */
         STARTING,
+
+        /**
+         * The process has finished executing. No more progress is expected to
+         * happen. This might be:
+         *
+         *  * Because spawning the process failed
+         *  * Because the process ran successfully and is now finished.
+         */
         RUNNING,
+
+        /**
+         * The process has been spawned and is running.
+         */
         FINISHED
     }
 
@@ -66,21 +78,50 @@ public class GPGProcess {
     private bool process_success;
 
     /**
-     * Private variables that when set will (with some delay)
+     * Private variable that when set will (with some delay)
      * emit the corresponding signals in the correct thread.
      */
     private bool _stdout_changed = false;
+
+    /**
+     * Private variable that when set will (with some delay)
+     * emit the corresponding signals in the correct thread.
+     */
     private bool _stderr_changed = false;
+
+    /**
+     * Private variable that when set will (with some delay)
+     * emit the corresponding signals in the correct thread.
+     */
     private bool _state_changed = false;
 
     /**
-     * Signals that will be emitted when the corresponding
+     * Signal that will be emitted when the corresponding
      * property changes.
      */
     public signal void stdout_changed();
+
+    /**
+     * Signal that will be emitted when the corresponding
+     * property changes.
+     */
     public signal void stderr_changed();
+
+    /**
+     * Signal that will be emitted when the corresponding
+     * property changes.
+     */
     public signal void state_changed();
 
+    /**
+     * Create a new GPGProcess with the given command line arguments and
+     * given password.
+     * After creating this object the corresponding process will be started.
+     * Check the signals to be notified of changes.
+     *
+     * @param args Command line arguments to use for starting this process
+     * @param passphrase Passphrase to pass to this process in a secure way
+     */
     public GPGProcess(string[] args, string passphrase) {
         // Start process
         start(args, passphrase);
@@ -113,6 +154,8 @@ public class GPGProcess {
 
     /**
      * Returns the state the process is currently in.
+     *
+     * @return The state the process is currently in
      */
     public State get_state() {
         lock (state) {
@@ -130,7 +173,9 @@ public class GPGProcess {
     }
 
     /**
-     * Returns stdout of process.
+     * Returns the current stdout of the process.
+     *
+     * @return The current stdout of the process
      */
     public string get_stdout() {
         lock (process_stdout) {
@@ -148,7 +193,9 @@ public class GPGProcess {
     }
 
     /**
-     * Returns stderr of process.
+     * Returns the current stderr of the process.
+     *
+     * @return The current stderr of the process
      */
     public string get_stderr() {
         lock (process_stderr) {
@@ -177,6 +224,8 @@ public class GPGProcess {
     /**
      * Returns whether the process finished successfully or with errors.
      * Only meaningful output when process is in finished state.
+     *
+     * @return True if finished successfully, false otherwise
      */
     public bool get_success() {
         lock (process_success) {
@@ -192,6 +241,12 @@ public class GPGProcess {
 
     /**
      * Start this process
+     *
+     * Start a gpg process with the given command line arguments and
+     * the given passphrase which should be passed to the process securely.
+     *
+     * @param args Command line parameters to use
+     * @param passphrase Passphrase to pass to the process securely
      */
     private void start(string[] args, string passphrase) {
         // Start gpg process

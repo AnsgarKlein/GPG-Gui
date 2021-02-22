@@ -13,6 +13,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Short version of the GPLv3+ license text.
+ * Full version at: [[http://www.gnu.org/licenses/]]
+ */
 private const string GPL3_LICENSE_SHORT =
 """This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -27,7 +31,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see http://www.gnu.org/licenses""";
 
+/**
+ * About dialog of this application showing
+ * information about it.
+ */
 public class AboutDialog : Gtk.AboutDialog {
+
+    /**
+     * Create a new about dialog for the given parent.
+     * Dialog will be made modal and transient for the given parent.
+     *
+     * @param parent The parent of this dialog
+     */
     public AboutDialog(Gtk.Window parent) {
         set_destroy_with_parent(true);
         set_transient_for(parent);

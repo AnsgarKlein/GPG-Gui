@@ -15,8 +15,9 @@
 
 /**
  * Return array of directories from PATH environment variable.
- *
  * Directories are guaranteed to not be a symlink and to exist.
+ *
+ * @return Array of directories (no symlink and guaranteed to exist)
  */
 private static string[] get_paths_from_env() {
     // Get PATH variable from environment
@@ -63,7 +64,9 @@ private static string[] get_paths_from_env() {
 
 /**
  * Given reference to an array of strings sort it using strcmp.
- * Uses BubbleSort
+ * Uses BubbleSort.
+ *
+ * @param arr Reference to existing array to sort
  */
 private static void sort_string_array(ref string[] arr) {
     bool unsorted = true;
@@ -89,8 +92,9 @@ private static void sort_string_array(ref string[] arr) {
 
 /**
  * Return array of suggestions of gpg paths
+ * Paths might be symlinks.
  *
- * Paths might be symlinks
+ * @return Array of paths to gpg binarys on this system.
  */
 private static string[] gpg_path_suggestions() {
     // Look in all paths from PATH environment variable
@@ -119,6 +123,10 @@ private static string[] gpg_path_suggestions() {
 /**
  * Generate path for encryption output depending on input file
  * used for encryption.
+ *
+ * @param input_path Path to the file to encrypt
+ * @return Path to output file for encryption or null if no
+ * output path could be determined.
  */
 private static string? encryption_output_path(string input_path) {
     const int max_loop = 100;
@@ -159,6 +167,10 @@ private static string? encryption_output_path(string input_path) {
 /**
  * Generate path for decryption output depending on input file
  * used for decryption.
+ *
+ * @param input_path Path to the file to decrypt
+ * @return Path to output file for decryption or null if no
+ * output path could be determined.
  */
 private static string? decryption_output_path(string input_path) {
     string input_dir = Path.get_dirname(input_path);

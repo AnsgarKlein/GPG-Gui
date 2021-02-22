@@ -13,6 +13,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Main window of this application.
+ */
 public class MainWindow : Gtk.Window {
 
     // Current state for selectable options
@@ -32,9 +35,15 @@ public class MainWindow : Gtk.Window {
     }
 
     /**
-     * Currently selected gpg operation
+     * Do not access directly. Use {@link selected_operation}.
+     *
+     * @see selected_operation
      */
     private GPGOperation _selected_operation;
+
+    /**
+     * Currently selected gpg operation
+     */
     private GPGOperation selected_operation {
         set {
             _selected_operation = value;
@@ -827,6 +836,8 @@ public class MainWindow : Gtk.Window {
 
     /**
      * Set selected operation to given operation
+     *
+     * @param operation The operation to select
      */
     public void set_operation(GPGOperation operation) {
         this.selected_operation = operation;
@@ -834,6 +845,8 @@ public class MainWindow : Gtk.Window {
 
     /**
      * Set selected file to given file
+     *
+     * @param path The file to select
      */
     public void set_file(string path) {
         this.selected_file = path;
@@ -842,9 +855,9 @@ public class MainWindow : Gtk.Window {
     /**
      * This function gets executed if the selected operation changed.
      * It does:
-     * - Update the string of run button according to currently selected
-     *   operation
-     * - Refresh all widgets
+     *
+     *  * Update the string of run button according to currently selected operation
+     *  * Refresh all widgets
      */
     private void on_operation_changed() {
         // Update lable of run button

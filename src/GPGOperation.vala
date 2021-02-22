@@ -15,10 +15,15 @@
 
 /**
  * Defines a type of symmetric gpg operation.
- * ENCRYPT: Symmetric encryption of a file with a passphrase
- * DECRYPT: Symmetric decryption of a file with a passphrase
  */
 public enum GPGOperation {
+    /**
+     * Symmetric encryption of a file with a passphrase
+     */
     ENCRYPT,
+
+    /**
+     * Symmetric decryption of a file with a passphrase
+     */
     DECRYPT
 }

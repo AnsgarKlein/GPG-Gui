@@ -13,6 +13,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Application entry point of this application
+ *
+ * @param args Command line arguments for this application
+ */
 private int main(string[] args) {
     // Check if threads are supported
     if (!Thread.supported()) {
@@ -78,6 +83,13 @@ private int main(string[] args) {
     return 0;
 }
 
+/**
+ * Print help about command line arguments to stdout.
+ *
+ * @param application_name The application name that was used to start this
+ * application. Normally this is recorded in the first (zeroth) command line
+ * parameter.
+ */
 private void print_help(string application_name) {
     stdout.printf("%s [OPTIONS]\n", application_name);
     stdout.printf("\n");

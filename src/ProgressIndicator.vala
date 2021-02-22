@@ -35,6 +35,12 @@ public class ProgressIndicator : Gtk.Box {
      */
     public signal void finished();
 
+    /**
+     * Creates a new ProgressIndicator widget with a given GPG process.
+     *
+     * @param gpg_process The process to monitor the progress of
+     * or null to not monitor any process.
+     */
     public ProgressIndicator(GPGProcess? gpg_process = null) {
         build_gui();
 
@@ -71,6 +77,9 @@ public class ProgressIndicator : Gtk.Box {
      *
      * Set to null to stop monitoring the current process
      * (This will *not* stop the process, only the monitoring!)
+     *
+     * @param gpg_process The process to monitor the progress of
+     * or null to stop monitoring.
      */
     public void set_process(GPGProcess? gpg_process) {
         this.gpg_process = gpg_process;

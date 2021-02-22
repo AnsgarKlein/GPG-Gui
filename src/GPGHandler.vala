@@ -129,12 +129,19 @@ public class GPGHandler : Object {
     /**
      * Extract line(s) of given array of lines that start with given string
      * as well as all "continuing lines".
+     *
      * A continuing line is a line after a line that starts with the given
      * string that starts with at least two spaces.
+     *
      * All following continuing lines are appended to the first line (starting
      * with the given string)
      *
      * Returns null if line starting with given string cannot be found at all.
+     *
+     * @param input Array of line to search in
+     * @param starter String indicating the starting line
+     * @return Starting line and all continuing lines concatenated or null if
+     * starting line cannot be found
      */
     private static string? extract_lines_starting_with(string[] input, string starter) {
         StringBuilder builder = new StringBuilder();
@@ -174,6 +181,8 @@ public class GPGHandler : Object {
     /**
      * Given the output of 'gpg --version' extracts the supported cipher
      * algorithms and sets the corresponding variable.
+     *
+     * @param stdout_lines 'gpg --version' output
      */
     private void parse_cipher_algos(string[] stdout_lines) {
         const string key = "Cipher:";
@@ -199,6 +208,8 @@ public class GPGHandler : Object {
     /**
      * Given the output of 'gpg --version' extracts the supported digest
      * algorithms and sets the corresponding variable.
+     *
+     * @param stdout_lines 'gpg --version' output
      */
     private void parse_digest_algos(string[] stdout_lines) {
         const string key = "Hash:";
@@ -221,21 +232,38 @@ public class GPGHandler : Object {
     }
 
     /**
-     * Return list of supported cipher algos of this gpg binary
+     * Returns list of supported cipher algos of this gpg binary.
+     *
+     * @return list of supported cipher algos of this gpg binary
      */
     public unowned string[] get_cipher_algos() {
         return this.cipher_algos;
     }
 
     /**
-     * Return list of supported digest algos of this gpg binary
+     * Returns list of supported digest algos of this gpg binary.
+     *
+     * @return list of supported digest algos of this gpg binary
      */
     public unowned string[] get_digest_algos() {
         return this.digest_algos;
     }
 
     /**
-     * Start GPG process for encrypting a given file
+     * Start a GPG process for encrypting a given file.
+     *
+     * @param passphrase The passphrase for encrypting the given file
+     * @param input_file The path of the file to encrypt
+     * @param output_file The path to write encrypted file to
+     * @param cipher_algo What cipher algorithm to use in encryption process
+     * @param digest_algo What digest algorithm to use in encryption process
+     * @param digest_strengthen Whether to increase s2k passphrase mangling
+     * @param compress Whether to compress the output
+     * @param armor Whether to wrap the output in ASCII armor
+     *
+     * @return GPGProcess that handles the started process
+     *
+     * @see GPGProcess
      */
     public GPGProcess encrypt(
             string passphrase,
@@ -306,7 +334,15 @@ public class GPGHandler : Object {
     }
 
     /**
-     * Start GPG process for decrypting a given file
+     * Start a GPG process for decrypting a given file.
+     *
+     * @param passphrase The passphrase for decrypting the given file
+     * @param input_file The path of the file to decrypt
+     * @param output_file The path to write decrypted file to
+     *
+     * @return GPGProcess that handles the started process
+     *
+     * @see GPGProcess
      */
     public GPGProcess decrypt(
             string passphrase,
@@ -331,6 +367,12 @@ public class GPGHandler : Object {
     /**
      * Helper function for encrypt / decrypt functions that creates a
      * GPG process with given arguments.
+     *
+     * @param args The arguments to use for the GPG process
+     * @param passphrase The passphrase to use for the GPG process
+     *
+     * @see encrypt
+     * @see decrypt
      */
     private inline GPGProcess start_process(string[] args, string passphrase) {
         // Start process
