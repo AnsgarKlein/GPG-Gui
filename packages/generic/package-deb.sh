@@ -76,13 +76,13 @@ EOF
 
 # Compile code
 echo -e '\n\n########## ########## ########## Compiling code ...'
-meson setup build > /dev/null
-meson configure build -Dbuildtype=release
-meson configure build -Doptimization=3
-meson configure build -Dprefix=/usr
-meson configure build -DGPG_GUI_CSD=true
-meson configure build -DGPG_GUI_RDNS_NAMING=false
-meson configure build
+meson setup \
+ -Dbuildtype=release \
+ -Doptimization=3 \
+ -Dprefix=/usr \
+ -DGPG_GUI_CSD=true \
+ -DGPG_GUI_RDNS_NAMING=false \
+ build
 ninja -C build
 
 
