@@ -35,19 +35,10 @@ public class MainWindow : Gtk.Window {
     }
 
     /**
-     * Do not access directly. Use {@link selected_operation}.
-     *
-     * @see selected_operation
-     */
-    private GPGOperation _selected_operation;
-
-    /**
      * Currently selected gpg operation
      */
     private GPGOperation selected_operation {
         set {
-            _selected_operation = value;
-
             if (value == GPGOperation.ENCRYPT && operation_selector1 != null) {
                 operation_selector1.set_active(true);
             } else if (value == GPGOperation.DECRYPT && operation_selector2 != null) {
@@ -56,7 +47,12 @@ public class MainWindow : Gtk.Window {
             operation_changed();
         }
         get {
-            return _selected_operation;
+            if (operation_selector1 != null && operation_selector1.get_active()) {
+                return GPGOperation.ENCRYPT;
+            } else if (operation_selector2 != null && operation_selector2.get_active()) {
+                return GPGOperation.DECRYPT;
+            }
+            return GPGOperation.ENCRYPT;
         }
     }
 
@@ -888,14 +884,9 @@ public class MainWindow : Gtk.Window {
     /**
      * This function gets executed if a selection via the operation buttons
      * has been made.
-     * It changes the currently selected operation.
      */
     private void on_operation_button_select() {
-        if (operation_selector1.get_active()) {
-            this.selected_operation = GPGOperation.ENCRYPT;
-        } else {
-            this.selected_operation = GPGOperation.DECRYPT;
-        }
+        operation_changed();
     }
 
     /**
