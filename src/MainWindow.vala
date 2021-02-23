@@ -485,6 +485,7 @@ public class MainWindow : Gtk.Window {
             Gtk.ButtonBox operation_selector_box = new Gtk.ButtonBox(Gtk.Orientation.HORIZONTAL);
             operation_selector_box.set_layout(Gtk.ButtonBoxStyle.CENTER);
             operation_selector_box.get_style_context().add_class("linked");
+            operation_selector_box.get_style_context().add_class("stack-switcher");
             operation_selector_box.add(operation_selector1);
             operation_selector_box.add(operation_selector2);
             header.set_custom_title(operation_selector_box);
