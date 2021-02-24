@@ -193,7 +193,20 @@ private class CLIParser {
         var opt_context = new OptionContext("");
         opt_context.set_help_enabled(false);
         opt_context.set_ignore_unknown_options(false);
-        opt_context.set_summary("gpg-gui always starts with a GUI. Options can be preselected via command line options though.");
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.printf(
+                "%s always starts with a GUI. Options can be preselected via command line options though.",
+                GPG_GUI_NAME);
+            opt_context.set_summary(builder.str);
+        }
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.printf(
+                "If you encounter any bugs please report them at %s",
+                GPG_GUI_WEBSITE);
+            opt_context.set_description(builder.str);
+        }
         opt_context.add_main_entries(cli_options, null);
         opt_context.add_group(Gtk.get_option_group(true));
 
