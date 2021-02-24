@@ -59,9 +59,10 @@ private int main(string[] args) {
         }
     }
 
-    // Start gtk main loop
-    window.destroy.connect(Gtk.main_quit);
-    Gtk.main();
+    // Start main loop
+    MainLoop main_loop = new MainLoop();
+    window.destroy.connect(() => { main_loop.quit(); });
+    main_loop.run();
 
     return 0;
 }
