@@ -36,71 +36,200 @@ private int main(string[] args) {
     // This removes all Gtk specific command line options from array
     Gtk.init(ref args);
 
-    // Parse application specific command line options
-    string? arg_file = null;
-    GPGOperation? arg_op = null;
-    for (int i = 1; i < args.length; i++) {
-        string arg1 = args[i];
-        string arg2 = (i + 1) > args.length ? null : args[i + 1];
+    MainWindow window;
+    {
+        // Parse application specific command line options
+        int move_on;
+        string? arg_file = null;
+        GPGOperation? arg_op = null;
+        new CLIParser(args, out move_on, out arg_op, out arg_file);
 
-        if (arg1 == "-d" || arg1 == "--decrypt") {
-            arg_op = GPGOperation.DECRYPT;
-        } else if (arg1 == "-e" || arg1 == "--encrypt") {
-            arg_op = GPGOperation.ENCRYPT;
-        } else if (arg1 == "-f" || arg1 == "--file") {
-            if (arg2 == null) {
-                stderr.printf("Expected file after \"%s\"\n", arg1);
-                print_help(args[0]);
-                return 1;
-            }
-            arg_file = arg2;
-            i++;
-        } else if (arg1 == "-h" || arg1 == "--help") {
-            print_help(args[0]);
-            return 0;
-        } else if (arg1 == "--version") {
-            stdout.printf("%s\n", GPG_GUI_VERSION);
-            return 0;
-        } else {
-            stderr.printf("Unknown option \"%s\"\n", arg1);
-            print_help(args[0]);
-            return 1;
+        // Check whether we should continue with application launch
+        if (move_on != 0) {
+            return (move_on < 0) ? 0 : 1;
+        }
+
+        // Create main window and apply parsed application parameters
+        window = new MainWindow();
+        if (arg_file != null) {
+            window.set_file(arg_file);
+        }
+        if (arg_op != null) {
+            window.set_operation(arg_op);
         }
     }
 
-    // Create main window and apply parsed application parameters
-    var window = new MainWindow();
-    if (arg_file != null) {
-        window.set_file(arg_file);
-    }
-    if (arg_op != null) {
-        window.set_operation(arg_op);
-    }
-
     // Start gtk main loop
+    window.destroy.connect(Gtk.main_quit);
     Gtk.main();
 
     return 0;
 }
 
 /**
- * Print help about command line arguments to stdout.
- *
- * @param application_name The application name that was used to start this
- * application. Normally this is recorded in the first (zeroth) command line
- * parameter.
+ * Parser of command line arguments.
  */
-private void print_help(string application_name) {
-    stdout.printf("%s [OPTIONS]\n", application_name);
-    stdout.printf("\n");
-    stdout.printf("gpg-gui always starts with a GUI. Options can be preselected via command line\n");
-    stdout.printf("options though.\n");
-    stdout.printf("\n");
-    stdout.printf("OPTIONS\n");
-    stdout.printf("  -d, --decrypt         Start gpg-gui in decryption mode\n");
-    stdout.printf("  -e, --encrypt         Start gpg-gui in encryption mode\n");
-    stdout.printf("  -f FILE, --file FILE  Start gpg-gui with FILE selected for\n");
-    stdout.printf("                        encryption / decryption\n");
-    stdout.printf("  -h, --help            Print this help and exit\n");
-    stdout.printf("  --version             Print version and exit\n");
+private class CLIParser {
+    private static bool cli_decrypt;
+    private static bool cli_encrypt;
+    private static string cli_file;
+    private static bool cli_help;
+    private static bool cli_version;
+
+    /**
+     * Defines the command line arguments this application accepts.
+     */
+    private const OptionEntry[] cli_options = {
+        {
+            "decrypt", 'd',
+            OptionFlags.NONE, OptionArg.NONE,
+            ref cli_decrypt,
+            "Start gpg-gui in decryption mode",
+            null
+        },
+        {
+            "encrypt", 'e',
+            OptionFlags.NONE, OptionArg.NONE,
+            ref cli_encrypt,
+            "Start gpg-gui in encryption mode",
+            null
+        },
+        {
+            "file", 'f',
+            OptionFlags.NONE, OptionArg.STRING,
+            ref cli_file,
+            "Start gpg-gui with FILE selected for encryption / decryption",
+            "FILE"
+        },
+        {
+            "help", 'h',
+            OptionFlags.NONE, OptionArg.NONE,
+            ref cli_help,
+            "Print this help and exit",
+            null
+        },
+        {
+            "version", '\0',
+            OptionFlags.NONE, OptionArg.NONE,
+            ref cli_version,
+            "Print version and exit",
+            null
+        },
+        {
+            null
+        }
+    };
+
+    /**
+     * Creates a new CLIParser that immediately begins to parse the given
+     * arguments.
+     *
+     * @param status Status code indicating whether to continue with
+     * application execution with the following meaning:
+     * status < 0 means abort execution and return 0 (SUCCESS) exit code.
+     * status > 0 means abort execution and return 1 (ERROR) exit code.
+     * status == 0 means continue execution.
+     * @param operation GPG operation set on command line (null if not set)
+     * @param file file to open set on command line (null if not set)
+     */
+    public CLIParser(string[] args,
+                     out int status,
+                     out GPGOperation? operation,
+                     out string file) {
+        // Set default values for static variables
+        set_default();
+
+        // Parse command line arguments
+        status = parse_command_line(args);
+
+        // Assign parsed arguments to out variables
+        if (cli_decrypt) {
+            operation = GPGOperation.DECRYPT;
+        } else if (cli_encrypt) {
+            operation = GPGOperation.ENCRYPT;
+        } else {
+            operation = null;
+        }
+        file = cli_file;
+
+        // Set static variables back to default
+        set_default();
+    }
+
+    /**
+     * Set static variables responsible for storing parsed command line
+     * parameters to default value.
+     */
+    private void set_default() {
+        CLIParser.cli_decrypt = false;
+        CLIParser.cli_encrypt = false;
+        CLIParser.cli_file = null;
+        CLIParser.cli_help = false;
+        CLIParser.cli_version = false;
+    }
+
+    /**
+     * Parse given command line arguments
+     *
+     * @param args Command line arguments to parse
+     *
+     * @return Status code indicating whether to continue with application
+     * execution with the following meaning:
+     * status < 0 means abort execution and return 0 (SUCCESS) exit code.
+     * status > 0 means abort execution and return 1 (ERROR) exit code.
+     * status == 0 means continue execution.
+     */
+    private int parse_command_line(string[] args) {
+        // We have to make an extra copy of the array, since .parse
+        // assumes that it can remove strings from the array without
+        // freing them.
+        //string[] args = command_line.get_arguments();
+        string[] args_copy = new string[args.length];
+        for (int i = 0; i < args.length; i++) {
+            args_copy[i] = args[i];
+        }
+
+        // Set up option context for command line parsing
+        var opt_context = new OptionContext("");
+        opt_context.set_help_enabled(false);
+        opt_context.set_ignore_unknown_options(false);
+        opt_context.set_summary("gpg-gui always starts with a GUI. Options can be preselected via command line options though.");
+        opt_context.add_main_entries(cli_options, null);
+        opt_context.add_group(Gtk.get_option_group(true));
+
+        // Parse command line arguments
+        try {
+            unowned string[] tmp = args_copy;
+            opt_context.parse(ref tmp);
+        } catch (OptionError e) {
+            stderr.printf("Error: %s\n", e.message);
+            stderr.printf(opt_context.get_help(false, null));
+            return 1;
+        }
+
+        // Extract parsed command line options
+        if (cli_help) {
+            stdout.printf(opt_context.get_help(false, null));
+            return -1;
+        }
+
+        if (cli_version) {
+            stdout.printf("%s\n", GPG_GUI_VERSION);
+            return -1;
+        }
+
+        GPGOperation? arg_op = null;
+        if (cli_decrypt) {
+            arg_op = GPGOperation.DECRYPT;
+        }
+        if (cli_encrypt) {
+            arg_op = GPGOperation.ENCRYPT;
+        }
+        string? arg_file = null;
+        if (cli_file != null) {
+            arg_file = cli_file;
+        }
+
+        return 0;
+    }
 }

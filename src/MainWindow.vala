@@ -294,7 +294,6 @@ public class MainWindow : Gtk.Window {
     public MainWindow() {
         Object(type: Gtk.WindowType.TOPLEVEL);
         this.set_position(Gtk.WindowPosition.CENTER);
-        this.destroy.connect(Gtk.main_quit);
 
         this.gpg_handler = new GPGHandler();
 
