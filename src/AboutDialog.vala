@@ -31,29 +31,19 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see http://www.gnu.org/licenses""";
 
-/**
- * About dialog of this application showing
- * information about it.
- */
-public class AboutDialog : Gtk.AboutDialog {
+public Gtk.AboutDialog show_about_dialog(Gtk.Window parent) {
+    Gtk.AboutDialog dialog = new Gtk.AboutDialog();
+    dialog.set_destroy_with_parent(true);
+    dialog.set_transient_for(parent);
+    dialog.set_modal(true);
 
-    /**
-     * Create a new about dialog for the given parent.
-     * Dialog will be made modal and transient for the given parent.
-     *
-     * @param parent The parent of this dialog
-     */
-    public AboutDialog(Gtk.Window parent) {
-        set_destroy_with_parent(true);
-        set_transient_for(parent);
-        set_modal(true);
+    dialog.set_program_name(GPG_GUI_NAME);
+    dialog.set_comments("Graphical user interface for GnuPG (GPG) file encryption");
+    dialog.set_logo_icon_name(GPG_GUI_ICON);
+    dialog.set_license(GPL3_LICENSE_SHORT);
+    dialog.set_website(GPG_GUI_WEBSITE);
+    dialog.set_website_label("GitHub");
+    dialog.set_version(GPG_GUI_VERSION);
 
-        set_program_name(GPG_GUI_NAME);
-        set_comments("Graphical user interface for GnuPG (GPG) file encryption");
-        set_logo_icon_name(GPG_GUI_ICON);
-        set_license(GPL3_LICENSE_SHORT);
-        set_website(GPG_GUI_WEBSITE);
-        set_website_label("GitHub");
-        set_version(GPG_GUI_VERSION);
-    }
+    return dialog;
 }

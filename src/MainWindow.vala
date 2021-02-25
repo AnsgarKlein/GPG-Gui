@@ -378,7 +378,7 @@ public class MainWindow : Gtk.Window {
         {
             var about_action = new SimpleAction("about", null);
             about_action.activate.connect( () => {
-                AboutDialog dialog = new AboutDialog(this);
+                Gtk.AboutDialog dialog = show_about_dialog(this);
                 dialog.present();
             });
             menu_actions.add_action(about_action);
