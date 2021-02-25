@@ -301,6 +301,8 @@ public class MainWindow : Gtk.Window {
         set_application_icon();
         this.style_updated.connect(set_application_icon);
 
+        this.set_default_size(10, 10);
+
         // Construct window contents
         this.content = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         this.add(this.content);
