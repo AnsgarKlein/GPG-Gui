@@ -450,7 +450,12 @@ public class MainWindow : Gtk.Window {
     private void build_gui() {
         // Set up main grid
         Gtk.Grid main_grid = new Gtk.Grid();
-        main_grid.border_width = 12;
+
+        main_grid.set_margin_top(12);
+        main_grid.set_margin_bottom(12);
+        main_grid.set_margin_start(12);
+        main_grid.set_margin_end(12);
+
         main_grid.set_row_spacing(10);
         main_grid.set_column_spacing(24);
         main_grid.set_orientation(Gtk.Orientation.VERTICAL);
