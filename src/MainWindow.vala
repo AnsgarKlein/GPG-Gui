@@ -449,6 +449,7 @@ public class MainWindow : Gtk.Window {
     private void build_gui() {
         // Set up main grid
         Gtk.Grid main_grid = new Gtk.Grid();
+        int main_grid_row_counter = 0;
 
         main_grid.set_margin_top(12);
         main_grid.set_margin_bottom(12);
@@ -496,7 +497,7 @@ public class MainWindow : Gtk.Window {
             operation_selector1.set_vexpand(true);
             operation_selector1.set_halign(Gtk.Align.CENTER);
             operation_selector1.set_valign(Gtk.Align.CENTER);
-            main_grid.add(operation_selector1);
+            main_grid.attach(operation_selector1, 0, ++main_grid_row_counter);
 
             operation_selector2.set_hexpand(true);
             operation_selector2.set_vexpand(true);
@@ -516,7 +517,7 @@ public class MainWindow : Gtk.Window {
         file_label.set_vexpand(true);
         file_label.set_halign(Gtk.Align.END);
         file_label.set_valign(Gtk.Align.CENTER);
-        main_grid.add(file_label);
+        main_grid.attach(file_label, 0, ++main_grid_row_counter);
 
         file_text_field = new Gtk.Entry();
         file_text_field.set_text("...");
@@ -558,7 +559,7 @@ public class MainWindow : Gtk.Window {
         pwlabel1.set_vexpand(true);
         pwlabel1.set_halign(Gtk.Align.END);
         pwlabel1.set_valign(Gtk.Align.CENTER);
-        main_grid.add(pwlabel1);
+        main_grid.attach(pwlabel1, 0, ++main_grid_row_counter);
 
         pwfield1 = new Gtk.Entry();
         pwfield1.set_visibility(false);
@@ -577,7 +578,7 @@ public class MainWindow : Gtk.Window {
         pwlabel2.set_vexpand(true);
         pwlabel2.set_halign(Gtk.Align.END);
         pwlabel2.set_valign(Gtk.Align.CENTER);
-        main_grid.add(pwlabel2);
+        main_grid.attach(pwlabel2, 0, ++main_grid_row_counter);
 
         pwfield2 = new Gtk.Entry();
         pwfield2.set_visibility(false);
@@ -608,7 +609,7 @@ public class MainWindow : Gtk.Window {
         crypto_label.set_vexpand(true);
         crypto_label.set_halign(Gtk.Align.END);
         crypto_label.set_valign(Gtk.Align.CENTER);
-        main_grid.add(crypto_label);
+        main_grid.attach(crypto_label, 0, ++main_grid_row_counter);
 
         crypto_box = new Gtk.ComboBoxText();
         crypto_box.set_tooltip_text(crypto_help);
@@ -637,7 +638,7 @@ public class MainWindow : Gtk.Window {
         hash_label.set_vexpand(true);
         hash_label.set_halign(Gtk.Align.END);
         hash_label.set_valign(Gtk.Align.CENTER);
-        main_grid.add(hash_label);
+        main_grid.attach(hash_label, 0, ++main_grid_row_counter);
 
         hash_box = new Gtk.ComboBoxText();
         hash_box.set_tooltip_text(hash_help);
@@ -664,7 +665,7 @@ public class MainWindow : Gtk.Window {
         hash_strengthen_label.set_vexpand(true);
         hash_strengthen_label.set_halign(Gtk.Align.END);
         hash_strengthen_label.set_valign(Gtk.Align.CENTER);
-        main_grid.add(hash_strengthen_label);
+        main_grid.attach(hash_strengthen_label, 0, ++main_grid_row_counter);
 
         hash_strengthen_button = new Gtk.Switch();
         hash_strengthen_button.set_tooltip_text(hash_strengthen_help);
@@ -700,7 +701,7 @@ public class MainWindow : Gtk.Window {
         compression_label.set_vexpand(true);
         compression_label.set_halign(Gtk.Align.END);
         compression_label.set_valign(Gtk.Align.CENTER);
-        main_grid.add(compression_label);
+        main_grid.attach(compression_label, 0, ++main_grid_row_counter);
 
         compression_button = new Gtk.Switch();
         compression_button.set_tooltip_text(compression_help);
@@ -730,7 +731,7 @@ public class MainWindow : Gtk.Window {
         armored_label.set_vexpand(true);
         armored_label.set_halign(Gtk.Align.END);
         armored_label.set_valign(Gtk.Align.CENTER);
-        main_grid.add(armored_label);
+        main_grid.attach(armored_label, 0, ++main_grid_row_counter);
 
         armored_button = new Gtk.Switch();
         armored_button.set_tooltip_text(armored_help);
