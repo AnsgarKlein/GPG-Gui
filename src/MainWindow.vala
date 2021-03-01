@@ -916,12 +916,19 @@ public class MainWindow : Gtk.Window {
             dgettext("gtk30", "_Cancel")
         );
 
-        // Set content of text field to selected file
-        if (file_chooser.run() == Gtk.ResponseType.ACCEPT) {
-            file_text_field.set_text(file_chooser.get_filename());
-        }
+        // Connect callback when file chooser selection has been made
+        file_chooser.response.connect((response_id) => {
+            // Set content of text field to selected file
+            if (response_id == Gtk.ResponseType.ACCEPT) {
+                file_text_field.set_text(file_chooser.get_filename());
+            }
 
-        file_chooser.destroy();
+            file_chooser.destroy();
+        });
+
+        // Show file chooser (modal)
+        file_chooser.set_modal(true);
+        file_chooser.show();
     }
 
     /**
