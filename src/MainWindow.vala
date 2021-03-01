@@ -920,7 +920,10 @@ public class MainWindow : Gtk.Window {
         file_chooser.response.connect((response_id) => {
             // Set content of text field to selected file
             if (response_id == Gtk.ResponseType.ACCEPT) {
-                file_text_field.set_text(file_chooser.get_filename());
+                File file = file_chooser.get_file();
+                if (file.query_exists()) {
+                    file_text_field.set_text(file.get_path());
+                }
             }
 
             file_chooser.destroy();
