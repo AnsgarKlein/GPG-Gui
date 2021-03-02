@@ -292,7 +292,7 @@ public class MainWindow : Gtk.Window {
     private GPGHandler gpg_handler;
 
     public MainWindow() {
-        Object(type: Gtk.WindowType.TOPLEVEL);
+        Object();
 
         this.gpg_handler = new GPGHandler();
 
