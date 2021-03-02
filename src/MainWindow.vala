@@ -412,15 +412,20 @@ public class MainWindow : Gtk.Window {
             menu_button.set_image(menu_button_image);
             header.pack_end(menu_button);
 
+            // Define global menu with correct action namespace
+            GLib.Menu global_menu = new GLib.Menu();
+            {
+                GLib.MenuItem about_item = new GLib.MenuItem("About", null);
+                StringBuilder builder = new StringBuilder();
+                builder.printf("%s.%s", action_namespace, "about");
+                about_item.set_detailed_action(builder.str);
+                global_menu.append_item(about_item);
+            }
+
             // Popover containing the menu
-            var popover = new Gtk.Popover(menu_button);
+            var popover = new Gtk.Popover.from_model(menu_button, global_menu);
             popover.insert_action_group(action_namespace, menu_actions);
             menu_button.set_popover(popover);
-
-            // Define menu model
-            GLib.Menu global_menu = new GLib.Menu();
-            global_menu.append("About", "about");
-            popover.bind_model(global_menu, action_namespace);
         }
         #else
         {
