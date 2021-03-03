@@ -7,3 +7,10 @@ option('GPG_GUI_RDNS_NAMING',
   type: 'boolean',
   value: false,
   description: 'Use reverse-DNS naming scheme for files')
+
+option('GPG_GUI_GTK_VERSION_MAJOR',
+  type: 'integer',
+  min: 3,
+  max: 4,
+  value: 3,
+  description: 'Gtk version to compile against (Version 4 does not work!)')

@@ -22,9 +22,23 @@ include_dirs = []
 dependencies = [
   dependency('glib-2.0'),
   dependency('gobject-2.0'),
-  dependency('gtk+-3.0'),
   valac.find_library('posix'),
 ]
+
+# Compile with specified version of gtk library
+if get_option('GPG_GUI_GTK_VERSION_MAJOR') == 4
+  dependencies += dependency('gtk4')
+elif get_option('GPG_GUI_GTK_VERSION_MAJOR') == 3
+  dependencies += dependency('gtk+-3.0')
+endif
+
+
+# Pass used major version of gtk library to compiler
+if get_option('GPG_GUI_GTK_VERSION_MAJOR') == 4
+  add_project_arguments(['-D', 'GPG_GUI_GTK_VERSION_MAJOR_FOUR'], language: 'vala')
+elif get_option('GPG_GUI_GTK_VERSION_MAJOR') == 3
+  add_project_arguments(['-D', 'GPG_GUI_GTK_VERSION_MAJOR_THREE'], language: 'vala')
+endif
 
 gettext_package = reverse_dns
 add_project_arguments('-DGETTEXT_PACKAGE=' + gettext_package, language: 'c')
