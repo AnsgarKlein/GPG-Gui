@@ -61,7 +61,17 @@ private int main(string[] args) {
 
     // Start main loop
     MainLoop main_loop = new MainLoop();
-    window.destroy.connect(() => { main_loop.quit(); });
+    #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+        window.destroy.connect(() => {
+            main_loop.quit();
+        });
+    #endif
+    #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+        window.close_request.connect(() => {
+            main_loop.quit();
+            return false;
+        });
+    #endif
     main_loop.run();
 
     return 0;
