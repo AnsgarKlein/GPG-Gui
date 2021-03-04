@@ -33,8 +33,13 @@ private int main(string[] args) {
     Intl.textdomain(GETTEXT_PACKAGE);
 
     // Initialize Gtk
-    // This removes all Gtk specific command line options from array
-    Gtk.init(ref args);
+    #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+        // This removes all Gtk specific command line options from array
+        Gtk.init(ref args);
+    #endif
+    #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+        Gtk.init();
+    #endif
 
     MainWindow window;
     {
@@ -219,7 +224,9 @@ private class CLIParser {
             opt_context.set_description(builder.str);
         }
         opt_context.add_main_entries(cli_options, null);
-        opt_context.add_group(Gtk.get_option_group(true));
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            opt_context.add_group(Gtk.get_option_group(true));
+        #endif
 
         // Parse command line arguments
         try {
