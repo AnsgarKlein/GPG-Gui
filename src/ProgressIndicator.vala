@@ -43,6 +43,8 @@ public class ProgressIndicator : Gtk.Box {
      */
     public ProgressIndicator(GPGProcess? gpg_process = null) {
         build_gui();
+        base.hide.connect(on_hide);
+        base.show.connect(on_show);
 
         set_process(gpg_process);
     }
@@ -57,6 +59,9 @@ public class ProgressIndicator : Gtk.Box {
         progress_bar.set_hexpand(true);
         progress_bar.set_vexpand(true);
         this.add(progress_bar);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            progress_bar.show();
+        #endif
 
 
         // Abort button
@@ -70,6 +75,19 @@ public class ProgressIndicator : Gtk.Box {
         abort_button.set_image_position(Gtk.PositionType.LEFT);
         abort_button.clicked.connect(on_abort_button);
         this.add(abort_button);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            abort_button.show();
+        #endif
+    }
+
+    private void on_hide() {
+        this.abort_button.hide();
+        this.progress_bar.hide();
+    }
+
+    private void on_show() {
+        this.abort_button.show();
+        this.progress_bar.show();
     }
 
     /**

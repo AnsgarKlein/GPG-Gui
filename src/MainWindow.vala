@@ -305,6 +305,10 @@ public class MainWindow : Gtk.Window {
         // Construct window contents
         this.content = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
         this.add(this.content);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            this.content.show();
+        #endif
+
         build_menu();
         build_gui();
         set_defaults();
@@ -402,6 +406,9 @@ public class MainWindow : Gtk.Window {
             header.set_title(GPG_GUI_NAME);
             header.set_show_close_button(true);
             this.set_titlebar(header);
+            #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+                header.show();
+            #endif
 
             // Button for opening global menu
             var menu_button_image = new Gtk.Image.from_icon_name(
@@ -411,6 +418,9 @@ public class MainWindow : Gtk.Window {
             var menu_button = new Gtk.MenuButton();
             menu_button.set_image(menu_button_image);
             header.pack_end(menu_button);
+            #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+                menu_button.show();
+            #endif
 
             // Define global menu with correct action namespace
             GLib.Menu global_menu = new GLib.Menu();
@@ -436,6 +446,7 @@ public class MainWindow : Gtk.Window {
             var menu_bar = new Gtk.MenuBar();
             menu_bar.insert_action_group(action_namespace, menu_actions);
             this.content.add(menu_bar);
+            menu_bar.show();
 
             // Define menu model
             GLib.Menu menu = new GLib.Menu();
@@ -465,6 +476,9 @@ public class MainWindow : Gtk.Window {
         main_grid.set_column_spacing(24);
         main_grid.set_orientation(Gtk.Orientation.VERTICAL);
         this.content.add(main_grid);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            main_grid.show();
+        #endif
 
 
         // Encrypt / Decrypt operation buttons
@@ -495,6 +509,11 @@ public class MainWindow : Gtk.Window {
             operation_selector_box.add(operation_selector1);
             operation_selector_box.add(operation_selector2);
             header.set_custom_title(operation_selector_box);
+            #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+                operation_selector1.show();
+                operation_selector2.show();
+                operation_selector_box.show();
+            #endif
         }
         #else
         {
@@ -512,6 +531,11 @@ public class MainWindow : Gtk.Window {
                 operation_selector2,
                 operation_selector1,
                 Gtk.PositionType.RIGHT);
+
+            #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+                operation_selector1.show();
+                operation_selector2.show();
+            #endif
         }
         #endif
 
@@ -523,6 +547,9 @@ public class MainWindow : Gtk.Window {
         file_label.set_halign(Gtk.Align.END);
         file_label.set_valign(Gtk.Align.CENTER);
         main_grid.attach(file_label, 0, ++main_grid_row_counter);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            file_label.show();
+        #endif
 
         file_text_field = new Gtk.Entry();
         file_text_field.set_text("...");
@@ -544,18 +571,27 @@ public class MainWindow : Gtk.Window {
         file_box.set_homogeneous(false);
         file_box.set_spacing(0);
         main_grid.attach_next_to(file_box, file_label, Gtk.PositionType.RIGHT);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            file_box.show();
+        #endif
 
         file_text_field.set_hexpand(true);
         file_text_field.set_vexpand(true);
         file_text_field.set_halign(Gtk.Align.FILL);
         file_text_field.set_valign(Gtk.Align.CENTER);
         file_box.pack_start(file_text_field, true, true);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            file_text_field.show();
+        #endif
 
         file_button.set_hexpand(false);
         file_button.set_vexpand(true);
         file_button.set_halign(Gtk.Align.START);
         file_button.set_valign(Gtk.Align.CENTER);
         file_box.pack_end(file_button, false, false);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            file_button.show();
+        #endif
 
 
         // Password fields
@@ -565,6 +601,9 @@ public class MainWindow : Gtk.Window {
         pwlabel1.set_halign(Gtk.Align.END);
         pwlabel1.set_valign(Gtk.Align.CENTER);
         main_grid.attach(pwlabel1, 0, ++main_grid_row_counter);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            pwlabel1.show();
+        #endif
 
         pwfield1 = new Gtk.Entry();
         pwfield1.set_visibility(false);
@@ -577,6 +616,9 @@ public class MainWindow : Gtk.Window {
         pwfield1.set_halign(Gtk.Align.FILL);
         pwfield1.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(pwfield1, pwlabel1, Gtk.PositionType.RIGHT);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            pwfield1.show();
+        #endif
 
         pwlabel2 = new Gtk.Label("Confirm Password:");
         pwlabel2.set_hexpand(false);
@@ -584,6 +626,9 @@ public class MainWindow : Gtk.Window {
         pwlabel2.set_halign(Gtk.Align.END);
         pwlabel2.set_valign(Gtk.Align.CENTER);
         main_grid.attach(pwlabel2, 0, ++main_grid_row_counter);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            pwlabel2.show();
+        #endif
 
         pwfield2 = new Gtk.Entry();
         pwfield2.set_visibility(false);
@@ -596,6 +641,9 @@ public class MainWindow : Gtk.Window {
         pwfield2.set_halign(Gtk.Align.FILL);
         pwfield2.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(pwfield2, pwlabel2, Gtk.PositionType.RIGHT);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            pwfield2.show();
+        #endif
 
 
         // Crypto selection
@@ -615,6 +663,9 @@ public class MainWindow : Gtk.Window {
         crypto_label.set_halign(Gtk.Align.END);
         crypto_label.set_valign(Gtk.Align.CENTER);
         main_grid.attach(crypto_label, 0, ++main_grid_row_counter);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            crypto_label.show();
+        #endif
 
         crypto_box = new Gtk.ComboBoxText();
         crypto_box.set_tooltip_text(crypto_help);
@@ -627,6 +678,9 @@ public class MainWindow : Gtk.Window {
         crypto_box.set_halign(Gtk.Align.FILL);
         crypto_box.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(crypto_box, crypto_label, Gtk.PositionType.RIGHT);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            crypto_box.show();
+        #endif
 
 
         // Hash selection
@@ -644,6 +698,9 @@ public class MainWindow : Gtk.Window {
         hash_label.set_halign(Gtk.Align.END);
         hash_label.set_valign(Gtk.Align.CENTER);
         main_grid.attach(hash_label, 0, ++main_grid_row_counter);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            hash_label.show();
+        #endif
 
         hash_box = new Gtk.ComboBoxText();
         hash_box.set_tooltip_text(hash_help);
@@ -656,6 +713,9 @@ public class MainWindow : Gtk.Window {
         hash_box.set_halign(Gtk.Align.FILL);
         hash_box.set_valign(Gtk.Align.CENTER);
         main_grid.attach_next_to(hash_box, hash_label, Gtk.PositionType.RIGHT);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            hash_box.show();
+        #endif
 
 
         // Hash strengthen button
@@ -671,6 +731,9 @@ public class MainWindow : Gtk.Window {
         hash_strengthen_label.set_halign(Gtk.Align.END);
         hash_strengthen_label.set_valign(Gtk.Align.CENTER);
         main_grid.attach(hash_strengthen_label, 0, ++main_grid_row_counter);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            hash_strengthen_label.show();
+        #endif
 
         hash_strengthen_button = new Gtk.Switch();
         hash_strengthen_button.set_tooltip_text(hash_strengthen_help);
@@ -686,6 +749,9 @@ public class MainWindow : Gtk.Window {
             hash_strengthen_button,
             hash_strengthen_label,
             Gtk.PositionType.RIGHT);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            hash_strengthen_button.show();
+        #endif
 
 
         // Compression button
@@ -707,6 +773,9 @@ public class MainWindow : Gtk.Window {
         compression_label.set_halign(Gtk.Align.END);
         compression_label.set_valign(Gtk.Align.CENTER);
         main_grid.attach(compression_label, 0, ++main_grid_row_counter);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            compression_label.show();
+        #endif
 
         compression_button = new Gtk.Switch();
         compression_button.set_tooltip_text(compression_help);
@@ -722,6 +791,9 @@ public class MainWindow : Gtk.Window {
             compression_button,
             compression_label,
             Gtk.PositionType.RIGHT);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            compression_button.show();
+        #endif
 
 
         // Armored button
@@ -737,6 +809,9 @@ public class MainWindow : Gtk.Window {
         armored_label.set_halign(Gtk.Align.END);
         armored_label.set_valign(Gtk.Align.CENTER);
         main_grid.attach(armored_label, 0, ++main_grid_row_counter);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            armored_label.show();
+        #endif
 
         armored_button = new Gtk.Switch();
         armored_button.set_tooltip_text(armored_help);
@@ -748,6 +823,9 @@ public class MainWindow : Gtk.Window {
             armored_button,
             armored_label,
             Gtk.PositionType.RIGHT);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            armored_button.show();
+        #endif
 
 
         // Run button (label will be overwritten)
@@ -766,6 +844,9 @@ public class MainWindow : Gtk.Window {
             run_button,
             armored_button,
             Gtk.PositionType.BOTTOM);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            run_button.show();
+        #endif
 
 
         // Progress indicator
@@ -783,11 +864,6 @@ public class MainWindow : Gtk.Window {
             // Return to ready state when gpg process is done
             this.window_state = State.READY;
         });
-
-
-        // Show all widgets except the progress indicator
-        this.show_all();
-        progress_indicator.hide();
     }
 
     /**
@@ -995,7 +1071,7 @@ public class MainWindow : Gtk.Window {
             armored_label.set_sensitive(false);
             armored_button.set_sensitive(false);
 
-            progress_indicator.show_all();
+            progress_indicator.show();
         } else {
             if (selected_operation == GPGOperation.ENCRYPT) {
                 operation_selector1.set_sensitive(true);

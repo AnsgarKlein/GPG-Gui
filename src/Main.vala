@@ -63,6 +63,7 @@ private int main(string[] args) {
             window.set_operation(arg_op);
         }
     }
+    window.show();
 
     // Start main loop
     MainLoop main_loop = new MainLoop();
