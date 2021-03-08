@@ -261,8 +261,14 @@ public class MainWindow : Gtk.Window {
 
     private Gtk.Box content;
 
-    private Gtk.RadioButton operation_selector1;
-    private Gtk.RadioButton operation_selector2;
+    #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+        private Gtk.RadioButton operation_selector1;
+        private Gtk.RadioButton operation_selector2;
+    #endif
+    #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+        private Gtk.ToggleButton operation_selector1;
+        private Gtk.ToggleButton operation_selector2;
+    #endif
 
     private Gtk.Label file_label;
     private Gtk.Entry file_text_field;
@@ -482,15 +488,22 @@ public class MainWindow : Gtk.Window {
 
 
         // Encrypt / Decrypt operation buttons
-        operation_selector1 = new Gtk.RadioButton.with_label(
-            null,
-            "Encrypt");
-        operation_selector2 = new Gtk.RadioButton.with_label_from_widget(
-            operation_selector1,
-            "Decrypt");
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            operation_selector1 = new Gtk.RadioButton.with_label(
+                null,
+                "Encrypt");
+            operation_selector2 = new Gtk.RadioButton.with_label_from_widget(
+                operation_selector1,
+                "Decrypt");
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            operation_selector1 = new Gtk.ToggleButton.with_label("Encrypt");
+            operation_selector2 = new Gtk.ToggleButton.with_label("Decrypt");
+            operation_selector1.set_group(operation_selector2);
+        #endif
 
-        operation_selector1.toggled.connect(on_operation_button_select);
-        operation_selector2.toggled.connect(on_operation_button_select);
+        operation_selector1.toggled.connect(on_operation_button1_select);
+        operation_selector2.toggled.connect(on_operation_button2_select);
 
         // Depending on what kind of window titlebar we have (client-side
         // decorated or traditional) we either create two Gtk.RadioButton
@@ -498,8 +511,10 @@ public class MainWindow : Gtk.Window {
         // inside a Gtk.StackSwitcher into the titlebar.
         #if GPG_GUI_CSD
         {
-            operation_selector1.set_mode(false);
-            operation_selector2.set_mode(false);
+            #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+                operation_selector1.set_mode(false);
+                operation_selector2.set_mode(false);
+            #endif
 
             // Create button box with css class "linked" to visually link
             // all contained buttons
@@ -968,10 +983,26 @@ public class MainWindow : Gtk.Window {
     }
 
     /**
-     * This function gets executed if a selection via the operation buttons
+     * This function gets executed if a selection via the operation button1
      * has been made.
      */
-    private void on_operation_button_select() {
+    private void on_operation_button1_select() {
+        bool state = operation_selector1.get_active();
+        if (operation_selector2.get_active() != !state) {
+            operation_selector2.set_active(!state);
+        }
+        operation_changed();
+    }
+
+    /**
+     * This function gets executed if a selection via the operation button2
+     * has been made.
+     */
+    private void on_operation_button2_select() {
+        bool state = operation_selector2.get_active();
+        if (operation_selector1.get_active() != !state) {
+            operation_selector1.set_active(!state);
+        }
         operation_changed();
     }
 
