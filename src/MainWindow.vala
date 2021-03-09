@@ -850,9 +850,15 @@ public class MainWindow : Gtk.Window {
 
 
         // Run button (label will be overwritten)
-        Gtk.Image run_button_image = new Gtk.Image.from_icon_name(
-            "system-run",
-            Gtk.IconSize.BUTTON);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            Gtk.Image run_button_image = new Gtk.Image.from_icon_name(
+                "system-run",
+                Gtk.IconSize.BUTTON);
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            Gtk.Image run_button_image = new Gtk.Image.from_icon_name(
+                "system-run");
+        #endif
         run_button = new Gtk.Button.with_label("Run");
         run_button.set_image(run_button_image);
         run_button.set_image_position(Gtk.PositionType.LEFT);
