@@ -65,9 +65,15 @@ public class ProgressIndicator : Gtk.Box {
 
 
         // Abort button
-        Gtk.Image abort_button_image = new Gtk.Image.from_icon_name(
-            "_Cancel",
-            Gtk.IconSize.BUTTON);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            Gtk.Image abort_button_image = new Gtk.Image.from_icon_name(
+                "_Cancel",
+                Gtk.IconSize.BUTTON);
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            Gtk.Image abort_button_image = new Gtk.Image.from_icon_name(
+                "_Cancel");
+        #endif
 
         abort_button = new Gtk.Button.with_mnemonic(
             dgettext("gtk30", "_Cancel"));
