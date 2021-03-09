@@ -573,9 +573,15 @@ public class MainWindow : Gtk.Window {
             "drive-harddisk");
         file_text_field.changed.connect(on_file_text_input);
 
-        Gtk.Image file_button_image = new Gtk.Image.from_icon_name(
-            "document-open",
-            Gtk.IconSize.BUTTON);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            Gtk.Image file_button_image = new Gtk.Image.from_icon_name(
+                "document-open",
+                Gtk.IconSize.BUTTON);
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            Gtk.Image file_button_image = new Gtk.Image.from_icon_name(
+                "document-open");
+        #endif
         file_button = new Gtk.Button.with_mnemonic(
             dgettext("gtk30", "_Open"));
         file_button.set_image(file_button_image);
