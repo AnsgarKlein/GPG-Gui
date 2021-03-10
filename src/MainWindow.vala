@@ -584,8 +584,13 @@ public class MainWindow : Gtk.Window {
         #endif
         file_button = new Gtk.Button.with_mnemonic(
             dgettext("gtk30", "_Open"));
-        file_button.set_image(file_button_image);
-        file_button.set_image_position(Gtk.PositionType.LEFT);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            file_button.set_image(file_button_image);
+            file_button.set_image_position(Gtk.PositionType.LEFT);
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            file_button.set_child(file_button_image);
+        #endif
         file_button.clicked.connect(on_file_chooser_button);
 
         Gtk.Box file_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL,0);
