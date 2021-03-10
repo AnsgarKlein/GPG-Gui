@@ -865,8 +865,13 @@ public class MainWindow : Gtk.Window {
                 "system-run");
         #endif
         run_button = new Gtk.Button.with_label("Run");
-        run_button.set_image(run_button_image);
-        run_button.set_image_position(Gtk.PositionType.LEFT);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            run_button.set_image(run_button_image);
+            run_button.set_image_position(Gtk.PositionType.LEFT);
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            run_button.set_child(run_button_image);
+        #endif
         run_button.clicked.connect(on_run_button);
         run_button.set_hexpand(true);
         run_button.set_vexpand(true);
