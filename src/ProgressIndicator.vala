@@ -77,8 +77,13 @@ public class ProgressIndicator : Gtk.Box {
 
         abort_button = new Gtk.Button.with_mnemonic(
             dgettext("gtk30", "_Cancel"));
-        abort_button.set_image(abort_button_image);
-        abort_button.set_image_position(Gtk.PositionType.LEFT);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            abort_button.set_image(abort_button_image);
+            abort_button.set_image_position(Gtk.PositionType.LEFT);
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            abort_button.set_child(abort_button_image);
+        #endif
         abort_button.clicked.connect(on_abort_button);
         this.add(abort_button);
         #if GPG_GUI_GTK_VERSION_MAJOR_THREE
