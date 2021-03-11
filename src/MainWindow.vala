@@ -521,8 +521,14 @@ public class MainWindow : Gtk.Window {
             Gtk.Box operation_selector_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL, 0);
             operation_selector_box.get_style_context().add_class("linked");
             operation_selector_box.get_style_context().add_class("stack-switcher");
-            operation_selector_box.add(operation_selector1);
-            operation_selector_box.add(operation_selector2);
+            #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+                operation_selector_box.add(operation_selector1);
+                operation_selector_box.add(operation_selector2);
+            #endif
+            #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+                operation_selector_box.append(operation_selector1);
+                operation_selector_box.append(operation_selector2);
+            #endif
             header.set_custom_title(operation_selector_box);
             #if GPG_GUI_GTK_VERSION_MAJOR_THREE
                 operation_selector1.show();
