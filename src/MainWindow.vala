@@ -481,9 +481,12 @@ public class MainWindow : Gtk.Window {
         main_grid.set_row_spacing(10);
         main_grid.set_column_spacing(24);
         main_grid.set_orientation(Gtk.Orientation.VERTICAL);
-        this.content.add(main_grid);
         #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            this.content.add(main_grid);
             main_grid.show();
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            this.content.append(main_grid);
         #endif
 
 
