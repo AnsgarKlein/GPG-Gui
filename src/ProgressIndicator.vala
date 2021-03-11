@@ -58,7 +58,12 @@ public class ProgressIndicator : Gtk.Box {
         progress_bar.set_pulse_step(0.3);
         progress_bar.set_hexpand(true);
         progress_bar.set_vexpand(true);
-        this.add(progress_bar);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            this.add(progress_bar);
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            this.append(progress_bar);
+        #endif
         #if GPG_GUI_GTK_VERSION_MAJOR_THREE
             progress_bar.show();
         #endif
