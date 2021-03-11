@@ -90,7 +90,12 @@ public class ProgressIndicator : Gtk.Box {
             abort_button.set_child(abort_button_image);
         #endif
         abort_button.clicked.connect(on_abort_button);
-        this.add(abort_button);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            this.add(abort_button);
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            this.append(abort_button);
+        #endif
         #if GPG_GUI_GTK_VERSION_MAJOR_THREE
             abort_button.show();
         #endif
