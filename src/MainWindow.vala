@@ -617,18 +617,24 @@ public class MainWindow : Gtk.Window {
         file_text_field.set_vexpand(true);
         file_text_field.set_halign(Gtk.Align.FILL);
         file_text_field.set_valign(Gtk.Align.CENTER);
-        file_box.pack_start(file_text_field, true, true);
         #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            file_box.pack_start(file_text_field, true, true);
             file_text_field.show();
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            file_box.append(file_text_field);
         #endif
 
         file_button.set_hexpand(false);
         file_button.set_vexpand(true);
         file_button.set_halign(Gtk.Align.START);
         file_button.set_valign(Gtk.Align.CENTER);
-        file_box.pack_end(file_button, false, false);
         #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            file_box.pack_end(file_button, false, false);
             file_button.show();
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            file_box.append(file_button);
         #endif
 
 
