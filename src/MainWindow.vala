@@ -310,9 +310,12 @@ public class MainWindow : Gtk.Window {
 
         // Construct window contents
         this.content = new Gtk.Box(Gtk.Orientation.VERTICAL, 0);
-        this.add(this.content);
         #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            this.add(this.content);
             this.content.show();
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            this.set_child(this.content);
         #endif
 
         build_menu();
