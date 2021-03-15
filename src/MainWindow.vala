@@ -420,12 +420,19 @@ public class MainWindow : Gtk.Window {
             #endif
 
             // Button for opening global menu
-            var menu_button_image = new Gtk.Image.from_icon_name(
-                "open-menu-symbolic",
-                Gtk.IconSize.BUTTON);
+            #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+                var menu_button_image = new Gtk.Image.from_icon_name(
+                    "open-menu-symbolic",
+                    Gtk.IconSize.BUTTON);
+            #endif
 
             var menu_button = new Gtk.MenuButton();
-            menu_button.set_image(menu_button_image);
+            #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+                menu_button.set_image(menu_button_image);
+            #endif
+            #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+                menu_button.set_icon_name("open-menu-symbolic");
+            #endif
             header.pack_end(menu_button);
             #if GPG_GUI_GTK_VERSION_MAJOR_THREE
                 menu_button.show();
