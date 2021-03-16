@@ -552,7 +552,12 @@ public class MainWindow : Gtk.Window {
                 operation_selector_box.append(operation_selector1);
                 operation_selector_box.append(operation_selector2);
             #endif
-            header.set_custom_title(operation_selector_box);
+            #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+                header.set_custom_title(operation_selector_box);
+            #endif
+            #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+                header.set_title_widget(operation_selector_box);
+            #endif
             #if GPG_GUI_GTK_VERSION_MAJOR_THREE
                 operation_selector1.show();
                 operation_selector2.show();
