@@ -412,7 +412,12 @@ public class MainWindow : Gtk.Window {
         {
             // Create client-side titlebar
             header = new Gtk.HeaderBar();
-            header.set_title(GPG_GUI_NAME);
+            #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+                header.set_title(GPG_GUI_NAME);
+            #endif
+            #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+                header.set_title_widget(new Gtk.Label(GPG_GUI_NAME));
+            #endif
             #if GPG_GUI_GTK_VERSION_MAJOR_THREE
                 header.set_show_close_button(true);
             #endif
