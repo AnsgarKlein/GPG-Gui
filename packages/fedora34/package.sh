@@ -1,0 +1,1 @@
+../generic/package-rpm.sh

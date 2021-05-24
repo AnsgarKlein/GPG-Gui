@@ -74,6 +74,7 @@ jobs:
         docker_image:
           - 'debian10'
           - 'fedora33'
+          - 'fedora34'
           - 'ubuntu18.04'
           - 'ubuntu20.04'
     steps:
