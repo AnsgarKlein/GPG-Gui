@@ -459,7 +459,12 @@ public class MainWindow : Gtk.Window {
             }
 
             // Popover containing the menu
-            var popover = new Gtk.Popover.from_model(menu_button, global_menu);
+            #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+                var popover = new Gtk.Popover.from_model(menu_button, global_menu);
+            #endif
+            #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+                var popover = new Gtk.PopoverMenu.from_model(global_menu);
+            #endif
             popover.insert_action_group(action_namespace, menu_actions);
             menu_button.set_popover(popover);
         }
