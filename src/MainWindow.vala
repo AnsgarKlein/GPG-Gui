@@ -302,9 +302,12 @@ public class MainWindow : Gtk.Window {
 
         this.gpg_handler = new GPGHandler();
 
-        //Set application icon & update application icon if theme changes
+        //Set application icon
         set_application_icon();
-        this.style_updated.connect(set_application_icon);
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            // Update application icon if theme changes
+            this.get_style_context().changed.connect(set_application_icon);
+        #endif
 
         this.set_default_size(10, 10);
 
@@ -340,46 +343,54 @@ public class MainWindow : Gtk.Window {
             "application-x-executable"
         };
 
-        const int[] DESIRED_ICON_SIZES = { 48, 32, 16, 64, 128, };
+        #if GPG_GUI_GTK_VERSION_MAJOR_THREE
+            Gtk.IconTheme theme = Gtk.IconTheme.get_default();
+            const int[] DESIRED_ICON_SIZES = { 48, 32, 16, 64, 128, };
 
-        Gtk.IconTheme theme = Gtk.IconTheme.get_default();
-
-        foreach (string icon_name in PREFERRED_ICON_NAMES) {
-            try {
-                // Try to get selected icon
-                // This may throw error in which case we try next icon
-                Gdk.Pixbuf first_icon = theme.load_icon(
-                    icon_name,
-                    DESIRED_ICON_SIZES[0],
-                    Gtk.IconLookupFlags.FORCE_SIZE);
-
-                // Icon is contained in icon theme
-                // => Get icon in multiple sizes
-                var icon_list = new List<Gdk.Pixbuf>();
-                icon_list.append(first_icon);
-
-                for (int i = 1; i < DESIRED_ICON_SIZES.length; i++) {
-                    int icon_size = DESIRED_ICON_SIZES[i];
-
-                    Gdk.Pixbuf icon = theme.load_icon(
+            foreach (string icon_name in PREFERRED_ICON_NAMES) {
+                try {
+                    // Try to get selected icon
+                    // This may throw error in which case we try next icon
+                    Gdk.Pixbuf first_icon = theme.load_icon(
                         icon_name,
-                        icon_size,
-                        0);
-                    if (icon != null) {
-                        icon_list.append(icon);
+                        DESIRED_ICON_SIZES[0],
+                        Gtk.IconLookupFlags.FORCE_SIZE);
+
+                    // Icon is contained in icon theme
+                    // => Get icon in multiple sizes
+                    var icon_list = new List<Gdk.Pixbuf>();
+                    icon_list.append(first_icon);
+
+                    for (int i = 1; i < DESIRED_ICON_SIZES.length; i++) {
+                        Gdk.Pixbuf icon = theme.load_icon(
+                            icon_name,
+                            DESIRED_ICON_SIZES[i],
+                            0);
+                        if (icon != null) {
+                            icon_list.append(icon);
+                        }
                     }
+
+                    this.set_icon_list(icon_list);
+                } catch (Error e) {
+                    // Could not find icon in current theme
+                    // => Try next icon
+                    continue;
                 }
 
-                this.set_icon_list(icon_list);
-            } catch (Error e) {
-                // Could not find icon in current theme
-                // => Try next icon
-                continue;
+                // Found working icon
+                break;
             }
-
-            // Found working icon
-            break;
-        }
+        #endif
+        #if GPG_GUI_GTK_VERSION_MAJOR_FOUR
+            Gtk.IconTheme theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default());
+            foreach (string icon_name in PREFERRED_ICON_NAMES) {
+                if (theme.has_icon(icon_name)) {
+                    this.set_icon_name(icon_name);
+                    break;
+                }
+            }
+        #endif
     }
 
     /**
