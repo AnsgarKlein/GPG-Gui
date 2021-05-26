@@ -45,11 +45,11 @@ fi
 # If update-desktop-database program does not exist on this system
 # it is probably safe to ignore it.
 if command -v update-desktop-database > /dev/null 2>&1; then
-    update-desktop-database -q "$DESKTOP_DIR"
+    update-desktop-database --quiet "$DESKTOP_DIR" || true
 fi
 
 # If gtk-update-icon-cache program does not exist on this system
 # it is probably safe to ignore it.
 if command -v gtk-update-icon-cache > /dev/null 2>&1; then
-    gtk-update-icon-cache -q "$ICONS_DIR"
+    gtk-update-icon-cache --quiet --ignore-theme-index "$ICONS_DIR" || true
 fi
