@@ -1,7 +1,7 @@
 option('GPG_GUI_CSD',
   type: 'boolean',
   value: true,
-  description: 'Use client-side decoration')
+  description: 'Use client-side decoration (Has to be true for Gtk version 4)')
 
 option('GPG_GUI_RDNS_NAMING',
   type: 'boolean',
@@ -13,4 +13,4 @@ option('GPG_GUI_GTK_VERSION_MAJOR',
   min: 3,
   max: 4,
   value: 3,
-  description: 'Gtk version to compile against (Version 4 does not work!)')
+  description: 'Gtk version to compile against (Version 4 considered experimental)')
