@@ -48,9 +48,9 @@ if get_option('GPG_GUI_CSD')
   add_project_arguments(['-D', 'GPG_GUI_CSD'], language: 'vala')
 endif
 
-subdir('scripts')
 subdir('src')
 subdir('data')
+subdir('scripts')
 subdir('include')
 subdir('vapi')
 

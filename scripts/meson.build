@@ -18,5 +18,26 @@ else
 endif
 
 
+# If we want a unity build we have to create a vala
+# unity source file since meson will otherwise try
+# to create unity source file from generated c sources
+# which will fail.
+if meson.is_unity()
+    # Create unity source from all sources
+    unity_source = custom_target(
+      'generate_unity',
+      input: sources,
+      output: 'unity.vala',
+      command: [
+        join_paths(meson.current_source_dir(), 'gen_unity_source.sh'),
+        '@INPUT@', '--output', '@OUTPUT@'
+      ],
+    )
+
+    # Overwrite variable with unity source
+    sources = unity_source
+endif
+
+
 # Add post install script
 meson.add_install_script('meson-postinstall.sh')
